@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -15,16 +16,30 @@ class AlquranApiException implements Exception {
 
 /// Wraps alquran.cloud. Holds no state; one service per data source.
 class AlquranApiService {
-  AlquranApiService({http.Client? client, this.baseUrl = _defaultBase})
-      : _client = client ?? http.Client();
+  AlquranApiService({
+    http.Client? client,
+    this.baseUrl = defaultBase,
+    this.timeout = defaultTimeout,
+  }) : _client = client ?? http.Client();
 
-  static const _defaultBase = 'https://api.alquran.cloud/v1';
+  static const defaultBase = 'https://api.alquran.cloud/v1';
+
+  /// Generous, because the whole-edition endpoint has a long tail: measured
+  /// ~2 s typically but 38 s on one sampled request. Without a timeout a slow
+  /// response hangs with no feedback at all.
+  static const defaultTimeout = Duration(seconds: 60);
 
   final http.Client _client;
   final String baseUrl;
+  final Duration timeout;
 
   Future<dynamic> _get(String path) async {
-    final response = await _client.get(Uri.parse('$baseUrl$path'));
+    final http.Response response;
+    try {
+      response = await _client.get(Uri.parse('$baseUrl$path')).timeout(timeout);
+    } on TimeoutException {
+      throw AlquranApiException('GET $path timed out after ${timeout.inSeconds}s');
+    }
     if (response.statusCode != 200) {
       throw AlquranApiException('GET $path returned ${response.statusCode}');
     }

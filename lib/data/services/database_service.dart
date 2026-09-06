@@ -1,5 +1,9 @@
 import 'package:sqlite3/sqlite3.dart';
 
+import '../../domain/models/ayah.dart';
+import '../../domain/models/edition.dart';
+import '../../domain/models/surah.dart';
+
 /// Owns the schema and its migrations. Takes an already-open [Database] so
 /// tests can pass an in-memory one.
 class DatabaseService {
@@ -96,4 +100,76 @@ class DatabaseService {
       PRIMARY KEY (edition, surah)
     );
   ''');
+
+  /// Bulk writes run inside one transaction with a prepared statement. 6236
+  /// individual inserts outside a transaction take seconds; inside one they
+  /// take milliseconds.
+  void writeSurahs(List<Surah> surahs) => _tx(() {
+        final stmt = db.prepare(
+            'INSERT OR REPLACE INTO surahs VALUES (?, ?, ?, ?, ?, ?)');
+        try {
+          for (final s in surahs) {
+            stmt.execute([
+              s.number, s.nameAr, s.nameEn,
+              s.nameEnTranslation, s.revelationType, s.ayahCount,
+            ]);
+          }
+        } finally {
+          stmt.close();
+        }
+      });
+
+  void writeAyahs(List<Ayah> ayahs) => _tx(() {
+        final stmt = db.prepare(
+            'INSERT OR REPLACE INTO ayahs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        try {
+          for (final a in ayahs) {
+            stmt.execute([
+              a.number, a.surah, a.numberInSurah, a.juz, a.page,
+              a.hizbQuarter, a.ruku, a.manzil,
+              a.sajda ? 1 : 0,
+              a.sajdaObligatory == null ? null : (a.sajdaObligatory! ? 1 : 0),
+              a.textAr,
+            ]);
+          }
+        } finally {
+          stmt.close();
+        }
+      });
+
+  /// [texts] maps global ayah number to that edition's translation.
+  void writeTranslations(String edition, Map<int, String> texts) => _tx(() {
+        final stmt = db.prepare(
+            'INSERT OR REPLACE INTO translations VALUES (?, ?, ?)');
+        try {
+          texts.forEach((ayah, text) => stmt.execute([edition, ayah, text]));
+        } finally {
+          stmt.close();
+        }
+      });
+
+  void writeEdition(Edition e, {bool downloaded = false}) => db.execute(
+        'INSERT OR REPLACE INTO editions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [
+          e.identifier, e.language, e.name, e.englishName,
+          e.format, e.type, e.direction, e.bitrate,
+          downloaded ? DateTime.now().millisecondsSinceEpoch : null,
+        ],
+      );
+
+  bool hasEdition(String identifier) => db.select(
+        'SELECT downloaded_at FROM editions WHERE identifier = ?',
+        [identifier],
+      ).any((r) => r['downloaded_at'] != null);
+
+  void _tx(void Function() body) {
+    db.execute('BEGIN');
+    try {
+      body();
+      db.execute('COMMIT');
+    } catch (_) {
+      db.execute('ROLLBACK');
+      rethrow;
+    }
+  }
 }
