@@ -6,6 +6,7 @@ import '../../../data/repositories/settings_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../../core/ui/arabic_text.dart';
+import '../../../data/services/audio_download_service.dart';
 import '../../../data/services/audio_player_service.dart';
 import '../audio_bloc.dart';
 import '../audio_state.dart';
@@ -59,7 +60,8 @@ class _ReaderView extends StatelessWidget {
           final ReaderLoaded loaded => BlocProvider(
               // Scoped to the open surah: its ayah numbers are the playlist.
               create: (context) => AudioBloc(
-                player: AudioPlayerService(),
+                player: AudioPlayerService(
+                    downloads: context.read<AudioDownloadService>()),
                 settings: context.read<ReaderBloc>().settings,
                 surah: loaded.surah.number,
                 ayahNumbers: [for (final a in loaded.ayahs) a.number],

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data/repositories/quran_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'l10n/app_localizations.dart';
+import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
@@ -16,14 +17,24 @@ import 'ui/surah_list/surah_list_event.dart';
 import 'ui/surah_list/widgets/surah_list_screen.dart';
 
 class WasiraApp extends StatelessWidget {
-  const WasiraApp({super.key, required this.repository, required this.db});
+  const WasiraApp({
+    super.key,
+    required this.repository,
+    required this.db,
+    required this.downloads,
+  });
 
   final QuranRepository repository;
   final DatabaseService db;
 
+  /// Read deep in the reader, so it is provided rather than threaded through
+  /// every widget between here and the audio bar.
+  final AudioDownloadService downloads;
+
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
         providers: [
+          RepositoryProvider.value(value: downloads),
           BlocProvider(
             create: (_) =>
                 OnboardingBloc(repository: repository, db: db)

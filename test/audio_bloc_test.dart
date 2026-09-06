@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/data/repositories/settings_repository.dart';
+import 'package:wasira/data/services/audio_download_service.dart';
 import 'package:wasira/data/services/audio_player_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 import 'package:wasira/domain/reciter.dart';
@@ -20,6 +21,11 @@ class _SpyPlayer implements AudioPlayerService {
   int? loadedStartAt;
 
   void emitAyah(int? n) => _ayahs.add(n);
+
+  /// Streaming, not offline: source resolution is the download service's own
+  /// test.
+  @override
+  AudioDownloadService? get downloads => null;
 
   @override
   Stream<int?> get currentAyah => _ayahs.stream;
