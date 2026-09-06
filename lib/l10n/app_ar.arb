@@ -42,5 +42,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "today": "اليوم",
+  "pickADay": "اختر يومًا",
+  "dailySettings": "إعدادات اليومي",
+  "ayahsPerDay": "آيات في اليوم",
+  "reminders": "التذكيرات",
+  "noFutureDays": "اليوم الذي لم يأتِ بعد لا آيات له"
 }

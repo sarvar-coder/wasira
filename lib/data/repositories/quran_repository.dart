@@ -67,5 +67,16 @@ class QuranRepository {
     return fetched;
   }
 
+  /// Ayahs by global number, for the daily pick. Local only: the numbers are
+  /// scattered across the Quran, and fetching them would mean one whole-surah
+  /// request each. Returns fewer than asked for while the sync is still
+  /// running, which is how the daily screen knows to wait.
+  List<Ayah> ayahsByNumber(List<int> numbers) => db.readAyahsByNumber(numbers);
+
+  Map<int, String> translationsByNumber(List<int> numbers, String? edition) =>
+      edition == null
+          ? const {}
+          : db.readTranslationsByNumber(numbers, edition);
+
   bool get isSynced => db.hasEdition(arabicEdition);
 }

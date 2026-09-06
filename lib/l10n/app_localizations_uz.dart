@@ -129,4 +129,22 @@ class AppLocalizationsUz extends AppLocalizations {
   String storageUsed(String size) {
     return 'diskda $size';
   }
+
+  @override
+  String get today => 'Bugun';
+
+  @override
+  String get pickADay => 'Kunni tanlang';
+
+  @override
+  String get dailySettings => 'Kunlik sozlamalar';
+
+  @override
+  String get ayahsPerDay => 'Kuniga oyatlar';
+
+  @override
+  String get reminders => 'Eslatmalar';
+
+  @override
+  String get noFutureDays => 'Hali kelmagan kunning oyatlari yo\'q';
 }

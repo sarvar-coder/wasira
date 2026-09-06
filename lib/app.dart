@@ -8,6 +8,10 @@ import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
+import 'data/repositories/daily_repository.dart';
+import 'ui/daily/daily_bloc.dart';
+import 'ui/daily/daily_event.dart';
+import 'ui/daily/widgets/daily_screen.dart';
 import 'ui/downloads/downloads_bloc.dart';
 import 'ui/downloads/downloads_event.dart';
 import 'ui/downloads/widgets/downloads_screen.dart';
@@ -106,7 +110,22 @@ class _Shell extends StatelessWidget {
               translationEdition: edition),
         ),
         ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
-        ShellDestination(l10n.navDaily, Icons.wb_sunny_outlined, _buildTodo),
+        ShellDestination(
+          l10n.navDaily,
+          Icons.wb_sunny_outlined,
+          (_) => BlocProvider(
+            create: (_) => DailyBloc(
+              repository: app.repository,
+              daily: DailyRepository(
+                db: app.db,
+                settings: SettingsRepository(app.db),
+              ),
+              settings: SettingsRepository(app.db),
+              translationEdition: edition,
+            )..add(DailyRequested()),
+            child: const DailyScreen(),
+          ),
+        ),
         ShellDestination(
           l10n.navDownloads,
           Icons.download_outlined,

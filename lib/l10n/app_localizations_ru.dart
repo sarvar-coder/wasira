@@ -131,4 +131,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String storageUsed(String size) {
     return '$size на диске';
   }
+
+  @override
+  String get today => 'Сегодня';
+
+  @override
+  String get pickADay => 'Выберите день';
+
+  @override
+  String get dailySettings => 'Настройки дня';
+
+  @override
+  String get ayahsPerDay => 'Аятов в день';
+
+  @override
+  String get reminders => 'Напоминания';
+
+  @override
+  String get noFutureDays => 'У ещё не наступившего дня нет аятов';
 }

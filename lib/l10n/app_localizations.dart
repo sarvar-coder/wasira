@@ -317,6 +317,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{size} on disk'**
   String storageUsed(String size);
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @pickADay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a day'**
+  String get pickADay;
+
+  /// No description provided for @dailySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily settings'**
+  String get dailySettings;
+
+  /// No description provided for @ayahsPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayahs a day'**
+  String get ayahsPerDay;
+
+  /// No description provided for @reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get reminders;
+
+  /// No description provided for @noFutureDays.
+  ///
+  /// In en, this message translates to:
+  /// **'A day that has not arrived has no ayahs yet'**
+  String get noFutureDays;
 }
 
 class _AppLocalizationsDelegate

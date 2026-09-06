@@ -132,4 +132,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String storageUsed(String size) {
     return '$size على القرص';
   }
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get pickADay => 'اختر يومًا';
+
+  @override
+  String get dailySettings => 'إعدادات اليومي';
+
+  @override
+  String get ayahsPerDay => 'آيات في اليوم';
+
+  @override
+  String get reminders => 'التذكيرات';
+
+  @override
+  String get noFutureDays => 'اليوم الذي لم يأتِ بعد لا آيات له';
 }

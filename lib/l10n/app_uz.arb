@@ -42,5 +42,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "today": "Bugun",
+  "pickADay": "Kunni tanlang",
+  "dailySettings": "Kunlik sozlamalar",
+  "ayahsPerDay": "Kuniga oyatlar",
+  "reminders": "Eslatmalar",
+  "noFutureDays": "Hali kelmagan kunning oyatlari yo'q"
 }

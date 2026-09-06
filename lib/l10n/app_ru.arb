@@ -42,5 +42,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "today": "Сегодня",
+  "pickADay": "Выберите день",
+  "dailySettings": "Настройки дня",
+  "ayahsPerDay": "Аятов в день",
+  "reminders": "Напоминания",
+  "noFutureDays": "У ещё не наступившего дня нет аятов"
 }
