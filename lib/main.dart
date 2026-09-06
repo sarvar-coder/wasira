@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqlite3/sqlite3.dart';
 
-void main() => runApp(const WasiraApp());
+import 'app.dart';
+import 'data/repositories/quran_repository.dart';
+import 'data/services/alquran_api_service.dart';
+import 'data/services/database_service.dart';
 
-class WasiraApp extends StatelessWidget {
-  const WasiraApp({super.key});
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'Wasira',
-        home: const Scaffold(body: Center(child: Text('Wasira'))),
-      );
+  // One database file, in the app's own support directory. The background sync
+  // isolate opens its own connection to the same path.
+  final dir = await getApplicationSupportDirectory();
+  final db = DatabaseService(sqlite3.open('${dir.path}/wasira.db'))..migrate();
+
+  runApp(WasiraApp(
+    db: db,
+    repository: QuranRepository(db: db, api: AlquranApiService()),
+  ));
 }
