@@ -20,3 +20,6 @@ scratch/
 
 # M0 throwaway spike - deliverable is the ADR, not the code
 spike/
+
+# Local agent config
+.claude/
