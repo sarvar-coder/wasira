@@ -8,6 +8,9 @@ import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 import 'data/services/notification_service.dart';
 import 'ui/core/themes/tokens.dart';
+import 'ui/bookmarks/bookmarks_bloc.dart';
+import 'ui/bookmarks/bookmarks_event.dart';
+import 'ui/bookmarks/widgets/bookmarks_screen.dart';
 import 'ui/core/ui/app_shell.dart';
 import 'data/repositories/bookmark_repository.dart';
 import 'data/repositories/daily_repository.dart';
@@ -117,7 +120,25 @@ class _Shell extends StatelessWidget {
               translationEdition: edition,
               bookmarks: BookmarkRepository(app.db)),
         ),
-        ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
+        ShellDestination(
+          l10n.navBookmarks,
+          Icons.star_outline,
+          (_) => BlocProvider(
+            // Rebuilt when the tab is entered, which is also how it picks up
+            // ayahs saved from the reader since it was last open.
+            create: (_) => BookmarksBloc(
+              repository: app.repository,
+              bookmarks: BookmarkRepository(app.db),
+              translationEdition: edition,
+            )..add(BookmarksRequested()),
+            child: BookmarksScreen(
+              repository: app.repository,
+              settings: SettingsRepository(app.db),
+              bookmarks: BookmarkRepository(app.db),
+              translationEdition: edition,
+            ),
+          ),
+        ),
         ShellDestination(
           l10n.navDaily,
           Icons.wb_sunny_outlined,
@@ -154,11 +175,6 @@ class _Shell extends StatelessWidget {
     );
   }
 }
-
-Widget _buildTodo(BuildContext context) => Center(
-      child: Text(AppLocalizations.of(context)!.notBuiltYet,
-          style: TextStyle(color: Tokens.of(context).muted)),
-    );
 
 /// A thin strip, never a modal. The surah list behind it stays scrollable.
 class _SyncBanner extends StatelessWidget {

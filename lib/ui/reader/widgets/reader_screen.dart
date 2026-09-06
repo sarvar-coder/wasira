@@ -26,6 +26,7 @@ class ReaderScreen extends StatelessWidget {
     required this.settings,
     required this.translationEdition,
     required this.bookmarks,
+    this.initialAyah,
   });
 
   final int surah;
@@ -33,6 +34,10 @@ class ReaderScreen extends StatelessWidget {
   final SettingsRepository settings;
   final String? translationEdition;
   final BookmarkRepository bookmarks;
+
+  /// Global ayah number to open at, when the reader was entered from a
+  /// bookmark rather than from the surah list.
+  final int? initialAyah;
 
   @override
   Widget build(BuildContext context) => BlocProvider(
@@ -42,12 +47,13 @@ class ReaderScreen extends StatelessWidget {
           translationEdition: translationEdition,
           bookmarks: bookmarks,
         )..add(SurahRequested(surah)),
-        child: const _ReaderView(),
+        child: _ReaderView(initialAyah: initialAyah),
       );
 }
 
 class _ReaderView extends StatelessWidget {
-  const _ReaderView();
+  const _ReaderView({this.initialAyah});
+  final int? initialAyah;
 
   @override
   Widget build(BuildContext context) =>
@@ -77,7 +83,10 @@ class _ReaderView extends StatelessWidget {
                   titleTextStyle: Theme.of(context).textTheme.titleMedium,
                   actions: [_ArabicSizeButton(current: loaded.arabicSize)],
                 ),
-                body: _Ayahs(loaded: loaded, arabicSize: loaded.arabicSize),
+                body: _Ayahs(
+                    loaded: loaded,
+                    arabicSize: loaded.arabicSize,
+                    scrollTo: initialAyah),
                 bottomNavigationBar: const AudioBar(),
               ),
             ),
@@ -85,18 +94,82 @@ class _ReaderView extends StatelessWidget {
       );
 }
 
-class _Ayahs extends StatelessWidget {
-  const _Ayahs({required this.loaded, required this.arabicSize});
+class _Ayahs extends StatefulWidget {
+  const _Ayahs({
+    required this.loaded,
+    required this.arabicSize,
+    this.scrollTo,
+  });
+
   final ReaderLoaded loaded;
   final double arabicSize;
 
+  /// Global ayah number to bring into view once, on arrival from a bookmark.
+  final int? scrollTo;
+
+  @override
+  State<_Ayahs> createState() => _AyahsState();
+}
+
+class _AyahsState extends State<_Ayahs> {
+  final _controller = ScrollController();
+  final _target = GlobalKey();
+  int _attempts = 0;
+
+  /// Two passes, because ayah tiles have no fixed height — a translation runs
+  /// from 137 characters to 2660, so there is no extent to compute an offset
+  /// from. A proportional jump brings the target into the build window, then
+  /// ensureVisible places it exactly.
+  //
+  // ponytail: fine for 286 ayahs. If a long surah ever lands short, that is
+  // what scrollable_positioned_list exists for.
+  void _bringIntoView() {
+    // An empty surah has nothing to scroll to, and the ratio below would
+    // divide by zero. Not reachable today — ReaderBloc fails on `ayahs.first`
+    // before this builds — so it is a guard against that changing, not a fix
+    // for a bug anyone can hit.
+    if (!mounted || widget.loaded.ayahs.isEmpty || _attempts++ > 5) return;
+
+    final context = _target.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(context,
+          alignment: 0.15, duration: const Duration(milliseconds: 220));
+      return;
+    }
+    if (!_controller.hasClients) return;
+
+    final index = widget.loaded.ayahs
+        .indexWhere((a) => a.number == widget.scrollTo)
+        .clamp(0, widget.loaded.ayahs.length - 1);
+    _controller.jumpTo(_controller.position.maxScrollExtent *
+        (index / widget.loaded.ayahs.length));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bringIntoView());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.scrollTo != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _bringIntoView());
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loaded = widget.loaded;
+    final arabicSize = widget.arabicSize;
     final header = loaded.bismillahHeader;
     // The header occupies index 0 when present, so ayahs shift by one.
     final offset = header == null ? 0 : 1;
 
     return ListView.builder(
+      controller: _controller,
       itemCount: loaded.ayahs.length + offset,
       itemBuilder: (context, i) {
         if (header != null && i == 0) {
@@ -115,6 +188,7 @@ class _Ayahs extends StatelessWidget {
         return BlocSelector<AudioBloc, AudioState, bool>(
           selector: (audio) => audio.currentAyah == ayah.number,
           builder: (context, sounding) => GestureDetector(
+            key: ayah.number == widget.scrollTo ? _target : null,
             behavior: HitTestBehavior.opaque,
             // Right-click on desktop, long-press on touch: the same menu, and
             // the position is the pointer so it opens where the ayah is.

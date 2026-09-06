@@ -8,7 +8,6 @@
   "tryAgain": "Qayta urinish",
   "surahsUnavailable": "Suralarni yuklab bo'lmadi",
   "downloadingQuran": "Qur'on yuklanmoqda",
-  "notBuiltYet": "Hali tayyor emas",
   "navSurahs": "Suralar",
   "navBookmarks": "Xatcho'plar",
   "navDaily": "Kunlik",
@@ -54,5 +53,7 @@
   "playFromHere": "Shu yerdan boshlash",
   "copyAyah": "Nusxa olish",
   "shareAyah": "Ulashish",
-  "copied": "Nusxa olindi"
+  "copied": "Nusxa olindi",
+  "noBookmarks": "Hali hech narsa saqlanmagan",
+  "bookmarksHint": "Saqlash uchun oyatni o'ng tugma bilan bosing"
 }

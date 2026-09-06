@@ -37,9 +37,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadingQuran => 'Downloading the Quran';
 
   @override
-  String get notBuiltYet => 'Not built yet';
-
-  @override
   String get navSurahs => 'Surahs';
 
   @override
@@ -166,4 +163,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copied => 'Copied';
+
+  @override
+  String get noBookmarks => 'Nothing saved yet';
+
+  @override
+  String get bookmarksHint => 'Right-click an ayah to save it';
 }

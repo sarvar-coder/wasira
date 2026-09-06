@@ -1,5 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:wasira/l10n/app_localizations.dart';
+import 'package:wasira/ui/reader/widgets/reader_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wasira/data/services/audio_download_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -227,6 +232,41 @@ void main() {
       final bloc = await open(1);
       expect((bloc.state as ReaderLoaded).bookmarked, isEmpty,
           reason: 'the last ayah of the Quran is not in Al-Fatiha');
+    });
+  });
+
+  group('opening at a bookmarked ayah', () {
+    testWidgets('the reader renders and brings the ayah into view',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1200);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(RepositoryProvider(
+        // Nothing is downloaded, so playback would stream; the audio bar just
+        // needs the service to exist.
+        create: (_) => AudioDownloadService(root: Directory.systemTemp),
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ReaderScreen(
+            surah: 1,
+            repository: repoFor(1),
+            settings: SettingsRepository(service),
+            translationEdition: null,
+            bookmarks: BookmarkRepository(service),
+            // Al-Fatiha 1:6, global ayah 6.
+            initialAyah: 6,
+          ),
+        ),
+      ));
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+
+      // The scroll runs in post-frame callbacks; a throw there surfaces here.
+      expect(tester.takeException(), isNull);
+      expect(find.byType(AyahTile), findsWidgets);
     });
   });
 }

@@ -78,5 +78,10 @@ class QuranRepository {
           ? const {}
           : db.readTranslationsByNumber(numbers, edition);
 
+  /// The surahs already on disk, without the network fallback [surahs] has.
+  /// Screens that only need names for ayahs they already hold cannot be
+  /// waiting on a request.
+  List<Surah> surahsLocal() => db.readSurahs();
+
   bool get isSynced => db.hasEdition(arabicEdition);
 }
