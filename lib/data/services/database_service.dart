@@ -250,6 +250,30 @@ class DatabaseService {
         bitrate: r['bitrate'] as int?,
       );
 
+  /// The ayah numbers stored for one day, or null when that day has never been
+  /// asked for. Stored as a comma-separated list: a handful of small integers,
+  /// read whole or not at all.
+  List<int>? readDailyAyahs(String date) {
+    final rows = db.select(
+        'SELECT ayah_numbers FROM daily_ayahs WHERE date = ?', [date]);
+    if (rows.isEmpty) return null;
+    return [
+      for (final n in (rows.first['ayah_numbers'] as String).split(','))
+        int.parse(n)
+    ];
+  }
+
+  void writeDailyAyahs(String date, List<int> ayahNumbers) => db.execute(
+        'INSERT OR REPLACE INTO daily_ayahs VALUES (?, ?)',
+        [date, ayahNumbers.join(',')],
+      );
+
+  /// Every day already generated, newest first. The calendar reads this.
+  List<String> readDailyDates() => db
+      .select('SELECT date FROM daily_ayahs ORDER BY date DESC')
+      .map((r) => r['date'] as String)
+      .toList(growable: false);
+
   String? readSetting(String key) {
     final rows = db.select('SELECT value FROM settings WHERE key = ?', [key]);
     return rows.isEmpty ? null : rows.first['value'] as String;
