@@ -353,6 +353,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A day that has not arrived has no ayahs yet'**
   String get noFutureDays;
+
+  /// No description provided for @bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get bookmark;
+
+  /// No description provided for @removeBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove bookmark'**
+  String get removeBookmark;
+
+  /// No description provided for @playFromHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Play from here'**
+  String get playFromHere;
+
+  /// No description provided for @copyAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyAyah;
+
+  /// No description provided for @shareAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareAyah;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
 }
 
 class _AppLocalizationsDelegate

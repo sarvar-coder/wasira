@@ -250,6 +250,24 @@ class DatabaseService {
         bitrate: r['bitrate'] as int?,
       );
 
+  /// Bookmarked ayah numbers, in Quran order.
+  List<int> readBookmarks() => db
+      .select('SELECT ayah_number FROM bookmarks ORDER BY ayah_number')
+      .map((r) => r['ayah_number'] as int)
+      .toList(growable: false);
+
+  bool isBookmarked(int ayahNumber) => db
+      .select('SELECT 1 FROM bookmarks WHERE ayah_number = ?', [ayahNumber])
+      .isNotEmpty;
+
+  void addBookmark(int ayahNumber) => db.execute(
+        'INSERT OR REPLACE INTO bookmarks VALUES (?, ?, NULL)',
+        [ayahNumber, DateTime.now().millisecondsSinceEpoch],
+      );
+
+  void removeBookmark(int ayahNumber) =>
+      db.execute('DELETE FROM bookmarks WHERE ayah_number = ?', [ayahNumber]);
+
   /// Ayahs addressed by their global number rather than by surah — how the
   /// daily pick arrives, scattered across the Quran.
   List<Ayah> readAyahsByNumber(List<int> numbers) {

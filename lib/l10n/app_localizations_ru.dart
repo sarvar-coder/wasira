@@ -149,4 +149,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noFutureDays => 'У ещё не наступившего дня нет аятов';
+
+  @override
+  String get bookmark => 'В закладки';
+
+  @override
+  String get removeBookmark => 'Убрать из закладок';
+
+  @override
+  String get playFromHere => 'Слушать отсюда';
+
+  @override
+  String get copyAyah => 'Копировать';
+
+  @override
+  String get shareAyah => 'Поделиться';
+
+  @override
+  String get copied => 'Скопировано';
 }

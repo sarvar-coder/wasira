@@ -147,4 +147,22 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get noFutureDays => 'Hali kelmagan kunning oyatlari yo\'q';
+
+  @override
+  String get bookmark => 'Saqlash';
+
+  @override
+  String get removeBookmark => 'Saqlanganni olib tashlash';
+
+  @override
+  String get playFromHere => 'Shu yerdan boshlash';
+
+  @override
+  String get copyAyah => 'Nusxa olish';
+
+  @override
+  String get shareAyah => 'Ulashish';
+
+  @override
+  String get copied => 'Nusxa olindi';
 }

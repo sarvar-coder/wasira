@@ -48,5 +48,11 @@
   "dailySettings": "Kunlik sozlamalar",
   "ayahsPerDay": "Kuniga oyatlar",
   "reminders": "Eslatmalar",
-  "noFutureDays": "Hali kelmagan kunning oyatlari yo'q"
+  "noFutureDays": "Hali kelmagan kunning oyatlari yo'q",
+  "bookmark": "Saqlash",
+  "removeBookmark": "Saqlanganni olib tashlash",
+  "playFromHere": "Shu yerdan boshlash",
+  "copyAyah": "Nusxa olish",
+  "shareAyah": "Ulashish",
+  "copied": "Nusxa olindi"
 }

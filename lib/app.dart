@@ -9,6 +9,7 @@ import 'data/services/database_service.dart';
 import 'data/services/notification_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
+import 'data/repositories/bookmark_repository.dart';
 import 'data/repositories/daily_repository.dart';
 import 'ui/daily/daily_bloc.dart';
 import 'ui/daily/daily_event.dart';
@@ -113,7 +114,8 @@ class _Shell extends StatelessWidget {
           (_) => SurahListScreen(
               repository: app.repository,
               settings: SettingsRepository(app.db),
-              translationEdition: edition),
+              translationEdition: edition,
+              bookmarks: BookmarkRepository(app.db)),
         ),
         ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
         ShellDestination(

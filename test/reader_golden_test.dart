@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
+import 'package:wasira/data/repositories/bookmark_repository.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
 import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
@@ -80,6 +81,7 @@ void main() {
         repository: repoFor(surah),
         settings: SettingsRepository(service),
         translationEdition: edition,
+        bookmarks: BookmarkRepository(service),
       ),
       ),
     ));

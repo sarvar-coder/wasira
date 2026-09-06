@@ -16,3 +16,10 @@ class ArabicSizeChanged extends ReaderEvent {
   ArabicSizeChanged(this.size);
   final double size;
 }
+
+/// Saving or unsaving an ayah. Recorded as intent rather than a bare setter:
+/// what a reader saves is what future memorization features read.
+class BookmarkToggled extends ReaderEvent {
+  BookmarkToggled(this.ayahNumber);
+  final int ayahNumber;
+}

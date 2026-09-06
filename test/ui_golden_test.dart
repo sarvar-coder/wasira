@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
+import 'package:wasira/data/repositories/bookmark_repository.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
 import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/l10n/app_localizations.dart';
@@ -102,7 +103,8 @@ void main() {
               body: SurahListScreen(
                   repository: repoServing('surah_list.json'),
                   settings: SettingsRepository(service),
-                  translationEdition: null))),
+                  translationEdition: null,
+                  bookmarks: BookmarkRepository(service)))),
     );
 
     await expectLater(find.byType(MaterialApp),
@@ -121,7 +123,8 @@ void main() {
               body: SurahListScreen(
                   repository: repoServing('surah_list.json'),
                   settings: SettingsRepository(service),
-                  translationEdition: null))),
+                  translationEdition: null,
+                  bookmarks: BookmarkRepository(service)))),
       brightness: Brightness.dark,
     );
 
@@ -141,7 +144,8 @@ void main() {
               body: SurahListScreen(
                   repository: repoServing('surah_list.json'),
                   settings: SettingsRepository(service),
-                  translationEdition: null))),
+                  translationEdition: null,
+                  bookmarks: BookmarkRepository(service)))),
       locale: const Locale('ar'),
     );
 
