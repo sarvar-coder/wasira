@@ -98,6 +98,20 @@ void main() {
           reason: 'a lower peak would mean the workers are not parallel at all');
     });
 
+    test('two surahs asked for at once still share the four-request cap',
+        () async {
+      // The screen can be left and re-entered mid-download, so more than one
+      // caller can be queueing surahs. The cap is per service, not per call.
+      await Future.wait([
+        service.download(Reciter.alafasy, 1, fatiha),
+        service.download(Reciter.alafasy, 2, [for (var n = 8; n <= 60; n++) n]),
+      ]);
+
+      expect(cdn.requested, hasLength(7 + 53));
+      expect(cdn.peakInFlight,
+          lessThanOrEqualTo(AudioDownloadService.maxConcurrent));
+    });
+
     test('resumes by skipping what is already on disk', () async {
       await service.download(Reciter.alafasy, 1, fatiha);
       cdn.requested.clear();
@@ -131,6 +145,15 @@ void main() {
     test('throws rather than reporting the surah complete', () async {
       await expectLater(
           service.download(Reciter.alafasy, 1, fatiha), throwsA(anything));
+    });
+
+    test('does not poison the surah queued behind it', () async {
+      await service.download(Reciter.alafasy, 1, fatiha).catchError((_) {});
+      // Al-Ikhlas, whose files are fine, must still download.
+      await service.download(Reciter.alafasy, 112, [6222, 6223, 6224, 6225]);
+
+      expect(service.progress(Reciter.alafasy, 112, [6222, 6223, 6224, 6225]),
+          (4, 4));
     });
 
     test('leaves nothing the resume check would mistake for a finished file',

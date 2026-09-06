@@ -82,7 +82,27 @@ class AudioDownloadService {
   /// [onProgress] fires with (done, total) counted over the whole surah, not
   /// only the missing part, so a resumed download does not restart the bar
   /// at zero.
+  ///
+  /// Surahs are downloaded one after another. The cap is per service, not per
+  /// call: two screens each asking for a surah must still add up to four
+  /// requests, so queueing here is what keeps [maxConcurrent] honest.
   Future<void> download(
+    Reciter reciter,
+    int surah,
+    List<int> ayahNumbers, {
+    void Function(int done, int total)? onProgress,
+  }) {
+    final result = _queue.then((_) =>
+        _download(reciter, surah, ayahNumbers, onProgress: onProgress));
+    // The queue swallows the failure it hands the caller; one bad surah must
+    // not poison every surah asked for after it.
+    _queue = result.catchError((Object _) {});
+    return result;
+  }
+
+  Future<void> _queue = Future.value();
+
+  Future<void> _download(
     Reciter reciter,
     int surah,
     List<int> ayahNumbers, {

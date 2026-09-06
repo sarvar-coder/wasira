@@ -114,4 +114,21 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get wholeSurahReciter =>
       'Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны';
+
+  @override
+  String get download => 'Скачать';
+
+  @override
+  String get resumeDownload => 'Продолжить';
+
+  @override
+  String get deleteDownload => 'Удалить загрузку';
+
+  @override
+  String get downloadFailed => 'Не удалось скачать';
+
+  @override
+  String storageUsed(String size) {
+    return '$size на диске';
+  }
 }

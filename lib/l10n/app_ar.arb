@@ -30,5 +30,17 @@
   "repeatRange": "تكرار المقطع",
   "reciter": "القارئ",
   "playbackFailed": "تعذر التشغيل",
-  "wholeSurahReciter": "هذا القارئ مسجَّل بالسور كاملة، لذا لا يمكن الانتقال إلى آية بعينها"
+  "wholeSurahReciter": "هذا القارئ مسجَّل بالسور كاملة، لذا لا يمكن الانتقال إلى آية بعينها",
+  "download": "تنزيل",
+  "resumeDownload": "متابعة",
+  "deleteDownload": "حذف التنزيل",
+  "downloadFailed": "فشل التنزيل",
+  "storageUsed": "{size} على القرص",
+  "@storageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }

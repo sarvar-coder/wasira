@@ -8,6 +8,9 @@ import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
+import 'ui/downloads/downloads_bloc.dart';
+import 'ui/downloads/downloads_event.dart';
+import 'ui/downloads/widgets/downloads_screen.dart';
 import 'ui/onboarding/onboarding_bloc.dart';
 import 'ui/onboarding/onboarding_event.dart';
 import 'ui/onboarding/onboarding_state.dart';
@@ -104,7 +107,21 @@ class _Shell extends StatelessWidget {
         ),
         ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
         ShellDestination(l10n.navDaily, Icons.wb_sunny_outlined, _buildTodo),
-        ShellDestination(l10n.navDownloads, Icons.download_outlined, _buildTodo),
+        ShellDestination(
+          l10n.navDownloads,
+          Icons.download_outlined,
+          // Its own bloc rather than an app-wide one: a download queued here
+          // keeps running through [DownloadsBloc]'s own future chain, and the
+          // screen re-scans disk when it comes back.
+          (_) => BlocProvider(
+            create: (_) => DownloadsBloc(
+              repository: app.repository,
+              downloads: app.downloads,
+              settings: SettingsRepository(app.db),
+            )..add(DownloadsRequested()),
+            child: const DownloadsScreen(),
+          ),
+        ),
       ],
     );
   }

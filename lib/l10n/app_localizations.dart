@@ -287,6 +287,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This reciter publishes whole surahs, so single ayahs cannot be addressed'**
   String get wholeSurahReciter;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @resumeDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resumeDownload;
+
+  /// No description provided for @deleteDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete download'**
+  String get deleteDownload;
+
+  /// No description provided for @downloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed'**
+  String get downloadFailed;
+
+  /// Total disk taken by one reciter's downloads
+  ///
+  /// In en, this message translates to:
+  /// **'{size} on disk'**
+  String storageUsed(String size);
 }
 
 class _AppLocalizationsDelegate

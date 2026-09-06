@@ -113,4 +113,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get wholeSurahReciter =>
       'This reciter publishes whole surahs, so single ayahs cannot be addressed';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get resumeDownload => 'Resume';
+
+  @override
+  String get deleteDownload => 'Delete download';
+
+  @override
+  String get downloadFailed => 'Download failed';
+
+  @override
+  String storageUsed(String size) {
+    return '$size on disk';
+  }
 }

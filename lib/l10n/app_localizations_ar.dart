@@ -115,4 +115,21 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get wholeSurahReciter =>
       'هذا القارئ مسجَّل بالسور كاملة، لذا لا يمكن الانتقال إلى آية بعينها';
+
+  @override
+  String get download => 'تنزيل';
+
+  @override
+  String get resumeDownload => 'متابعة';
+
+  @override
+  String get deleteDownload => 'حذف التنزيل';
+
+  @override
+  String get downloadFailed => 'فشل التنزيل';
+
+  @override
+  String storageUsed(String size) {
+    return '$size على القرص';
+  }
 }
