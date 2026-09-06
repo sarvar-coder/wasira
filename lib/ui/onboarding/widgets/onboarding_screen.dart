@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/models/edition.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../onboarding_bloc.dart';
 import '../onboarding_event.dart';
@@ -38,7 +39,7 @@ class _Failed extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Could not reach the Quran service',
+            Text(AppLocalizations.of(context)!.serviceUnreachable,
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Text('$error',
@@ -47,7 +48,7 @@ class _Failed extends StatelessWidget {
             FilledButton(
               onPressed: () =>
                   context.read<OnboardingBloc>().add(EditionsRequested()),
-              child: const Text('Try again'),
+              child: Text(AppLocalizations.of(context)!.tryAgain),
             ),
           ],
         ),
@@ -74,12 +75,12 @@ class _Picker extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Choose a translation',
+              Text(AppLocalizations.of(context)!.chooseTranslation,
                   style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 6),
               Text(
-                '${editions.length} translations in ${languages.length} languages. '
-                'You can change this later.',
+                AppLocalizations.of(context)!
+                    .pickerSubtitle(editions.length, languages.length),
                 style: TextStyle(color: tokens.muted),
               ),
             ],
@@ -95,7 +96,9 @@ class _Picker extends StatelessWidget {
               return ExpansionTile(
                 title: Text(language.toUpperCase(),
                     style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text('${group.length} available',
+                subtitle: Text(
+                    AppLocalizations.of(context)!
+                        .translationsAvailable(group.length),
                     style: TextStyle(color: tokens.muted, fontSize: 12)),
                 children: [
                   for (final e in group)

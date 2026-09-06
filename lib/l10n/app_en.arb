@@ -1,0 +1,36 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Wasira",
+
+  "chooseTranslation": "Choose a translation",
+  "@chooseTranslation": { "description": "Heading of the first-launch language picker" },
+
+  "pickerSubtitle": "{translations} translations in {languages} languages. You can change this later.",
+  "@pickerSubtitle": {
+    "placeholders": { "translations": { "type": "int" }, "languages": { "type": "int" } }
+  },
+
+  "translationsAvailable": "{count} available",
+  "@translationsAvailable": { "placeholders": { "count": { "type": "int" } } },
+
+  "serviceUnreachable": "Could not reach the Quran service",
+  "tryAgain": "Try again",
+
+  "surahsUnavailable": "Could not load surahs",
+
+  "downloadingQuran": "Downloading the Quran",
+
+  "notBuiltYet": "Not built yet",
+
+  "navSurahs": "Surahs",
+  "navBookmarks": "Bookmarks",
+  "navDaily": "Daily",
+  "navDownloads": "Downloads",
+
+  "ayahCount": "{count, plural, =1{1 ayah} other{{count} ayahs}}",
+  "@ayahCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "revelationMeccan": "Meccan",
+  "revelationMedinan": "Medinan"
+}

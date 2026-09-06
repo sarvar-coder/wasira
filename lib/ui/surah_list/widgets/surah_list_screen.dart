@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/models/surah.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../surah_list_bloc.dart';
 import '../surah_list_event.dart';
@@ -18,7 +19,8 @@ class SurahListScreen extends StatelessWidget {
         builder: (context, state) => switch (state) {
           SurahListLoading() => const Center(child: CircularProgressIndicator()),
           SurahListFailed(:final error) => Center(
-              child: Text('Could not load surahs: $error',
+              child: Text(
+                  '${AppLocalizations.of(context)!.surahsUnavailable}: $error',
                   style: TextStyle(color: Tokens.of(context).muted)),
             ),
           SurahListLoaded(:final surahs) => ListView.builder(
@@ -36,6 +38,18 @@ class _SurahTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = Tokens.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    // revelationType arrives from the API as "Meccan"/"Medinan"; map it so the
+    // subtitle is not half-translated.
+    final revelation = surah.revelationType == 'Meccan'
+        ? l10n.revelationMeccan
+        : l10n.revelationMedinan;
+    // nameEnTranslation is an English gloss the API offers in English only.
+    // Mixing it into an Arabic or Russian line reads as half-translated, and in
+    // RTL the bidirectional run renders awkwardly, so show it only in English.
+    final englishGloss = Localizations.localeOf(context).languageCode == 'en'
+        ? '${surah.nameEnTranslation}  ·  '
+        : '';
 
     return ListTile(
       leading: Container(
@@ -54,7 +68,7 @@ class _SurahTile extends StatelessWidget {
       ),
       title: Text(surah.nameEn),
       subtitle: Text(
-        '${surah.nameEnTranslation}  ·  ${surah.ayahCount} ayahs  ·  ${surah.revelationType}',
+        '$englishGloss${l10n.ayahCount(surah.ayahCount)}  ·  $revelation',
         style: TextStyle(color: tokens.muted, fontSize: 12),
       ),
       trailing: Directionality(

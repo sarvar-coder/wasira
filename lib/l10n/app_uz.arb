@@ -1,0 +1,19 @@
+{
+  "@@locale": "uz",
+  "appTitle": "Wasira",
+  "chooseTranslation": "Tarjimani tanlang",
+  "pickerSubtitle": "{languages} tilda {translations} ta tarjima. Buni keyin ham o'zgartirishingiz mumkin.",
+  "translationsAvailable": "{count} ta mavjud",
+  "serviceUnreachable": "Qur'on xizmatiga ulanib bo'lmadi",
+  "tryAgain": "Qayta urinish",
+  "surahsUnavailable": "Suralarni yuklab bo'lmadi",
+  "downloadingQuran": "Qur'on yuklanmoqda",
+  "notBuiltYet": "Hali tayyor emas",
+  "navSurahs": "Suralar",
+  "navBookmarks": "Xatcho'plar",
+  "navDaily": "Kunlik",
+  "navDownloads": "Yuklamalar",
+  "ayahCount": "{count, plural, other{{count} oyat}}",
+  "revelationMeccan": "Makkiy",
+  "revelationMedinan": "Madaniy"
+}

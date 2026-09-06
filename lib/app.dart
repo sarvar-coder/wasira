@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'data/repositories/quran_repository.dart';
+import 'l10n/app_localizations.dart';
 import 'data/services/database_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
@@ -32,7 +33,11 @@ class WasiraApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          title: 'Wasira',
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          // Arabic is shipped deliberately: it exercises RTL mirroring during
+          // development instead of after an Arabic user reports it.
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: Tokens.light.theme,
           darkTheme: Tokens.dark.theme,
           // No manual toggle: the app follows the system appearance.
@@ -66,22 +71,25 @@ class _Shell extends StatelessWidget {
   final double? progress;
 
   @override
-  Widget build(BuildContext context) => AppShell(
-        banner: progress == null ? null : _SyncBanner(progress: progress!),
-        destinations: const [
-          ShellDestination('Surahs', Icons.menu_book_outlined,
-              _buildSurahs),
-          ShellDestination('Bookmarks', Icons.star_outline, _buildTodo),
-          ShellDestination('Daily', Icons.wb_sunny_outlined, _buildTodo),
-          ShellDestination('Downloads', Icons.download_outlined, _buildTodo),
-        ],
-      );
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppShell(
+      banner: progress == null ? null : _SyncBanner(progress: progress!),
+      destinations: [
+        ShellDestination(l10n.navSurahs, Icons.menu_book_outlined, _buildSurahs),
+        ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
+        ShellDestination(l10n.navDaily, Icons.wb_sunny_outlined, _buildTodo),
+        ShellDestination(l10n.navDownloads, Icons.download_outlined, _buildTodo),
+      ],
+    );
+  }
 }
 
 Widget _buildSurahs(BuildContext context) => const SurahListScreen();
 
 Widget _buildTodo(BuildContext context) => Center(
-      child: Text('Not built yet',
+      child: Text(AppLocalizations.of(context)!.notBuiltYet,
           style: TextStyle(color: Tokens.of(context).muted)),
     );
 
@@ -101,7 +109,7 @@ class _SyncBanner extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
           child: Row(
             children: [
-              Text('Downloading the Quran',
+              Text(AppLocalizations.of(context)!.downloadingQuran,
                   style: TextStyle(fontSize: 12, color: tokens.muted)),
               const Spacer(),
               Text('${(progress * 100).round()}%',
