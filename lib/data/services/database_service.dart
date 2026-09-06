@@ -172,4 +172,81 @@ class DatabaseService {
       rethrow;
     }
   }
+
+  List<Surah> readSurahs() => db
+      .select('SELECT * FROM surahs ORDER BY number')
+      .map(_surahOf)
+      .toList(growable: false);
+
+  List<Ayah> readAyahs(int surah) => db
+      .select('SELECT * FROM ayahs WHERE surah = ? ORDER BY number_in_surah',
+          [surah])
+      .map(_ayahOf)
+      .toList(growable: false);
+
+  /// Keyed by global ayah number, matching how the reader pairs them up.
+  Map<int, String> readTranslations(int surah, String edition) => {
+        for (final r in db.select(
+          'SELECT t.ayah_number n, t.text FROM translations t '
+          'JOIN ayahs a ON a.number = t.ayah_number '
+          'WHERE a.surah = ? AND t.edition = ? '
+          'ORDER BY a.number_in_surah',
+          [surah, edition],
+        ))
+          r['n'] as int: r['text'] as String
+      };
+
+  List<Edition> readEditions({String? format, String? type}) {
+    final where = <String>[];
+    final args = <Object?>[];
+    if (format != null) {
+      where.add('format = ?');
+      args.add(format);
+    }
+    if (type != null) {
+      where.add('type = ?');
+      args.add(type);
+    }
+    final clause = where.isEmpty ? '' : 'WHERE ${where.join(' AND ')}';
+    return db
+        .select('SELECT * FROM editions $clause ORDER BY english_name', args)
+        .map(_editionOf)
+        .toList(growable: false);
+  }
+
+  static Surah _surahOf(Row r) => Surah(
+        number: r['number'] as int,
+        nameAr: r['name_ar'] as String,
+        nameEn: r['name_en'] as String,
+        nameEnTranslation: r['name_en_translation'] as String,
+        revelationType: r['revelation_type'] as String,
+        ayahCount: r['ayah_count'] as int,
+      );
+
+  static Ayah _ayahOf(Row r) => Ayah(
+        number: r['number'] as int,
+        surah: r['surah'] as int,
+        numberInSurah: r['number_in_surah'] as int,
+        juz: r['juz'] as int,
+        page: r['page'] as int,
+        hizbQuarter: r['hizb_quarter'] as int,
+        ruku: r['ruku'] as int,
+        manzil: r['manzil'] as int,
+        sajda: (r['sajda'] as int) == 1,
+        sajdaObligatory: r['sajda_obligatory'] == null
+            ? null
+            : (r['sajda_obligatory'] as int) == 1,
+        textAr: r['text_ar'] as String,
+      );
+
+  static Edition _editionOf(Row r) => Edition(
+        identifier: r['identifier'] as String,
+        language: r['language'] as String,
+        name: r['name'] as String,
+        englishName: r['english_name'] as String,
+        format: r['format'] as String,
+        type: r['type'] as String,
+        direction: r['direction'] as String?,
+        bitrate: r['bitrate'] as int?,
+      );
 }
