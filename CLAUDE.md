@@ -10,7 +10,7 @@ A transform on it is a correctness bug, not a style choice.
 **One exception exists, and it is segmentation rather than alteration.** The API
 concatenates the Bismillah into ayah 1, so `quran-uthmani` returns 2:1 as
 `بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ الٓمٓ` while every translation returns only
-"Alif, Lam, Meem". Al-Baqarah's first verse is الٓمٓ alone.
+"Alif, Lam, Meem". Al-Baqarah's first ayah is الٓمٓ alone.
 
 | Surah | Rule |
 |---|---|
