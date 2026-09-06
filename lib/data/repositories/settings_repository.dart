@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import '../../domain/daily_seed.dart';
-import '../../domain/reciter.dart';
 import '../services/database_service.dart';
 
 /// Reading preferences that outlive a launch.
@@ -22,7 +21,6 @@ class SettingsRepository {
   static const defaultDailyCount = 3;
 
   static const _arabicSizeKey = 'arabic_font_size';
-  static const _reciterKey = 'reciter';
   static const _dailySeedKey = 'daily_seed';
   static const _dailyCountKey = 'daily_count';
   static const _dailySinceKey = 'daily_since';
@@ -39,19 +37,6 @@ class SettingsRepository {
     if (!arabicSizes.contains(size)) return;
     db.writeSetting(_arabicSizeKey, '$size');
   }
-
-  /// Falls back to the first offered reciter when nothing is stored, or when a
-  /// stored edition is no longer offered.
-  Reciter get reciter {
-    final stored = db.readSetting(_reciterKey);
-    return Reciter.all.firstWhere(
-      (r) => r.edition == stored,
-      orElse: () => Reciter.all.first,
-    );
-  }
-
-  void setReciter(Reciter reciter) =>
-      db.writeSetting(_reciterKey, reciter.edition);
 
   /// Generated once and then never again — it is the whole reason a day the
   /// user missed can be reproduced rather than stored forever.

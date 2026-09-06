@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/settings_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
-import '../../reader/widgets/ayah_tile.dart';
+import 'ayah_view.dart';
 import '../daily_bloc.dart';
 import '../daily_event.dart';
 import '../daily_state.dart';
@@ -63,7 +63,7 @@ class _Day extends StatelessWidget {
                       style: TextStyle(fontSize: 12, color: tokens.muted),
                     ),
                   ),
-                  AyahTile(
+                  AyahView(
                     ayah: daily.ayah,
                     arabicSize: state.arabicSize,
                     translation: daily.translation,

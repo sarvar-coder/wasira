@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:wasira/data/repositories/bookmark_repository.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
-import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/l10n/app_localizations.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
 import 'package:wasira/data/services/database_service.dart';
@@ -17,9 +15,6 @@ import 'package:wasira/ui/core/themes/tokens.dart';
 import 'package:wasira/ui/onboarding/onboarding_bloc.dart';
 import 'package:wasira/ui/onboarding/onboarding_event.dart';
 import 'package:wasira/ui/onboarding/widgets/onboarding_screen.dart';
-import 'package:wasira/ui/surah_list/surah_list_bloc.dart';
-import 'package:wasira/ui/surah_list/surah_list_event.dart';
-import 'package:wasira/ui/surah_list/widgets/surah_list_screen.dart';
 
 /// Renders the real screens against real captured API responses, so the
 /// goldens show what a user actually sees rather than a mock-shaped guess.
@@ -89,67 +84,5 @@ void main() {
 
     await expectLater(find.byType(MaterialApp),
         matchesGoldenFile('goldens/onboarding_picker.png'));
-  });
-
-  testWidgets('surah list with all 114 real surahs', (tester) async {
-    final bloc = SurahListBloc(repoServing('surah_list.json'))
-      ..add(SurahListRequested());
-    addTearDown(bloc.close);
-
-    await render(
-      tester,
-      BlocProvider.value(
-          value: bloc, child: Scaffold(
-              body: SurahListScreen(
-                  repository: repoServing('surah_list.json'),
-                  settings: SettingsRepository(service),
-                  translationEdition: null,
-                  bookmarks: BookmarkRepository(service)))),
-    );
-
-    await expectLater(find.byType(MaterialApp),
-        matchesGoldenFile('goldens/surah_list.png'));
-  });
-
-  testWidgets('surah list in dark mode', (tester) async {
-    final bloc = SurahListBloc(repoServing('surah_list.json'))
-      ..add(SurahListRequested());
-    addTearDown(bloc.close);
-
-    await render(
-      tester,
-      BlocProvider.value(
-          value: bloc, child: Scaffold(
-              body: SurahListScreen(
-                  repository: repoServing('surah_list.json'),
-                  settings: SettingsRepository(service),
-                  translationEdition: null,
-                  bookmarks: BookmarkRepository(service)))),
-      brightness: Brightness.dark,
-    );
-
-    await expectLater(find.byType(MaterialApp),
-        matchesGoldenFile('goldens/surah_list_dark.png'));
-  });
-
-  testWidgets('surah list in Arabic, mirrored right to left', (tester) async {
-    final bloc = SurahListBloc(repoServing('surah_list.json'))
-      ..add(SurahListRequested());
-    addTearDown(bloc.close);
-
-    await render(
-      tester,
-      BlocProvider.value(
-          value: bloc, child: Scaffold(
-              body: SurahListScreen(
-                  repository: repoServing('surah_list.json'),
-                  settings: SettingsRepository(service),
-                  translationEdition: null,
-                  bookmarks: BookmarkRepository(service)))),
-      locale: const Locale('ar'),
-    );
-
-    await expectLater(find.byType(MaterialApp),
-        matchesGoldenFile('goldens/surah_list_arabic.png'));
   });
 }

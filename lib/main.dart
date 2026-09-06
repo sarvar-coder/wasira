@@ -9,7 +9,6 @@ import 'data/repositories/daily_repository.dart';
 import 'data/repositories/quran_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'data/services/alquran_api_service.dart';
-import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 import 'data/services/notification_service.dart';
 import 'ui/onboarding/onboarding_bloc.dart';
@@ -27,7 +26,6 @@ Future<void> main() async {
   runApp(WasiraApp(
     db: db,
     repository: QuranRepository(db: db, api: AlquranApiService()),
-    downloads: AudioDownloadService(root: dir),
     notifications: notifications,
   ));
 
