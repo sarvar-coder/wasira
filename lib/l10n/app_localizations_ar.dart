@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'وسيلة';
+  String get appTitle => 'Wasira';
 
   @override
   String get chooseTranslation => 'اختر ترجمة';
@@ -25,7 +25,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get serviceUnreachable => 'تعذر الوصول إلى خدمة القرآن';
+  String get serviceUnreachable => 'تعذر الوصول إلى خدمة القرآن الكريم';
 
   @override
   String get tryAgain => 'أعد المحاولة';
@@ -34,7 +34,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get surahsUnavailable => 'تعذر تحميل السور';
 
   @override
-  String get downloadingQuran => 'جارٍ تحميل القرآن';
+  String get downloadingQuran => 'جارٍ تحميل القرآن الكريم';
 
   @override
   String get navSurahs => 'السور';
@@ -74,10 +74,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showLess => 'عرض أقل';
 
   @override
-  String get sajdaHere => 'سجدة';
+  String get sajdaHere => 'سجدة تلاوة';
 
   @override
-  String get sajdaObligatoryHere => 'سجدة واجبة';
+  String get sajdaObligatoryHere => 'سجدة تلاوة واجبة';
 
   @override
   String get arabicTextSize => 'حجم النص العربي';
