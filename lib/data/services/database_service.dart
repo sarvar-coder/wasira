@@ -249,4 +249,14 @@ class DatabaseService {
         direction: r['direction'] as String?,
         bitrate: r['bitrate'] as int?,
       );
+
+  String? readSetting(String key) {
+    final rows = db.select('SELECT value FROM settings WHERE key = ?', [key]);
+    return rows.isEmpty ? null : rows.first['value'] as String;
+  }
+
+  void writeSetting(String key, String value) => db.execute(
+        'INSERT OR REPLACE INTO settings VALUES (?, ?)',
+        [key, value],
+      );
 }
