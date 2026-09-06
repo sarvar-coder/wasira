@@ -53,5 +53,15 @@
   "@sajdaHere": {
     "description": "Marker on an ayah of prostration"
   },
-  "arabicTextSize": "Arabic text size"
+  "arabicTextSize": "Arabic text size",
+  "play": "Play",
+  "pause": "Pause",
+  "nextAyah": "Next ayah",
+  "previousAyah": "Previous ayah",
+  "repeatOff": "No repeat",
+  "repeatAyah": "Repeat ayah",
+  "repeatRange": "Repeat range",
+  "reciter": "Reciter",
+  "playbackFailed": "Playback failed",
+  "wholeSurahReciter": "This reciter publishes whole surahs, so single ayahs cannot be addressed"
 }

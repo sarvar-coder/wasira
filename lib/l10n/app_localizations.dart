@@ -227,6 +227,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Arabic text size'**
   String get arabicTextSize;
+
+  /// No description provided for @play.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get play;
+
+  /// No description provided for @pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// No description provided for @nextAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Next ayah'**
+  String get nextAyah;
+
+  /// No description provided for @previousAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous ayah'**
+  String get previousAyah;
+
+  /// No description provided for @repeatOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No repeat'**
+  String get repeatOff;
+
+  /// No description provided for @repeatAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat ayah'**
+  String get repeatAyah;
+
+  /// No description provided for @repeatRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat range'**
+  String get repeatRange;
+
+  /// No description provided for @reciter.
+  ///
+  /// In en, this message translates to:
+  /// **'Reciter'**
+  String get reciter;
+
+  /// No description provided for @playbackFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback failed'**
+  String get playbackFailed;
+
+  /// No description provided for @wholeSurahReciter.
+  ///
+  /// In en, this message translates to:
+  /// **'This reciter publishes whole surahs, so single ayahs cannot be addressed'**
+  String get wholeSurahReciter;
 }
 
 class _AppLocalizationsDelegate

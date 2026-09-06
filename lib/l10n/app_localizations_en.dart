@@ -82,4 +82,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get arabicTextSize => 'Arabic text size';
+
+  @override
+  String get play => 'Play';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get nextAyah => 'Next ayah';
+
+  @override
+  String get previousAyah => 'Previous ayah';
+
+  @override
+  String get repeatOff => 'No repeat';
+
+  @override
+  String get repeatAyah => 'Repeat ayah';
+
+  @override
+  String get repeatRange => 'Repeat range';
+
+  @override
+  String get reciter => 'Reciter';
+
+  @override
+  String get playbackFailed => 'Playback failed';
+
+  @override
+  String get wholeSurahReciter =>
+      'This reciter publishes whole surahs, so single ayahs cannot be addressed';
 }

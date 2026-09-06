@@ -20,5 +20,15 @@
   "showLess": "عرض أقل",
   "sajdaHere": "سجدة",
   "sajdaObligatoryHere": "سجدة واجبة",
-  "arabicTextSize": "حجم النص العربي"
+  "arabicTextSize": "حجم النص العربي",
+  "play": "تشغيل",
+  "pause": "إيقاف مؤقت",
+  "nextAyah": "الآية التالية",
+  "previousAyah": "الآية السابقة",
+  "repeatOff": "بدون تكرار",
+  "repeatAyah": "تكرار الآية",
+  "repeatRange": "تكرار المقطع",
+  "reciter": "القارئ",
+  "playbackFailed": "تعذر التشغيل",
+  "wholeSurahReciter": "هذا القارئ مسجَّل بالسور كاملة، لذا لا يمكن الانتقال إلى آية بعينها"
 }

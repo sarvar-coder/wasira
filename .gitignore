@@ -23,3 +23,6 @@ spike/
 
 # Local agent config
 .claude/
+
+# Flutter writes these when a golden mismatches - diagnostic only
+test/failures/

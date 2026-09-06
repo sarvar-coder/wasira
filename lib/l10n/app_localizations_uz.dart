@@ -81,4 +81,35 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get arabicTextSize => 'Arab matni o\'lchami';
+
+  @override
+  String get play => 'Ijro';
+
+  @override
+  String get pause => 'To\'xtatish';
+
+  @override
+  String get nextAyah => 'Keyingi oyat';
+
+  @override
+  String get previousAyah => 'Oldingi oyat';
+
+  @override
+  String get repeatOff => 'Takrorlanmasin';
+
+  @override
+  String get repeatAyah => 'Oyatni takrorlash';
+
+  @override
+  String get repeatRange => 'Oraliqni takrorlash';
+
+  @override
+  String get reciter => 'Qori';
+
+  @override
+  String get playbackFailed => 'Ijro etilmadi';
+
+  @override
+  String get wholeSurahReciter =>
+      'Bu qori butun surani o\'qigan, shuning uchun alohida oyatga o\'tib bo\'lmaydi';
 }

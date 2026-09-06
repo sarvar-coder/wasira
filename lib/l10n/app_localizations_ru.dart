@@ -83,4 +83,35 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get arabicTextSize => 'Размер арабского текста';
+
+  @override
+  String get play => 'Воспроизвести';
+
+  @override
+  String get pause => 'Пауза';
+
+  @override
+  String get nextAyah => 'Следующий аят';
+
+  @override
+  String get previousAyah => 'Предыдущий аят';
+
+  @override
+  String get repeatOff => 'Без повтора';
+
+  @override
+  String get repeatAyah => 'Повтор аята';
+
+  @override
+  String get repeatRange => 'Повтор отрывка';
+
+  @override
+  String get reciter => 'Чтец';
+
+  @override
+  String get playbackFailed => 'Не удалось воспроизвести';
+
+  @override
+  String get wholeSurahReciter =>
+      'Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны';
 }

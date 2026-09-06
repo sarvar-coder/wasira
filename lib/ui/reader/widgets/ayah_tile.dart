@@ -14,6 +14,7 @@ class AyahTile extends StatelessWidget {
     this.translationDirection = TextDirection.ltr,
     this.expanded = false,
     this.onExpand,
+    this.highlighted = false,
   });
 
   /// Past this many characters a translation is clamped. uz.sodik is a
@@ -28,13 +29,21 @@ class AyahTile extends StatelessWidget {
   final bool expanded;
   final VoidCallback? onExpand;
 
+  /// True while this ayah is the one sounding. Never true for a surah-by-surah
+  /// reciter, which cannot report ayah position.
+  final bool highlighted;
+
   @override
   Widget build(BuildContext context) {
     final tokens = Tokens.of(context);
     final l10n = AppLocalizations.of(context)!;
     final long = (translation?.length ?? 0) > clampThreshold;
 
-    return Padding(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      color: highlighted
+          ? tokens.accent.withValues(alpha: 0.06)
+          : Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

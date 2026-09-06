@@ -4,7 +4,7 @@ import '../../domain/audio_url.dart';
 import '../../domain/reciter.dart';
 
 /// What the player is repeating.
-enum RepeatMode {
+enum RecitationRepeat {
   /// Play through and stop at the end of the surah.
   none,
 
@@ -84,10 +84,10 @@ class AudioPlayerService {
     await _player.seekToPrevious();
   }
 
-  Future<void> setRepeat(RepeatMode mode) => _player.setLoopMode(switch (mode) {
-        RepeatMode.none => LoopMode.off,
-        RepeatMode.ayah => LoopMode.one,
-        RepeatMode.range => LoopMode.all,
+  Future<void> setRepeat(RecitationRepeat mode) => _player.setLoopMode(switch (mode) {
+        RecitationRepeat.none => LoopMode.off,
+        RecitationRepeat.ayah => LoopMode.one,
+        RecitationRepeat.range => LoopMode.all,
       });
 
   Future<void> dispose() => _player.dispose();
