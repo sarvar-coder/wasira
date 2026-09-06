@@ -87,6 +87,18 @@ Eight packages are allowed: `sqlite3`, `sqlite3_flutter_libs`, `just_audio`,
 `flutter_local_notifications`, `http`, `path_provider`, `flutter_bloc`,
 `share_plus`. A ninth needs its justification written here.
 
+**`timezone` is the ninth, and it is not a choice.**
+`flutter_local_notifications.zonedSchedule` takes a `TZDateTime`; the older
+plain-`DateTime` `schedule` is gone. So the ninth package is a required
+companion of the fourth, not a separate decision.
+
+What it does **not** bring is a way to ask the OS which zone this is —
+`tz.local` defaults to UTC, which for Tashkent schedules every reminder five
+hours out. The usual answer is a tenth package. Instead the IANA name is read
+from `/etc/localtime`, the symlink macOS and Linux already maintain, falling
+back to UTC. Windows keeps its zone in the registry under different names and
+will need a lookup when it ships.
+
 ## Text rendering
 
 Arabic renders in **Amiri Quran**, locked by ADR-0002. Changing it means

@@ -1,4 +1,5 @@
 import '../../domain/daily_seed.dart';
+import '../../domain/reminder_window.dart';
 import '../services/database_service.dart';
 import 'settings_repository.dart';
 
@@ -38,6 +39,50 @@ class DailyRepository {
   }
 
   List<int> get today => ayahsFor(DateTime.now());
+
+  /// What a day's pick *will* be, without writing it down.
+  ///
+  /// Scheduling has to look ahead; history must not. A day already stored is
+  /// returned as stored, so a reminder never names an ayah the day does not
+  /// actually hold.
+  List<int> previewFor(DateTime date) =>
+      db.readDailyAyahs(dayKey(date)) ??
+      dailyAyahs(
+        seed: settings.dailySeed,
+        date: date,
+        count: settings.dailyCount,
+      );
+
+  /// The rolling window of reminders that should be pending.
+  ///
+  /// One per ayah per day: three ayahs a day is three notifications, not one
+  /// listing three.
+  List<Reminder> upcomingReminders({DateTime? from}) => reminderWindow(
+        from: from ?? DateTime.now(),
+        times: settings.reminderTimes,
+        ayahsFor: previewFor,
+      );
+
+  /// What a reminder says. The body is the translation, so the ayah is
+  /// readable from Notification Center without opening the app; with no
+  /// translation chosen it falls back to the Arabic.
+  ({String title, String body})? textFor(int ayahNumber, String? edition) {
+    final ayah = db.readAyahsByNumber([ayahNumber]).firstOrNull;
+    if (ayah == null) return null;
+
+    final surah = db
+        .readSurahs()
+        .where((s) => s.number == ayah.surah)
+        .firstOrNull;
+    final translation = edition == null
+        ? null
+        : db.readTranslationsByNumber([ayahNumber], edition)[ayahNumber];
+
+    return (
+      title: '${surah?.nameEn ?? ayah.surah} ${ayah.surah}:${ayah.numberInSurah}',
+      body: translation ?? ayah.textAr,
+    );
+  }
 
   /// Days already generated, newest first.
   List<String> get history => db.readDailyDates();

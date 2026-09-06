@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/daily_repository.dart';
 import '../../data/repositories/quran_repository.dart';
 import '../../data/repositories/settings_repository.dart';
+import '../../data/services/notification_service.dart';
 import '../../domain/bismillah.dart';
 import '../../domain/models/ayah.dart';
 import 'daily_event.dart';
@@ -16,12 +17,14 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
     required this.daily,
     required this.settings,
     required this.translationEdition,
+    this.notifications,
   }) : super(DailyLoading()) {
     on<DailyRequested>((event, emit) => _load(DateTime.now(), emit));
     on<DaySelected>((event, emit) => _load(event.date, emit));
 
     on<DailyCountChanged>((event, emit) async {
       settings.setDailyCount(event.count);
+      await _reschedule();
       // Today is re-read rather than regenerated: a day already stored keeps
       // the number of ayahs it was read with.
       await _load(_date, emit);
@@ -32,6 +35,7 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
       if (event.index < 0 || event.index >= times.length) return;
       times[event.index] = event.minutes;
       settings.setReminderTimes(times);
+      await _reschedule();
       await _load(_date, emit);
     });
 
@@ -47,9 +51,30 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
   final SettingsRepository settings;
   final String? translationEdition;
 
+  /// Null in tests and wherever notifications are not wired up; a reminder
+  /// that cannot be scheduled must not stop the screen working.
+  final NotificationService? notifications;
+
   /// The day on screen. Settings changes reload it rather than jumping to
   /// today, so changing the count while looking at last Tuesday stays there.
   DateTime _date = DateTime.now();
+
+  /// Rewrites the pending window whenever what it would contain changes.
+  /// Failing here is not worth failing the screen for — the next launch
+  /// reschedules anyway.
+  Future<void> _reschedule() async {
+    final service = notifications;
+    if (service == null) return;
+    try {
+      // Idempotent after the first answer, so this is where permission is
+      // asked of someone who set a reminder time before launch ever did.
+      if (!await service.requestPermission()) return;
+      await service.schedule(
+        daily.upcomingReminders(),
+        textFor: (ayah) => daily.textFor(ayah, translationEdition),
+      );
+    } catch (_) {}
+  }
 
   Future<void> _load(DateTime date, Emitter<DailyState> emit) async {
     emit(DailyLoading());

@@ -6,6 +6,7 @@ import 'data/repositories/settings_repository.dart';
 import 'l10n/app_localizations.dart';
 import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
+import 'data/services/notification_service.dart';
 import 'ui/core/themes/tokens.dart';
 import 'ui/core/ui/app_shell.dart';
 import 'data/repositories/daily_repository.dart';
@@ -29,6 +30,7 @@ class WasiraApp extends StatelessWidget {
     required this.repository,
     required this.db,
     required this.downloads,
+    this.notifications,
   });
 
   final QuranRepository repository;
@@ -37,6 +39,10 @@ class WasiraApp extends StatelessWidget {
   /// Read deep in the reader, so it is provided rather than threaded through
   /// every widget between here and the audio bar.
   final AudioDownloadService downloads;
+
+  /// Null in tests. The daily screen reschedules through it when the count or
+  /// a reminder time changes.
+  final NotificationService? notifications;
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
@@ -122,6 +128,7 @@ class _Shell extends StatelessWidget {
               ),
               settings: SettingsRepository(app.db),
               translationEdition: edition,
+              notifications: app.notifications,
             )..add(DailyRequested()),
             child: const DailyScreen(),
           ),
