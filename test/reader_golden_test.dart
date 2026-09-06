@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
+import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 import 'package:wasira/l10n/app_localizations.dart';
@@ -71,6 +72,7 @@ void main() {
       home: ReaderScreen(
         surah: surah,
         repository: repoFor(surah),
+        settings: SettingsRepository(service),
         translationEdition: edition,
       ),
     ));

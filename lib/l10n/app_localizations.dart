@@ -221,6 +221,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Obligatory prostration'**
   String get sajdaObligatoryHere;
+
+  /// No description provided for @arabicTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic text size'**
+  String get arabicTextSize;
 }
 
 class _AppLocalizationsDelegate

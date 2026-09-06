@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
+import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 import 'package:wasira/domain/bismillah.dart';
@@ -43,7 +44,10 @@ void main() {
 
   Future<ReaderLoaded> load(int surah, {String? edition}) async {
     final bloc =
-        ReaderBloc(repository: repoFor(surah), translationEdition: edition)
+        ReaderBloc(
+            repository: repoFor(surah),
+            settings: SettingsRepository(service),
+            translationEdition: edition)
           ..add(SurahRequested(surah));
     addTearDown(bloc.close);
     return await bloc.stream.firstWhere((s) => s is! ReaderLoading)
@@ -111,7 +115,10 @@ void main() {
     });
 
     test('expanding one ayah does not expand the others', () async {
-      final bloc = ReaderBloc(repository: repoFor(2), translationEdition: 'uz.sodik')
+      final bloc = ReaderBloc(
+          repository: repoFor(2),
+          settings: SettingsRepository(service),
+          translationEdition: 'uz.sodik')
         ..add(SurahRequested(2));
       addTearDown(bloc.close);
       final loaded =
@@ -123,6 +130,34 @@ void main() {
 
       expect(next.expanded, {target});
       expect(next.expanded.length, 1);
+    });
+  });
+
+  group('Arabic font size', () {
+    test('the reader opens at the stored size', () async {
+      SettingsRepository(service).setArabicFontSize(22);
+
+      final state = await load(2, edition: 'uz.sodik');
+
+      expect(state.arabicSize, 22);
+    });
+
+    test('changing it updates the reader and persists for next launch',
+        () async {
+      final settings = SettingsRepository(service);
+      final bloc = ReaderBloc(
+        repository: repoFor(2),
+        settings: settings,
+        translationEdition: 'uz.sodik',
+      )..add(SurahRequested(2));
+      addTearDown(bloc.close);
+      await bloc.stream.firstWhere((s) => s is! ReaderLoading);
+
+      bloc.add(ArabicSizeChanged(34));
+      final next = await bloc.stream.first as ReaderLoaded;
+
+      expect(next.arabicSize, 34);
+      expect(settings.arabicFontSize, 34, reason: 'must outlive the bloc');
     });
   });
 }

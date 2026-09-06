@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/repositories/quran_repository.dart';
+import '../../../data/repositories/settings_repository.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../../core/ui/arabic_text.dart';
 import '../reader_bloc.dart';
@@ -14,28 +16,28 @@ class ReaderScreen extends StatelessWidget {
     super.key,
     required this.surah,
     required this.repository,
+    required this.settings,
     required this.translationEdition,
-    this.arabicSize = 30,
   });
 
   final int surah;
   final QuranRepository repository;
+  final SettingsRepository settings;
   final String? translationEdition;
-  final double arabicSize;
 
   @override
   Widget build(BuildContext context) => BlocProvider(
         create: (_) => ReaderBloc(
           repository: repository,
+          settings: settings,
           translationEdition: translationEdition,
         )..add(SurahRequested(surah)),
-        child: _ReaderView(arabicSize: arabicSize),
+        child: const _ReaderView(),
       );
 }
 
 class _ReaderView extends StatelessWidget {
-  const _ReaderView({required this.arabicSize});
-  final double arabicSize;
+  const _ReaderView();
 
   @override
   Widget build(BuildContext context) =>
@@ -54,8 +56,9 @@ class _ReaderView extends StatelessWidget {
               appBar: AppBar(
                 title: Text(loaded.surah.nameEn),
                 titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                actions: [_ArabicSizeButton(current: loaded.arabicSize)],
               ),
-              body: _Ayahs(loaded: loaded, arabicSize: arabicSize),
+              body: _Ayahs(loaded: loaded, arabicSize: loaded.arabicSize),
             ),
         },
       );
@@ -105,4 +108,43 @@ class _BismillahHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
         child: ArabicText(text, size: size * 0.9, align: TextAlign.center),
       );
+}
+
+/// Uthmani script at one fixed size is unreadable for many people, so this is
+/// the one reading preference in v1. The choice persists across launches.
+class _ArabicSizeButton extends StatelessWidget {
+  const _ArabicSizeButton({required this.current});
+  final double current;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = Tokens.of(context);
+
+    return PopupMenuButton<double>(
+      tooltip: AppLocalizations.of(context)!.arabicTextSize,
+      icon: const Icon(Icons.format_size, size: 20),
+      onSelected: (size) =>
+          context.read<ReaderBloc>().add(ArabicSizeChanged(size)),
+      itemBuilder: (context) => [
+        for (final size in SettingsRepository.arabicSizes)
+          PopupMenuItem(
+            value: size,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text('${size.round()}',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: size == current
+                              ? FontWeight.w700
+                              : FontWeight.w400)),
+                ),
+                if (size == current)
+                  Icon(Icons.check, size: 16, color: tokens.accent),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

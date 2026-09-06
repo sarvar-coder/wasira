@@ -81,4 +81,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sajdaObligatoryHere => 'سجدة واجبة';
+
+  @override
+  String get arabicTextSize => 'حجم النص العربي';
 }

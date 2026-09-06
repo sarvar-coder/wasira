@@ -80,4 +80,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sajdaObligatoryHere => 'Обязательный земной поклон';
+
+  @override
+  String get arabicTextSize => 'Размер арабского текста';
 }
