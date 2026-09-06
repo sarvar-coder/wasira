@@ -66,33 +66,51 @@ class AlquranApiService {
         .toList(growable: false);
   }
 
-  /// A whole edition in one request: ~2.1 MB for Arabic, ~3.2 MB for a
-  /// translation. Parsing this belongs off the UI isolate.
-  Future<({List<Surah> surahs, List<Ayah> ayahs})> wholeEdition(
-      String identifier) async {
-    final data = await _get('/quran/$identifier') as Map<String, dynamic>;
-    return _parseSurahs(data['surahs'] as List);
-  }
+  /// Arabic, in the Uthmani script the app renders.
+  static const arabicEdition = 'quran-uthmani';
 
-  /// One surah, the fallback when the background sync has not reached it yet.
-  /// 247 KB worst case (Al-Baqarah in a tafsir-translation).
-  Future<({List<Surah> surahs, List<Ayah> ayahs})> surah(
-      int number, String identifier) async {
-    final data = await _get('/surah/$number/$identifier') as Map<String, dynamic>;
-    return _parseSurahs([data]);
-  }
+  /// One ayah, in Arabic and in a translation, in a single request.
+  ///
+  /// 2.3 KB, and the whole of a day's network use. Each row carries its surah
+  /// inline — number, name, ayah count — so nothing else has to be fetched or
+  /// stored to render a citation.
+  Future<({Ayah ayah, Surah surah, String? translation})> dailyAyah(
+    int number,
+    String? translationEdition,
+  ) async {
+    final editions = [
+      arabicEdition,
+      if (translationEdition != null && translationEdition != arabicEdition)
+        translationEdition,
+    ];
+    final data = await _get('/ayah/$number/editions/${editions.join(',')}');
 
-  static ({List<Surah> surahs, List<Ayah> ayahs}) _parseSurahs(List raw) {
-    final surahs = <Surah>[];
-    final ayahs = <Ayah>[];
-    for (final s in raw.cast<Map<String, dynamic>>()) {
-      surahs.add(Surah.fromJson(s));
-      final number = s['number'] as int;
-      for (final a in (s['ayahs'] as List).cast<Map<String, dynamic>>()) {
-        ayahs.add(Ayah.fromJson(a, number));
+    // A single edition can come back unwrapped; asking for two always yields a
+    // list. Both shapes are handled so the Arabic-only path cannot surprise.
+    final rows = (data is List ? data : [data]).cast<Map<String, dynamic>>();
+
+    Map<String, dynamic>? rowFor(String edition) {
+      for (final row in rows) {
+        if ((row['edition'] as Map)['identifier'] == edition) return row;
       }
+      return null;
     }
-    return (surahs: surahs, ayahs: ayahs);
+
+    final arabic = rowFor(arabicEdition);
+    if (arabic == null) {
+      throw AlquranApiException('ayah $number came back without $arabicEdition');
+    }
+
+    final surah = Surah.fromJson(arabic['surah'] as Map<String, dynamic>);
+    final translation = translationEdition == null
+        ? null
+        : rowFor(translationEdition)?['text'] as String?;
+
+    return (
+      ayah: Ayah.fromJson(arabic, surah.number),
+      surah: surah,
+      translation: translation,
+    );
   }
 
   void close() => _client.close();

@@ -1,88 +1,42 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../data/repositories/quran_repository.dart';
-import '../../data/services/database_service.dart';
-import '../../data/services/sync_service.dart';
+import '../../data/repositories/settings_repository.dart';
+import '../../data/services/alquran_api_service.dart';
 import 'onboarding_event.dart';
 import 'onboarding_state.dart';
 
-/// Key under which the chosen translation edition is remembered.
-const kTranslationSetting = 'translation_edition';
-
+/// Choosing a translation, which is the only thing the app asks before it can
+/// show an ayah.
+///
+/// Nothing downloads here. The app used to sync 5.3 MB and 6236 rows before it
+/// could render anything; now the day's ayah is two kilobytes fetched when the
+/// day needs it, so the picker's only job is to record a choice.
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
-  OnboardingBloc({
-    required this.repository,
-    required this.db,
-    this.sync = const SyncService(),
-  }) : super(OnboardingLoading()) {
+  OnboardingBloc({required this.api, required this.settings})
+      : super(OnboardingLoading()) {
     on<EditionsRequested>(_onEditionsRequested);
-    on<LanguageSelected>(_onLanguageSelected);
-    on<SyncProgressed>((e, emit) {
-      if (state case OnboardingSyncing(:final edition)) {
-        emit(OnboardingSyncing(edition, e.fraction));
-      }
+
+    on<LanguageSelected>((event, emit) {
+      settings.setTranslationEdition(event.edition);
+      emit(OnboardingReady(event.edition));
     });
-    on<SyncFinished>((e, emit) {
-      if (state case OnboardingSyncing(:final edition)) {
-        db.writeSetting(kTranslationSetting, edition);
-        emit(OnboardingReady(edition));
-      }
-    });
-    on<SyncFailed>((e, emit) => emit(OnboardingFailed(e.error)));
   }
 
-  final QuranRepository repository;
-  final DatabaseService db;
-  final SyncService sync;
-
-  StreamSubscription<void>? _syncSub;
+  final AlquranApiService api;
+  final SettingsRepository settings;
 
   Future<void> _onEditionsRequested(
       EditionsRequested event, Emitter<OnboardingState> emit) async {
     emit(OnboardingLoading());
     try {
-      final chosen = db.readSetting(kTranslationSetting);
-      if (chosen != null && repository.isSynced) {
+      final chosen = settings.translationEdition;
+      if (chosen != null) {
         emit(OnboardingReady(chosen));
         return;
       }
-      emit(OnboardingChoosing(await repository.translationEditions()));
+      emit(OnboardingChoosing(await api.translationEditions()));
     } catch (error) {
       emit(OnboardingFailed(error));
     }
-  }
-
-  Future<void> _onLanguageSelected(
-      LanguageSelected event, Emitter<OnboardingState> emit) async {
-    emit(OnboardingSyncing(event.edition, 0));
-
-    // Arabic first — it is what the reader needs — then the translation.
-    // Both run off the UI isolate so the surah list stays scrollable.
-    final path = '${(await getApplicationSupportDirectory()).path}/wasira.db';
-    try {
-      await _run(path, QuranRepository.arabicEdition, isArabic: true, from: 0);
-      await _run(path, event.edition, isArabic: false, from: 0.5);
-      add(SyncFinished());
-    } catch (error) {
-      add(SyncFailed(error));
-    }
-  }
-
-  /// Maps one edition's 0..1 progress onto its half of the overall bar.
-  Future<void> _run(String path, String edition,
-      {required bool isArabic, required double from}) async {
-    await for (final p in sync.syncEdition(
-        dbPath: path, editionId: edition, isArabic: isArabic)) {
-      add(SyncProgressed(from + p * 0.5));
-    }
-  }
-
-  @override
-  Future<void> close() {
-    _syncSub?.cancel();
-    return super.close();
   }
 }

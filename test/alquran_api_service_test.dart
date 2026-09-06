@@ -26,53 +26,80 @@ Map<String, dynamic> _ayah(int n, int inSurah, {Object sajda = false}) => {
       'sajda': sajda,
     };
 
-Map<String, dynamic> _surah(int number, List<Map<String, dynamic>> ayahs) => {
-      'number': number,
-      'name': 'سُورَةُ ٱلْفَاتِحَةِ',
-      'englishName': 'Al-Faatiha',
-      'englishNameTranslation': 'The Opening',
-      'revelationType': 'Meccan',
-      'numberOfAyahs': ayahs.length,
-      'ayahs': ayahs,
+/// One row of `/ayah/{n}/editions/a,b`: an ayah with its surah and edition
+/// inline, which is why nothing else has to be stored to render a citation.
+Map<String, dynamic> _row(String edition, String text,
+        {int inSurah = 255, Object sajda = false}) =>
+    {
+      ..._ayah(262, inSurah, sajda: sajda),
+      'text': text,
+      'surah': {
+        'number': 2,
+        'name': 'سُورَةُ البَقَرَةِ',
+        'englishName': 'Al-Baqara',
+        'englishNameTranslation': 'The Cow',
+        'revelationType': 'Medinan',
+        'numberOfAyahs': 286,
+      },
+      'edition': {'identifier': edition},
     };
 
 AlquranApiService _service(http.Response Function(http.Request) handler) =>
     AlquranApiService(client: MockClient((r) async => handler(r)));
 
 void main() {
-  test('parses surahs and preserves Arabic through UTF-8', () async {
-    // /quran/{edition} wraps the list in {surahs: [...], edition: {...}}
-    final api = _service((_) => _ok({
-          'surahs': [
-            _surah(1, [_ayah(1, 1)])
-          ]
-        }));
+  test('an ayah arrives with its surah, and the Arabic survives UTF-8',
+      () async {
+    final api = _service((_) => _ok([
+          _row('quran-uthmani', 'ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ'),
+          _row('en.sahih', 'Allah - there is no deity except Him'),
+        ]));
 
-    final result = await api.wholeEdition('quran-uthmani');
+    final result = await api.dailyAyah(262, 'en.sahih');
 
-    expect(result.surahs.single.nameAr, 'سُورَةُ ٱلْفَاتِحَةِ');
-    expect(result.ayahs.single.textAr, 'ٱلْحَمْدُ لِلَّهِ');
-    expect(result.ayahs.single.surah, 1);
+    expect(result.ayah.textAr, 'ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ');
+    expect(result.translation, 'Allah - there is no deity except Him');
+    expect(result.surah.nameEn, 'Al-Baqara');
+    expect(result.surah.number, 2);
+    expect(result.ayah.numberInSurah, 255);
+  });
+
+  test('reading Arabic only asks for one edition and carries no translation',
+      () async {
+    late String path;
+    final api = _service((request) {
+      path = request.url.path;
+      return _ok([_row('quran-uthmani', 'ٱلْحَمْدُ لِلَّهِ')]);
+    });
+
+    final result = await api.dailyAyah(2, null);
+
+    expect(path, '/v1/ayah/2/editions/quran-uthmani');
+    expect(result.translation, isNull);
+  });
+
+  test('an ayah missing its Arabic throws rather than rendering blank',
+      () async {
+    final api = _service((_) => _ok([_row('en.sahih', 'only a translation')]));
+
+    await expectLater(
+        api.dailyAyah(262, 'en.sahih'), throwsA(isA<AlquranApiException>()));
   });
 
   test('sajda false stays false, sajda object becomes true with its ruling',
       () async {
-    final api = _service((_) => _ok({
-          'surahs': [
-            _surah(32, [
-              _ayah(4197, 14),
-              _ayah(4198, 15,
-                  sajda: {'id': 10, 'recommended': false, 'obligatory': true}),
-            ])
-          ]
-        }));
+    final plain = _service((_) => _ok([_row('quran-uthmani', 'نَصٌّ')]));
+    final prostration = _service((_) => _ok([
+          _row('quran-uthmani', 'نَصٌّ',
+              sajda: {'id': 10, 'recommended': false, 'obligatory': true}),
+        ]));
 
-    final ayahs = (await api.wholeEdition('quran-uthmani')).ayahs;
+    expect((await plain.dailyAyah(262, null)).ayah.sajda, isFalse);
+    expect((await plain.dailyAyah(262, null)).ayah.sajdaObligatory, isNull);
 
-    expect(ayahs[0].sajda, isFalse);
-    expect(ayahs[0].sajdaObligatory, isNull);
-    expect(ayahs[1].sajda, isTrue);
-    expect(ayahs[1].sajdaObligatory, isTrue);
+    final marked = (await prostration.dailyAyah(262, null)).ayah;
+    expect(marked.sajda, isTrue);
+    expect(marked.sajdaObligatory, isTrue);
   });
 
   test('surah list reads ayah count from numberOfAyahs', () async {
@@ -137,17 +164,31 @@ void main() {
     http.Response fixture(String name) => http.Response.bytes(
         File('test/fixtures/$name').readAsBytesSync(), 200);
 
-    test('real surah response parses, Bismillah still glued to ayah 1',
-        () async {
-      final api = _service((_) => fixture('surah_1_uthmani.json'));
+    test('a real ayah 1 still arrives with the Bismillah glued on', () async {
+      // Captured from the live API. Splitting it is DailyRepository's job; the
+      // service must hand it over untouched.
+      final ones = jsonDecode(
+              File('test/fixtures/ayah_ones_uthmani.json').readAsStringSync())
+          as Map<String, dynamic>;
+      final api =
+          _service((_) => _ok([_row('quran-uthmani', ones['2'] as String)]));
 
-      final result = await api.surah(1, 'quran-uthmani');
+      final result = await api.dailyAyah(8, null);
 
-      expect(result.surahs.single.nameEn, 'Al-Faatiha');
-      expect(result.ayahs, hasLength(7));
-      // Surah 1 is the case where Bismillah legitimately IS ayah 1.
-      expect(result.ayahs.first.textAr, contains('بِسْمِ'));
-      expect(result.ayahs.first.surah, 1);
+      expect(result.ayah.textAr, startsWith('بِسْمِ'));
+      expect(result.ayah.textAr, endsWith('الٓمٓ'));
+    });
+
+    test('a single unwrapped ayah response parses too', () async {
+      // `/ayah/{n}/{edition}` answers with an object rather than a list; the
+      // service handles both so the Arabic-only path cannot surprise.
+      final api = _service((_) => fixture('ayah_32_15_sajda.json'));
+
+      final result = await api.dailyAyah(3518, null);
+
+      expect(result.ayah.sajda, isTrue);
+      expect(result.ayah.sajdaObligatory, isTrue);
+      expect(result.surah.number, 32);
     });
 
     test('real sajda ayah carries the obligatory ruling', () async {

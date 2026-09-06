@@ -1,153 +1,147 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../data/repositories/daily_repository.dart';
 import '../../../data/repositories/settings_repository.dart';
+import '../../../domain/ayah_citation.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
-import 'ayah_view.dart';
 import '../daily_bloc.dart';
 import '../daily_event.dart';
 import '../daily_state.dart';
+import 'ayah_view.dart';
 
-/// A few ayahs a day, and the calendar of the days already given.
+/// The whole app: one ayah, for today.
 class DailyScreen extends StatelessWidget {
   const DailyScreen({super.key});
 
   @override
   Widget build(BuildContext context) => BlocBuilder<DailyBloc, DailyState>(
-    builder: (context, state) => switch (state) {
-      DailyLoading() => const Center(child: CircularProgressIndicator()),
-      DailyFailed(:final error) => _Message(text: '$error'),
-      DailyWaitingForSync() => _Message(
-        text: AppLocalizations.of(context)!.downloadingQuran,
-      ),
-      final DailyLoaded loaded => _Day(state: loaded),
-    },
-  );
+        builder: (context, state) => switch (state) {
+          DailyLoading() => const Center(child: CircularProgressIndicator()),
+          DailyUnavailable(:final error) => _Unavailable(error: error),
+          final DailyLoaded loaded => _Ayah(state: loaded),
+        },
+      );
 }
 
-class _Message extends StatelessWidget {
-  const _Message({required this.text});
-  final String text;
+/// The app needs the network once a day. This is that once, and it failed.
+class _Unavailable extends StatelessWidget {
+  const _Unavailable({required this.error});
+  final Object error;
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Text(text, style: TextStyle(color: Tokens.of(context).muted)),
-  );
+  Widget build(BuildContext context) {
+    final tokens = Tokens.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.serviceUnreachable,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: tokens.muted)),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: () => context.read<DailyBloc>().add(DailyRetried()),
+              child: Text(l10n.tryAgain),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _Day extends StatelessWidget {
-  const _Day({required this.state});
+class _Ayah extends StatelessWidget {
+  const _Ayah({required this.state});
   final DailyLoaded state;
 
   @override
   Widget build(BuildContext context) {
     final tokens = Tokens.of(context);
-
-    return Column(
-      children: [
-        _Header(state: state),
-        Divider(height: 1, color: tokens.divider),
-        Expanded(
-          child: ListView.builder(
-            itemCount: state.ayahs.length,
-            itemBuilder: (context, i) {
-              final daily = state.ayahs[i];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 18, 24, 0),
-                    child: Text(
-                      '${daily.surah.nameEn} · ${daily.ayah.numberInSurah}',
-                      style: TextStyle(fontSize: 12, color: tokens.muted),
-                    ),
-                  ),
-                  AyahView(
-                    ayah: daily.ayah,
-                    arabicSize: state.arabicSize,
-                    translation: daily.translation,
-                    expanded: state.expanded.contains(daily.ayah.number),
-                    onExpand: () => context.read<DailyBloc>().add(
-                      TranslationExpanded(daily.ayah.number),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.state});
-  final DailyLoaded state;
-
-  @override
-  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isToday = _sameDay(state.date, DateTime.now());
+    final daily = state.daily;
+    final reference =
+        ayahReference(daily.surah.number, daily.ayah.numberInSurah);
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 12, 8, 12),
-      child: Row(
+    return SafeArea(
+      child: Column(
         children: [
-          Flexible(
-            child: Text(
-              isToday
-                  ? l10n.today
-                  : MaterialLocalizations.of(context).formatFullDate(state.date),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 10, 8, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${daily.surah.nameEn}  ·  $reference',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12, color: tokens.muted),
+                  ),
+                ),
+                _CopyButton(daily: daily),
+                IconButton(
+                  icon: const Icon(Icons.tune, size: 18),
+                  tooltip: l10n.dailySettings,
+                  onPressed: () => _openSettings(context),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 12),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.calendar_today_outlined, size: 19),
-            tooltip: l10n.pickADay,
-            onPressed: () => _pickDay(context, state),
-          ),
-          IconButton(
-            icon: const Icon(Icons.tune, size: 20),
-            tooltip: l10n.dailySettings,
-            onPressed: () => _openSettings(context, state),
+          Expanded(
+            child: SingleChildScrollView(
+              child: AyahView(
+                ayah: daily.ayah,
+                arabicSize: state.arabicSize,
+                translation: daily.translation,
+                expanded: state.expanded,
+                onExpand: () =>
+                    context.read<DailyBloc>().add(TranslationExpanded()),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-
-  static bool _sameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
-/// Material's own calendar, with `lastDate` set to today — which is what makes
-/// a future day unreachable, rather than a check that has to be remembered.
-Future<void> _pickDay(BuildContext context, DailyLoaded state) async {
-  final bloc = context.read<DailyBloc>();
-  final now = DateTime.now();
-  final picked = await showDialog<DateTime>(
-    context: context,
-    builder: (context) => Dialog(
-      child: SizedBox(
-        width: 360,
-        child: CalendarDatePicker(
-          initialDate: state.date,
-          firstDate: state.since,
-          lastDate: now,
-          onDateChanged: (date) => Navigator.of(context).pop(date),
-        ),
-      ),
-    ),
-  );
-  if (picked != null) bloc.add(DaySelected(picked));
+class _CopyButton extends StatelessWidget {
+  const _CopyButton({required this.daily});
+  final DailyAyah daily;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return IconButton(
+      icon: const Icon(Icons.copy_all_outlined, size: 17),
+      tooltip: l10n.copyAyah,
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        await Clipboard.setData(ClipboardData(
+          text: ayahCitation(
+            arabic: daily.ayah.textAr,
+            translation: daily.translation,
+            surahName: daily.surah.nameEn,
+            surah: daily.surah.number,
+            numberInSurah: daily.ayah.numberInSurah,
+          ),
+        ));
+        messenger.showSnackBar(SnackBar(
+          content: Text(l10n.copied),
+          duration: const Duration(seconds: 2),
+        ));
+      },
+    );
+  }
 }
 
-Future<void> _openSettings(BuildContext context, DailyLoaded state) {
+Future<void> _openSettings(BuildContext context) {
   final bloc = context.read<DailyBloc>();
   return showDialog<void>(
     context: context,
@@ -158,8 +152,8 @@ Future<void> _openSettings(BuildContext context, DailyLoaded state) {
   );
 }
 
-/// Count and reminder times, and nothing else. Everything else about a day is
-/// derived from the seed, so there is nothing else to offer.
+/// Arabic size and the five reminder times. Nothing else is configurable,
+/// because nothing else exists.
 class _SettingsDialog extends StatelessWidget {
   const _SettingsDialog();
 
@@ -179,30 +173,31 @@ class _SettingsDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.ayahsPerDay,
-                style: TextStyle(fontSize: 12, color: tokens.muted),
-              ),
+              Text(l10n.arabicTextSize,
+                  style: TextStyle(fontSize: 12, color: tokens.muted)),
               const SizedBox(height: 8),
-              SegmentedButton<int>(
+              SegmentedButton<double>(
                 showSelectedIcon: false,
                 segments: [
-                  for (final count in SettingsRepository.dailyCounts)
-                    ButtonSegment(value: count, label: Text('$count')),
+                  for (final size in SettingsRepository.arabicSizes)
+                    ButtonSegment(
+                        value: size, label: Text('${size.round()}')),
                 ],
-                selected: {state.count},
+                selected: {state.arabicSize},
                 onSelectionChanged: (s) =>
-                    bloc.add(DailyCountChanged(s.first)),
+                    bloc.add(ArabicSizeChanged(s.first)),
               ),
               const SizedBox(height: 20),
-              Text(
-                l10n.reminders,
-                style: TextStyle(fontSize: 12, color: tokens.muted),
+              Text(l10n.reminders,
+                  style: TextStyle(fontSize: 12, color: tokens.muted)),
+              // One ayah, five nudges — the count of reminders has nothing to
+              // do with the count of ayahs.
+              Wrap(
+                children: [
+                  for (var i = 0; i < state.reminderTimes.length; i++)
+                    _ReminderChip(index: i, minutes: state.reminderTimes[i]),
+                ],
               ),
-              // One reminder per ayah: three ayahs is three notifications, not
-              // one listing three.
-              for (var i = 0; i < state.reminderTimes.length; i++)
-                _ReminderRow(index: i, minutes: state.reminderTimes[i]),
             ],
           ),
           actions: [
@@ -217,8 +212,8 @@ class _SettingsDialog extends StatelessWidget {
   }
 }
 
-class _ReminderRow extends StatelessWidget {
-  const _ReminderRow({required this.index, required this.minutes});
+class _ReminderChip extends StatelessWidget {
+  const _ReminderChip({required this.index, required this.minutes});
   final int index;
   final int minutes;
 
@@ -226,23 +221,17 @@ class _ReminderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final time = TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60);
 
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: TextButton(
-        onPressed: () async {
-          final bloc = context.read<DailyBloc>();
-          final picked = await showTimePicker(
-            context: context,
-            initialTime: time,
-          );
-          if (picked != null) {
-            bloc.add(
-              ReminderTimeChanged(index, picked.hour * 60 + picked.minute),
-            );
-          }
-        },
-        child: Text(time.format(context)),
-      ),
+    return TextButton(
+      onPressed: () async {
+        final bloc = context.read<DailyBloc>();
+        final picked =
+            await showTimePicker(context: context, initialTime: time);
+        if (picked != null) {
+          bloc.add(
+              ReminderTimeChanged(index, picked.hour * 60 + picked.minute));
+        }
+      },
+      child: Text(time.format(context)),
     );
   }
 }

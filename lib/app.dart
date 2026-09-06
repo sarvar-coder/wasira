@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'data/repositories/daily_repository.dart';
-import 'data/repositories/quran_repository.dart';
 import 'data/repositories/settings_repository.dart';
-import 'data/services/database_service.dart';
+import 'data/services/alquran_api_service.dart';
+import 'data/services/local_store.dart';
 import 'data/services/notification_service.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/core/themes/tokens.dart';
@@ -21,22 +21,29 @@ import 'ui/onboarding/widgets/onboarding_screen.dart';
 class WasiraApp extends StatelessWidget {
   const WasiraApp({
     super.key,
-    required this.repository,
-    required this.db,
+    required this.api,
+    required this.settingsStore,
+    required this.dailyStore,
     this.notifications,
   });
 
-  final QuranRepository repository;
-  final DatabaseService db;
+  final AlquranApiService api;
 
-  /// Null in tests. The daily screen reschedules through it when a reminder
+  /// Two files rather than one: preferences outlive the day's ayah, and the
+  /// ayah is deleted wholesale at every rollover.
+  final LocalStore settingsStore;
+  final LocalStore dailyStore;
+
+  /// Null in tests. The settings sheet reschedules through it when a reminder
   /// time changes.
   final NotificationService? notifications;
 
+  SettingsRepository get settings => SettingsRepository(settingsStore);
+
   @override
   Widget build(BuildContext context) => BlocProvider(
-        create: (_) => OnboardingBloc(repository: repository, db: db)
-          ..add(EditionsRequested()),
+        create: (_) =>
+            OnboardingBloc(api: api, settings: settings)..add(EditionsRequested()),
         child: MaterialApp(
           onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -63,9 +70,7 @@ class _Root extends StatelessWidget {
           OnboardingFailed() ||
           OnboardingChoosing() =>
             const Scaffold(body: OnboardingScreen()),
-          OnboardingSyncing(:final edition) ||
-          OnboardingReady(:final edition) =>
-            _Daily(edition: edition),
+          OnboardingReady(:final edition) => _Daily(edition: edition),
         },
       );
 }
@@ -82,12 +87,8 @@ class _Daily extends StatelessWidget {
 
     return BlocProvider(
       create: (_) => DailyBloc(
-        repository: app.repository,
-        daily: DailyRepository(
-          db: app.db,
-          settings: SettingsRepository(app.db),
-        ),
-        settings: SettingsRepository(app.db),
+        daily: DailyRepository(store: app.dailyStore, api: app.api),
+        settings: app.settings,
         translationEdition: edition,
         notifications: app.notifications,
       )..add(DailyRequested()),

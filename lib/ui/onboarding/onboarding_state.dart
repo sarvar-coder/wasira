@@ -15,14 +15,6 @@ class OnboardingChoosing extends OnboardingState {
   final List<Edition> editions;
 }
 
-/// A language is chosen and the Quran is downloading in the background. The
-/// surah list is already usable at this point — this is not a blocking screen.
-class OnboardingSyncing extends OnboardingState {
-  OnboardingSyncing(this.edition, this.progress);
-  final String edition;
-  final double progress;
-}
-
 class OnboardingReady extends OnboardingState {
   OnboardingReady(this.edition);
   final String edition;

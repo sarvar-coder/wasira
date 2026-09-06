@@ -1,65 +1,45 @@
-import '../../domain/models/ayah.dart';
-import '../../domain/models/surah.dart';
+import '../../data/repositories/daily_repository.dart';
 
 sealed class DailyState {}
 
 class DailyLoading extends DailyState {}
 
-class DailyFailed extends DailyState {
-  DailyFailed(this.error);
+/// The ayah could not be fetched and none is cached for today.
+///
+/// Distinct from a generic failure because the remedy is specific and the user
+/// can act on it: the app needs the network once a day, and this is that once.
+class DailyUnavailable extends DailyState {
+  DailyUnavailable(this.error);
   final Object error;
-}
-
-/// The pick is made and stored, but the Quran text has not finished syncing,
-/// so there is nothing to render yet. Distinct from an error: waiting is the
-/// correct outcome here, and the day is already fixed.
-class DailyWaitingForSync extends DailyState {
-  DailyWaitingForSync(this.date);
-  final DateTime date;
 }
 
 class DailyLoaded extends DailyState {
   DailyLoaded({
-    required this.date,
-    required this.ayahs,
+    required this.daily,
     required this.arabicSize,
-    required this.count,
     required this.reminderTimes,
-    required this.since,
-    this.expanded = const <int>{},
+    this.expanded = false,
   });
 
-  final DateTime date;
-  final List<DailyAyah> ayahs;
+  final DailyAyah daily;
   final double arabicSize;
 
-  /// How many ayahs a day offers, and one reminder time per ayah.
-  final int count;
+  /// Five, minutes after midnight. One ayah, nudged five times.
   final List<int> reminderTimes;
 
-  /// The first day the calendar offers: when the app started keeping days.
-  final DateTime since;
+  /// Whether a long translation is shown in full. uz.sodik runs to 2660
+  /// characters, which buries the ayah it belongs to.
+  final bool expanded;
 
-  final Set<int> expanded;
-
-  DailyLoaded copyWith({Set<int>? expanded}) => DailyLoaded(
-        date: date,
-        ayahs: ayahs,
-        arabicSize: arabicSize,
-        count: count,
-        reminderTimes: reminderTimes,
-        since: since,
+  DailyLoaded copyWith({
+    double? arabicSize,
+    List<int>? reminderTimes,
+    bool? expanded,
+  }) =>
+      DailyLoaded(
+        daily: daily,
+        arabicSize: arabicSize ?? this.arabicSize,
+        reminderTimes: reminderTimes ?? this.reminderTimes,
         expanded: expanded ?? this.expanded,
       );
-}
-
-/// One ayah of a day, with the surah it belongs to — the daily pick is
-/// scattered, so a bare ayah number tells the reader nothing.
-class DailyAyah {
-  const DailyAyah({required this.ayah, required this.surah, this.translation});
-
-  /// Any opening Bismillah is already split off, exactly as in the reader.
-  final Ayah ayah;
-  final Surah surah;
-  final String? translation;
 }

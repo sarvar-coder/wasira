@@ -1,32 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/repositories/daily_repository.dart';
-import '../../data/repositories/quran_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../data/services/notification_service.dart';
-import '../../domain/bismillah.dart';
 import 'daily_event.dart';
 import 'daily_state.dart';
 
-/// The ayahs of one day, and the two things about them the user can change:
-/// how many there are and when they are reminded.
+/// The ayah of the day, and the two things about it the user can change: how
+/// large the Arabic is, and when the five reminders fire.
 class DailyBloc extends Bloc<DailyEvent, DailyState> {
   DailyBloc({
-    required this.repository,
     required this.daily,
     required this.settings,
     required this.translationEdition,
     this.notifications,
   }) : super(DailyLoading()) {
-    on<DailyRequested>((event, emit) => _load(DateTime.now(), emit));
-    on<DaySelected>((event, emit) => _load(event.date, emit));
+    on<DailyRequested>((event, emit) => _load(emit));
+    on<DailyRetried>((event, emit) => _load(emit));
 
-    on<DailyCountChanged>((event, emit) async {
-      settings.setDailyCount(event.count);
-      await _reschedule();
-      // Today is re-read rather than regenerated: a day already stored keeps
-      // the number of ayahs it was read with.
-      await _load(_date, emit);
+    on<ArabicSizeChanged>((event, emit) {
+      settings.setArabicFontSize(event.size);
+      if (state case final DailyLoaded loaded) {
+        emit(loaded.copyWith(arabicSize: settings.arabicFontSize));
+      }
     });
 
     on<ReminderTimeChanged>((event, emit) async {
@@ -35,83 +31,50 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
       times[event.index] = event.minutes;
       settings.setReminderTimes(times);
       await _reschedule();
-      await _load(_date, emit);
+
+      if (state case final DailyLoaded loaded) {
+        emit(loaded.copyWith(reminderTimes: settings.reminderTimes));
+      }
     });
 
     on<TranslationExpanded>((event, emit) {
       if (state case final DailyLoaded loaded) {
-        emit(loaded.copyWith(expanded: {...loaded.expanded, event.ayahNumber}));
+        emit(loaded.copyWith(expanded: true));
       }
     });
   }
 
-  final QuranRepository repository;
   final DailyRepository daily;
   final SettingsRepository settings;
   final String? translationEdition;
 
   /// Null in tests and wherever notifications are not wired up; a reminder
-  /// that cannot be scheduled must not stop the screen working.
+  /// that cannot be scheduled must not stop the ayah being shown.
   final NotificationService? notifications;
 
-  /// The day on screen. Settings changes reload it rather than jumping to
-  /// today, so changing the count while looking at last Tuesday stays there.
-  DateTime _date = DateTime.now();
+  Future<void> _load(Emitter<DailyState> emit) async {
+    emit(DailyLoading());
+    try {
+      emit(DailyLoaded(
+        daily: await daily.today(translationEdition: translationEdition),
+        arabicSize: settings.arabicFontSize,
+        reminderTimes: settings.reminderTimes,
+      ));
+    } catch (error) {
+      emit(DailyUnavailable(error));
+    }
+  }
 
-  /// Rewrites the pending window whenever what it would contain changes.
-  /// Failing here is not worth failing the screen for — the next launch
-  /// reschedules anyway.
+  /// Rewrites the five reminders whenever their times change. Failing here is
+  /// not worth failing the screen for — the next launch reschedules anyway.
   Future<void> _reschedule() async {
     final service = notifications;
     if (service == null) return;
     try {
       // Idempotent after the first answer, so this is where permission is
-      // asked of someone who set a reminder time before launch ever did.
+      // asked of someone who set a time before launch ever got there.
       if (!await service.requestPermission()) return;
-      await service.schedule(
-        daily.upcomingReminders(),
-        textFor: (ayah) => daily.textFor(ayah, translationEdition),
-      );
+      await service.scheduleDaily(settings.reminderTimes);
     } catch (_) {}
-  }
-
-  Future<void> _load(DateTime date, Emitter<DailyState> emit) async {
-    emit(DailyLoading());
-    try {
-      _date = date;
-      final numbers = daily.ayahsFor(date);
-      final surahs = await repository.surahs();
-      final ayahs = repository.ayahsByNumber(numbers);
-
-      // The sync writes 6236 rows over a few seconds; until the day's ayahs
-      // are among them there is nothing to show.
-      if (ayahs.length < numbers.length) {
-        emit(DailyWaitingForSync(date));
-        return;
-      }
-
-      final translations =
-          repository.translationsByNumber(numbers, translationEdition);
-
-      emit(DailyLoaded(
-        date: date,
-        arabicSize: settings.arabicFontSize,
-        count: settings.dailyCount,
-        reminderTimes: settings.reminderTimes,
-        since: settings.dailySince,
-        ayahs: [
-          for (final ayah in ayahs)
-            DailyAyah(
-              // A daily pick can land on ayah 1, which arrives with the
-              // Bismillah glued on.
-              ayah: withoutOpeningBismillah(ayah),
-              surah: surahs.firstWhere((s) => s.number == ayah.surah),
-              translation: translations[ayah.number],
-            ),
-        ],
-      ));
-    } catch (error) {
-      emit(DailyFailed(error));
-    }
   }
 }
