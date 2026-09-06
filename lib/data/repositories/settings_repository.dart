@@ -1,121 +1,75 @@
-import 'dart:math';
+import '../services/local_store.dart';
 
-import '../../domain/daily_seed.dart';
-import '../../domain/reciter.dart';
-import '../services/database_service.dart';
-
-/// Reading preferences that outlive a launch.
+/// Preferences that outlive a launch.
 class SettingsRepository {
-  const SettingsRepository(this.db);
+  const SettingsRepository(this.store);
 
-  final DatabaseService db;
+  final LocalStore store;
 
   /// The sizes offered for Quranic Arabic. Uthmani script at one fixed size is
   /// unreadable for a lot of people, which is why this is the one reading
-  /// preference in v1.
+  /// preference the app has.
   static const arabicSizes = [22.0, 26.0, 30.0, 34.0];
   static const defaultArabicSize = 30.0;
 
-  /// How many ayahs a day offers. More than five stops being a daily habit
-  /// and starts being a reading session.
-  static const dailyCounts = [1, 3, 5];
-  static const defaultDailyCount = 3;
+  /// One ayah a day, nudged five times. The count of reminders is not the
+  /// count of ayahs — there is only ever one of those.
+  static const reminderCount = 5;
 
   static const _arabicSizeKey = 'arabic_font_size';
-  static const _reciterKey = 'reciter';
-  static const _dailySeedKey = 'daily_seed';
-  static const _dailyCountKey = 'daily_count';
-  static const _dailySinceKey = 'daily_since';
   static const _reminderTimesKey = 'reminder_times';
+  static const _translationKey = 'translation_edition';
 
   double get arabicFontSize {
-    final stored = db.readSetting(_arabicSizeKey);
-    final parsed = stored == null ? null : double.tryParse(stored);
+    final stored = store.read()[_arabicSizeKey];
+    final size = stored is num ? stored.toDouble() : null;
     // An unknown value falls back rather than rendering at some arbitrary size.
-    return arabicSizes.contains(parsed) ? parsed! : defaultArabicSize;
+    return arabicSizes.contains(size) ? size! : defaultArabicSize;
   }
 
   void setArabicFontSize(double size) {
     if (!arabicSizes.contains(size)) return;
-    db.writeSetting(_arabicSizeKey, '$size');
+    store.update({_arabicSizeKey: size});
   }
 
-  /// Falls back to the first offered reciter when nothing is stored, or when a
-  /// stored edition is no longer offered.
-  Reciter get reciter {
-    final stored = db.readSetting(_reciterKey);
-    return Reciter.all.firstWhere(
-      (r) => r.edition == stored,
-      orElse: () => Reciter.all.first,
-    );
+  /// The translation shown under the ayah. Null until it has been chosen,
+  /// which is what the picker is for.
+  String? get translationEdition {
+    final stored = store.read()[_translationKey];
+    return stored is String && stored.isNotEmpty ? stored : null;
   }
 
-  void setReciter(Reciter reciter) =>
-      db.writeSetting(_reciterKey, reciter.edition);
+  void setTranslationEdition(String edition) =>
+      store.update({_translationKey: edition});
 
-  /// Generated once and then never again — it is the whole reason a day the
-  /// user missed can be reproduced rather than stored forever.
-  ///
-  /// Reading it the first time writes it, so the seed exists from whenever the
-  /// daily feature is first touched instead of needing an install hook.
-  int get dailySeed {
-    final stored = int.tryParse(db.readSetting(_dailySeedKey) ?? '');
-    if (stored != null) return stored;
-
-    final seed = Random().nextInt(0x100000000);
-    db.writeSetting(_dailySeedKey, '$seed');
-    // Stamped alongside the seed so the calendar can stop at the day the app
-    // started rather than offering a daily ayah for 2019.
-    db.writeSetting(_dailySinceKey, dayKey(DateTime.now()));
-    return seed;
-  }
-
-  /// The first day the calendar offers. Reading [dailySeed] is what sets it.
-  DateTime get dailySince {
-    final stored = db.readSetting(_dailySinceKey);
-    if (stored == null) {
-      dailySeed;
-      return DateTime.now();
-    }
-    return DateTime.parse(stored);
-  }
-
-  /// One reminder per ayah, so this list is always [dailyCount] long. Stored
-  /// as minutes after midnight: a wall-clock time, unaffected by the device
-  /// moving between time zones.
+  /// Minutes after midnight, always [reminderCount] of them. A wall-clock time
+  /// rather than an instant, so it does not shift when the device changes zone.
   List<int> get reminderTimes {
-    final stored = db.readSetting(_reminderTimesKey);
-    final parsed = stored == null
-        ? const <int>[]
-        : [
-            for (final part in stored.split(','))
-              if (int.tryParse(part) case final int m when m >= 0 && m < 1440) m
-          ];
-    final defaults = defaultReminderTimes(dailyCount);
+    final stored = store.read()[_reminderTimesKey];
+    final parsed = stored is List
+        ? [
+            for (final value in stored)
+              if (value is int && value >= 0 && value < 1440) value
+          ]
+        : const <int>[];
+
+    final defaults = defaultReminderTimes;
     return [
-      for (var i = 0; i < dailyCount; i++)
+      for (var i = 0; i < reminderCount; i++)
         i < parsed.length ? parsed[i] : defaults[i]
     ];
   }
 
-  void setReminderTimes(List<int> minutes) => db.writeSetting(
-      _reminderTimesKey,
-      [for (final m in minutes) m.clamp(0, 1439)].join(','));
+  void setReminderTimes(List<int> minutes) => store.update({
+        _reminderTimesKey: [
+          for (final m in minutes.take(reminderCount)) m.clamp(0, 1439)
+        ]
+      });
 
-  /// Spread across the waking day, so three reminders are morning, midday and
-  /// evening rather than three notifications at once.
-  static List<int> defaultReminderTimes(int count) => count <= 1
-      ? const [8 * 60]
-      : [for (var i = 0; i < count; i++) 8 * 60 + (12 * 60 * i) ~/ (count - 1)];
-
-  int get dailyCount {
-    final stored = int.tryParse(db.readSetting(_dailyCountKey) ?? '');
-    return dailyCounts.contains(stored) ? stored! : defaultDailyCount;
-  }
-
-  void setDailyCount(int count) {
-    if (!dailyCounts.contains(count)) return;
-    db.writeSetting(_dailyCountKey, '$count');
-  }
+  /// Spread across the waking day, so five reminders are not five
+  /// notifications at once.
+  static List<int> get defaultReminderTimes => [
+        for (var i = 0; i < reminderCount; i++)
+          8 * 60 + (12 * 60 * i) ~/ (reminderCount - 1)
+      ];
 }
-

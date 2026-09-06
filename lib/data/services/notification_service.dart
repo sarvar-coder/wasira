@@ -4,7 +4,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../domain/reminder_window.dart';
 
 /// Schedules the daily ayah reminders.
 ///
@@ -107,35 +106,52 @@ class NotificationService {
     return false;
   }
 
-  /// Replaces every pending reminder with [reminders].
+  /// Rewrites the day's reminders: one repeating notification per time in
+  /// [minutes], each firing at that wall-clock time every day.
   ///
-  /// Cancelling first is what keeps the window rolling: yesterday's leftovers
-  /// go, a changed time does not leave its old copy behind, and the pending
-  /// count stays under the platform cap without any bookkeeping.
+  /// Repeating rather than scheduled ahead, because there is no ahead — the
+  /// app only ever knows today's ayah, so a notification cannot carry its text
+  /// and there is nothing to recompute each morning. Five pending
+  /// notifications, forever, well inside every platform's cap.
   ///
-  /// [textFor] returning null skips that reminder — an ayah whose text has not
-  /// synced yet is better left unscheduled than sent with an empty body.
-  Future<void> schedule(
-    List<Reminder> reminders, {
-    required ({String title, String body})? Function(int ayahNumber) textFor,
-  }) async {
+  /// Cancelling first is what keeps a changed time from leaving its old copy
+  /// behind.
+  Future<void> scheduleDaily(List<int> minutes) async {
     await initialize();
     await _plugin.cancelAll();
 
-    for (final reminder in reminders) {
-      final text = textFor(reminder.ayahNumber);
-      if (text == null) continue;
+    final now = tz.TZDateTime.now(tz.local);
+
+    for (var slot = 0; slot < minutes.length; slot++) {
+      final at = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day,
+        minutes[slot] ~/ 60,
+        minutes[slot] % 60,
+      );
 
       await _plugin.zonedSchedule(
-        id: reminder.id,
-        scheduledDate: tz.TZDateTime.from(reminder.at, tz.local),
-        title: text.title,
-        body: text.body,
+        id: slot,
+        // A time already past today starts tomorrow rather than firing the
+        // moment it is scheduled, which reads as a bug rather than a reminder.
+        scheduledDate:
+            at.isAfter(now) ? at : at.add(const Duration(days: 1)),
+        title: _title,
+        body: _body,
         notificationDetails: _details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     }
   }
+
+  /// Fixed text. A repeating notification carries the same body every day,
+  /// and the ayah changes daily, so naming it would mean knowing tomorrow's —
+  /// which is the one thing this app deliberately does not do.
+  static const _title = 'Wasira';
+  static const _body = "Today's ayah is ready";
 
   Future<void> cancelAll() => _plugin.cancelAll();
 }

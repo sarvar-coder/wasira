@@ -22,9 +22,9 @@ class OnboardingScreen extends StatelessWidget {
         OnboardingFailed(:final error) => _Failed(error: error),
         OnboardingChoosing(:final editions) =>
           _Picker(editions: editions, tokens: tokens),
-        // Once a language is chosen the app moves on immediately; the download
-        // continues behind the surah list rather than behind a spinner.
-        OnboardingSyncing() || OnboardingReady() => const SizedBox.shrink(),
+        // Choosing replaces this screen with the ayah at once — there is
+        // nothing to download and so nothing to wait behind.
+        OnboardingReady() => const SizedBox.shrink(),
       },
     );
   }

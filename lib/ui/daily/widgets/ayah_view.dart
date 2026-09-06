@@ -5,8 +5,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../../core/ui/arabic_text.dart';
 
-class AyahTile extends StatelessWidget {
-  const AyahTile({
+/// One ayah: its number, any sajda mark, the Arabic, and the translation.
+class AyahView extends StatelessWidget {
+  const AyahView({
     super.key,
     required this.ayah,
     required this.arabicSize,
@@ -14,8 +15,6 @@ class AyahTile extends StatelessWidget {
     this.translationDirection = TextDirection.ltr,
     this.expanded = false,
     this.onExpand,
-    this.highlighted = false,
-    this.bookmarked = false,
   });
 
   /// Past this many characters a translation is clamped. uz.sodik is a
@@ -30,25 +29,13 @@ class AyahTile extends StatelessWidget {
   final bool expanded;
   final VoidCallback? onExpand;
 
-  /// True while this ayah is the one sounding. Never true for a surah-by-surah
-  /// reciter, which cannot report ayah position.
-  final bool highlighted;
-
-  /// Saved. Marked on the ayah itself rather than only inside the menu, so a
-  /// reader can see what they kept while scrolling.
-  final bool bookmarked;
-
   @override
   Widget build(BuildContext context) {
     final tokens = Tokens.of(context);
     final l10n = AppLocalizations.of(context)!;
     final long = (translation?.length ?? 0) > clampThreshold;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      color: highlighted
-          ? tokens.accent.withValues(alpha: 0.06)
-          : Colors.transparent,
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,10 +46,6 @@ class AyahTile extends StatelessWidget {
               if (ayah.sajda) ...[
                 const SizedBox(width: 8),
                 _SajdaMark(ayah: ayah, tokens: tokens, l10n: l10n),
-              ],
-              if (bookmarked) ...[
-                const SizedBox(width: 8),
-                Icon(Icons.bookmark, size: 15, color: tokens.accent),
               ],
             ],
           ),
@@ -96,8 +79,6 @@ class AyahTile extends StatelessWidget {
                 ),
               ),
           ],
-          const SizedBox(height: 14),
-          Divider(height: 1, color: tokens.divider),
         ],
       ),
     );
