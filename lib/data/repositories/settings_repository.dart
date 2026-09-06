@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../../domain/reciter.dart';
 import '../services/database_service.dart';
 
@@ -13,8 +15,15 @@ class SettingsRepository {
   static const arabicSizes = [22.0, 26.0, 30.0, 34.0];
   static const defaultArabicSize = 30.0;
 
+  /// How many ayahs a day offers. More than five stops being a daily habit
+  /// and starts being a reading session.
+  static const dailyCounts = [1, 3, 5];
+  static const defaultDailyCount = 3;
+
   static const _arabicSizeKey = 'arabic_font_size';
   static const _reciterKey = 'reciter';
+  static const _dailySeedKey = 'daily_seed';
+  static const _dailyCountKey = 'daily_count';
 
   double get arabicFontSize {
     final stored = db.readSetting(_arabicSizeKey);
@@ -40,4 +49,29 @@ class SettingsRepository {
 
   void setReciter(Reciter reciter) =>
       db.writeSetting(_reciterKey, reciter.edition);
+
+  /// Generated once and then never again — it is the whole reason a day the
+  /// user missed can be reproduced rather than stored forever.
+  ///
+  /// Reading it the first time writes it, so the seed exists from whenever the
+  /// daily feature is first touched instead of needing an install hook.
+  int get dailySeed {
+    final stored = int.tryParse(db.readSetting(_dailySeedKey) ?? '');
+    if (stored != null) return stored;
+
+    final seed = Random().nextInt(0x100000000);
+    db.writeSetting(_dailySeedKey, '$seed');
+    return seed;
+  }
+
+  int get dailyCount {
+    final stored = int.tryParse(db.readSetting(_dailyCountKey) ?? '');
+    return dailyCounts.contains(stored) ? stored! : defaultDailyCount;
+  }
+
+  void setDailyCount(int count) {
+    if (!dailyCounts.contains(count)) return;
+    db.writeSetting(_dailyCountKey, '$count');
+  }
 }
+
