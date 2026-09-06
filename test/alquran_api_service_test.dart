@@ -168,4 +168,14 @@ void main() {
       expect(editions.every((e) => e.direction == 'rtl'), isTrue);
     });
   });
+
+  test('a hanging response times out instead of waiting forever', () async {
+    final api = AlquranApiService(
+      timeout: const Duration(milliseconds: 50),
+      client: MockClient((_) => Future.delayed(
+          const Duration(seconds: 5), () => http.Response('{}', 200))),
+    );
+
+    await expectLater(api.surahs(), throwsA(isA<AlquranApiException>()));
+  });
 }
