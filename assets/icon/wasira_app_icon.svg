@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="arch" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#0B5A57"/>
+      <stop offset="0.55" stop-color="#126E67"/>
+      <stop offset="1" stop-color="#D6A43A"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0B5A57"/>
+      <stop offset="1" stop-color="#155F5B"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- macOS insets app-icon artwork inside its canvas: 824 of 1024, with equal
+       margins. Rendered edge to edge this icon sits visibly larger than every
+       neighbour in the Dock. Remove this group to get the full-bleed version. -->
+  <g transform="translate(100,100) scale(0.8047)">
+
+
+  <!-- App icon background -->
+  <rect width="1024" height="1024" rx="224" fill="#F8F5ED"/>
+
+  <!-- Minimal mihrab / protective arch -->
+  <path d="M244 545V394
+           C244 277 340 190 512 116
+           C684 190 780 277 780 394V545"
+        fill="none"
+        stroke="url(#arch)"
+        stroke-width="62"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        filter="url(#shadow)"/>
+
+  <!-- Open Qur'an / book -->
+  <path d="M244 548
+           C340 559 427 589 512 674
+           C597 589 684 559 780 548
+           L780 690
+           C680 700 592 731 512 817
+           C432 731 344 700 244 690Z"
+        fill="url(#book)"
+        filter="url(#shadow)"/>
+
+  <!-- Page fold -->
+  <path d="M512 674V817" stroke="#F8F5ED" stroke-width="14" stroke-linecap="round"/>
+  <path d="M512 674
+           C474 628 414 594 348 578"
+        fill="none" stroke="#D6A43A" stroke-width="13" stroke-linecap="round" opacity="0.9"/>
+  <path d="M512 674
+           C550 628 610 594 676 578"
+        fill="none" stroke="#D6A43A" stroke-width="13" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- Guiding light / verse -->
+  <path d="M512 321
+           L531 365
+           L575 384
+           L531 403
+           L512 447
+           L493 403
+           L449 384
+           L493 365Z"
+        fill="#D6A43A"/>
+  </g>
+</svg>

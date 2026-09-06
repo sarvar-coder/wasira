@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- The 16 px slot only. At 32 px and up the real artwork still reads and is
+       used; at 16 px the arch, book and star merge into a teal ring.
+       Two shapes only: a solid mihrab, and the open book cut out of its base.
+       Stroking the arch made the book merge into it and read as a closed ring,
+       so here the arch is filled and the book is negative space. No gradients,
+       no star, no page detail — at 16 px each of those is one pixel of noise. -->
+
+  <rect width="1024" height="1024" rx="224" fill="#F8F5ED"/>
+
+  <path d="M236 856V386
+           C236 262 340 172 512 96
+           C684 172 788 262 788 386
+           V856Z"
+        fill="#0F6660"/>
+
+  <!-- The open book, as cream cut out of the arch's base. Deep enough that the
+       two feet read as facing pages at 16 px, where a shallow notch did not. -->
+  <path d="M236 900 L512 548 L788 900Z" fill="#F8F5ED"/>
+</svg>
