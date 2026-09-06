@@ -146,10 +146,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get noFutureDays => 'Hali kelmagan kunning oyatlari yo\'q';
 
   @override
-  String get bookmark => 'Saqlash';
+  String get bookmark => 'Xatcho\'p qo\'shish';
 
   @override
-  String get removeBookmark => 'Saqlanganni olib tashlash';
+  String get removeBookmark => 'Xatcho\'pni olib tashlash';
 
   @override
   String get playFromHere => 'Shu yerdan boshlash';
@@ -164,8 +164,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get copied => 'Nusxa olindi';
 
   @override
-  String get noBookmarks => 'Hali hech narsa saqlanmagan';
+  String get noBookmarks => 'Hali xatcho\'p yo\'q';
 
   @override
-  String get bookmarksHint => 'Saqlash uchun oyatni o\'ng tugma bilan bosing';
+  String get bookmarksHint =>
+      'Xatcho\'p qo\'shish uchun oyatni o\'ng tugma bilan bosing';
 }

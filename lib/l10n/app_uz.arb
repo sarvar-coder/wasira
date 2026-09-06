@@ -48,12 +48,12 @@
   "ayahsPerDay": "Kuniga oyatlar",
   "reminders": "Eslatmalar",
   "noFutureDays": "Hali kelmagan kunning oyatlari yo'q",
-  "bookmark": "Saqlash",
-  "removeBookmark": "Saqlanganni olib tashlash",
+  "bookmark": "Xatcho'p qo'shish",
+  "removeBookmark": "Xatcho'pni olib tashlash",
   "playFromHere": "Shu yerdan boshlash",
   "copyAyah": "Nusxa olish",
   "shareAyah": "Ulashish",
   "copied": "Nusxa olindi",
-  "noBookmarks": "Hali hech narsa saqlanmagan",
-  "bookmarksHint": "Saqlash uchun oyatni o'ng tugma bilan bosing"
+  "noBookmarks": "Hali xatcho'p yo'q",
+  "bookmarksHint": "Xatcho'p qo'shish uchun oyatni o'ng tugma bilan bosing"
 }

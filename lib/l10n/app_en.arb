@@ -88,6 +88,6 @@
   "copyAyah": "Copy",
   "shareAyah": "Share",
   "copied": "Copied",
-  "noBookmarks": "Nothing saved yet",
-  "bookmarksHint": "Right-click an ayah to save it"
+  "noBookmarks": "No bookmarks yet",
+  "bookmarksHint": "Right-click an ayah to bookmark it"
 }

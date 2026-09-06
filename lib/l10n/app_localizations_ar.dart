@@ -149,10 +149,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noFutureDays => 'اليوم الذي لم يأتِ بعد لا آيات له';
 
   @override
-  String get bookmark => 'إضافة إشارة';
+  String get bookmark => 'إضافة إلى المحفوظات';
 
   @override
-  String get removeBookmark => 'إزالة الإشارة';
+  String get removeBookmark => 'إزالة من المحفوظات';
 
   @override
   String get playFromHere => 'التشغيل من هنا';
@@ -167,8 +167,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get copied => 'تم النسخ';
 
   @override
-  String get noBookmarks => 'لم يُحفظ شيء بعد';
+  String get noBookmarks => 'لا توجد محفوظات بعد';
 
   @override
-  String get bookmarksHint => 'انقر على الآية بالزر الأيمن لحفظها';
+  String get bookmarksHint =>
+      'انقر على الآية بالزر الأيمن لإضافتها إلى المحفوظات';
 }
