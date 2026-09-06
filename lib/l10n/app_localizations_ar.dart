@@ -43,7 +43,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navBookmarks => 'المحفوظات';
 
   @override
-  String get navDaily => 'اليومي';
+  String get navDaily => 'آية اليوم';
 
   @override
   String get navDownloads => 'التنزيلات';
@@ -137,7 +137,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pickADay => 'اختر يومًا';
 
   @override
-  String get dailySettings => 'إعدادات اليومي';
+  String get dailySettings => 'إعدادات آية اليوم';
 
   @override
   String get ayahsPerDay => 'آيات في اليوم';
@@ -146,7 +146,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reminders => 'التذكيرات';
 
   @override
-  String get noFutureDays => 'اليوم الذي لم يأتِ بعد لا آيات له';
+  String get noFutureDays => 'لا آيات ليومٍ لم يأتِ بعد';
 
   @override
   String get bookmark => 'إضافة إلى المحفوظات';
