@@ -48,5 +48,11 @@
   "dailySettings": "إعدادات اليومي",
   "ayahsPerDay": "آيات في اليوم",
   "reminders": "التذكيرات",
-  "noFutureDays": "اليوم الذي لم يأتِ بعد لا آيات له"
+  "noFutureDays": "اليوم الذي لم يأتِ بعد لا آيات له",
+  "bookmark": "إضافة إشارة",
+  "removeBookmark": "إزالة الإشارة",
+  "playFromHere": "التشغيل من هنا",
+  "copyAyah": "نسخ",
+  "shareAyah": "مشاركة",
+  "copied": "تم النسخ"
 }

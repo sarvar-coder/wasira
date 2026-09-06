@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
+import 'package:wasira/data/repositories/bookmark_repository.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
 import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
@@ -47,7 +48,8 @@ void main() {
         ReaderBloc(
             repository: repoFor(surah),
             settings: SettingsRepository(service),
-            translationEdition: edition)
+            translationEdition: edition,
+            bookmarks: BookmarkRepository(service))
           ..add(SurahRequested(surah));
     addTearDown(bloc.close);
     return await bloc.stream.firstWhere((s) => s is! ReaderLoading)
@@ -118,7 +120,8 @@ void main() {
       final bloc = ReaderBloc(
           repository: repoFor(2),
           settings: SettingsRepository(service),
-          translationEdition: 'uz.sodik')
+          translationEdition: 'uz.sodik',
+          bookmarks: BookmarkRepository(service))
         ..add(SurahRequested(2));
       addTearDown(bloc.close);
       final loaded =
@@ -149,6 +152,7 @@ void main() {
         repository: repoFor(2),
         settings: settings,
         translationEdition: 'uz.sodik',
+        bookmarks: BookmarkRepository(service),
       )..add(SurahRequested(2));
       addTearDown(bloc.close);
       await bloc.stream.firstWhere((s) => s is! ReaderLoading);
@@ -158,6 +162,71 @@ void main() {
 
       expect(next.arabicSize, 34);
       expect(settings.arabicFontSize, 34, reason: 'must outlive the bloc');
+    });
+  });
+
+  group('bookmarks in the reader', () {
+    Future<ReaderBloc> open(int surah) async {
+      final bloc = ReaderBloc(
+        repository: repoFor(surah),
+        settings: SettingsRepository(service),
+        translationEdition: null,
+        bookmarks: BookmarkRepository(service),
+      )..add(SurahRequested(surah));
+      addTearDown(bloc.close);
+      await bloc.stream.firstWhere((s) => s is! ReaderLoading);
+      return bloc;
+    }
+
+    test('a surah opens with nothing saved', () async {
+      final bloc = await open(1);
+      expect((bloc.state as ReaderLoaded).bookmarked, isEmpty);
+    });
+
+    test('saving marks that ayah and leaves the rest alone', () async {
+      final bloc = await open(1);
+      final ayahs = (bloc.state as ReaderLoaded).ayahs;
+
+      bloc.add(BookmarkToggled(ayahs[2].number));
+      final saved = await bloc.stream.firstWhere(
+          (s) => s is ReaderLoaded && s.bookmarked.isNotEmpty) as ReaderLoaded;
+
+      expect(saved.bookmarked, {ayahs[2].number});
+    });
+
+    test('saving again removes it', () async {
+      final bloc = await open(1);
+      final ayah = (bloc.state as ReaderLoaded).ayahs.first.number;
+
+      bloc.add(BookmarkToggled(ayah));
+      await bloc.stream.firstWhere(
+          (s) => s is ReaderLoaded && s.bookmarked.contains(ayah));
+
+      bloc.add(BookmarkToggled(ayah));
+      final gone = await bloc.stream.firstWhere(
+          (s) => s is ReaderLoaded && s.bookmarked.isEmpty) as ReaderLoaded;
+
+      expect(gone.bookmarked, isEmpty);
+      expect(BookmarkRepository(service).all, isEmpty);
+    });
+
+    test('a saved ayah is still saved when the surah is reopened', () async {
+      final first = await open(1);
+      final ayah = (first.state as ReaderLoaded).ayahs.last.number;
+      first.add(BookmarkToggled(ayah));
+      await first.stream.firstWhere(
+          (s) => s is ReaderLoaded && s.bookmarked.contains(ayah));
+
+      final again = await open(1);
+      expect((again.state as ReaderLoaded).bookmarked, {ayah});
+    });
+
+    test('only this surah\'s bookmarks reach its state', () async {
+      BookmarkRepository(service).toggle(6236);
+
+      final bloc = await open(1);
+      expect((bloc.state as ReaderLoaded).bookmarked, isEmpty,
+          reason: 'the last ayah of the Quran is not in Al-Fatiha');
     });
   });
 }

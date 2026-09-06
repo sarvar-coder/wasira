@@ -82,5 +82,11 @@
   "dailySettings": "Daily settings",
   "ayahsPerDay": "Ayahs a day",
   "reminders": "Reminders",
-  "noFutureDays": "A day that has not arrived has no ayahs yet"
+  "noFutureDays": "A day that has not arrived has no ayahs yet",
+  "bookmark": "Bookmark",
+  "removeBookmark": "Remove bookmark",
+  "playFromHere": "Play from here",
+  "copyAyah": "Copy",
+  "shareAyah": "Share",
+  "copied": "Copied"
 }

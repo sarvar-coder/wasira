@@ -148,4 +148,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noFutureDays => 'A day that has not arrived has no ayahs yet';
+
+  @override
+  String get bookmark => 'Bookmark';
+
+  @override
+  String get removeBookmark => 'Remove bookmark';
+
+  @override
+  String get playFromHere => 'Play from here';
+
+  @override
+  String get copyAyah => 'Copy';
+
+  @override
+  String get shareAyah => 'Share';
+
+  @override
+  String get copied => 'Copied';
 }

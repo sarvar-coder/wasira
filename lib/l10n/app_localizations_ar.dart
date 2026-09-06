@@ -150,4 +150,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noFutureDays => 'اليوم الذي لم يأتِ بعد لا آيات له';
+
+  @override
+  String get bookmark => 'إضافة إشارة';
+
+  @override
+  String get removeBookmark => 'إزالة الإشارة';
+
+  @override
+  String get playFromHere => 'التشغيل من هنا';
+
+  @override
+  String get copyAyah => 'نسخ';
+
+  @override
+  String get shareAyah => 'مشاركة';
+
+  @override
+  String get copied => 'تم النسخ';
 }

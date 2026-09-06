@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../data/repositories/bookmark_repository.dart';
 import '../../../data/repositories/quran_repository.dart';
 import '../../../data/repositories/settings_repository.dart';
 import '../../../l10n/app_localizations.dart';
@@ -14,6 +15,7 @@ import '../reader_bloc.dart';
 import '../reader_event.dart';
 import '../reader_state.dart';
 import 'audio_bar.dart';
+import 'ayah_menu.dart';
 import 'ayah_tile.dart';
 
 class ReaderScreen extends StatelessWidget {
@@ -23,12 +25,14 @@ class ReaderScreen extends StatelessWidget {
     required this.repository,
     required this.settings,
     required this.translationEdition,
+    required this.bookmarks,
   });
 
   final int surah;
   final QuranRepository repository;
   final SettingsRepository settings;
   final String? translationEdition;
+  final BookmarkRepository bookmarks;
 
   @override
   Widget build(BuildContext context) => BlocProvider(
@@ -36,6 +40,7 @@ class ReaderScreen extends StatelessWidget {
           repository: repository,
           settings: settings,
           translationEdition: translationEdition,
+          bookmarks: bookmarks,
         )..add(SurahRequested(surah)),
         child: const _ReaderView(),
       );
@@ -98,17 +103,34 @@ class _Ayahs extends StatelessWidget {
           return _BismillahHeader(text: header, size: arabicSize);
         }
         final ayah = loaded.ayahs[i - offset];
+        void openMenu(Offset at) => showAyahMenu(
+              context,
+              at: at,
+              ayah: ayah,
+              surah: loaded.surah,
+              translation: loaded.translations[ayah.number],
+              bookmarked: loaded.bookmarked.contains(ayah.number),
+            );
+
         return BlocSelector<AudioBloc, AudioState, bool>(
           selector: (audio) => audio.currentAyah == ayah.number,
-          builder: (context, sounding) => AyahTile(
-            ayah: ayah,
-            arabicSize: arabicSize,
-            translation: loaded.translations[ayah.number],
-            expanded: loaded.expanded.contains(ayah.number),
-            highlighted: sounding,
-            onExpand: () => context
-                .read<ReaderBloc>()
-                .add(TranslationExpanded(ayah.number)),
+          builder: (context, sounding) => GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            // Right-click on desktop, long-press on touch: the same menu, and
+            // the position is the pointer so it opens where the ayah is.
+            onSecondaryTapDown: (d) => openMenu(d.globalPosition),
+            onLongPressStart: (d) => openMenu(d.globalPosition),
+            child: AyahTile(
+              ayah: ayah,
+              arabicSize: arabicSize,
+              translation: loaded.translations[ayah.number],
+              expanded: loaded.expanded.contains(ayah.number),
+              highlighted: sounding,
+              bookmarked: loaded.bookmarked.contains(ayah.number),
+              onExpand: () => context
+                  .read<ReaderBloc>()
+                  .add(TranslationExpanded(ayah.number)),
+            ),
           ),
         );
       },

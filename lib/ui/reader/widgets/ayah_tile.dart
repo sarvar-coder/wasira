@@ -15,6 +15,7 @@ class AyahTile extends StatelessWidget {
     this.expanded = false,
     this.onExpand,
     this.highlighted = false,
+    this.bookmarked = false,
   });
 
   /// Past this many characters a translation is clamped. uz.sodik is a
@@ -32,6 +33,10 @@ class AyahTile extends StatelessWidget {
   /// True while this ayah is the one sounding. Never true for a surah-by-surah
   /// reciter, which cannot report ayah position.
   final bool highlighted;
+
+  /// Saved. Marked on the ayah itself rather than only inside the menu, so a
+  /// reader can see what they kept while scrolling.
+  final bool bookmarked;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,10 @@ class AyahTile extends StatelessWidget {
               if (ayah.sajda) ...[
                 const SizedBox(width: 8),
                 _SajdaMark(ayah: ayah, tokens: tokens, l10n: l10n),
+              ],
+              if (bookmarked) ...[
+                const SizedBox(width: 8),
+                Icon(Icons.bookmark, size: 15, color: tokens.accent),
               ],
             ],
           ),

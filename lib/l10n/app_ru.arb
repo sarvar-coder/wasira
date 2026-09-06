@@ -48,5 +48,11 @@
   "dailySettings": "Настройки дня",
   "ayahsPerDay": "Аятов в день",
   "reminders": "Напоминания",
-  "noFutureDays": "У ещё не наступившего дня нет аятов"
+  "noFutureDays": "У ещё не наступившего дня нет аятов",
+  "bookmark": "В закладки",
+  "removeBookmark": "Убрать из закладок",
+  "playFromHere": "Слушать отсюда",
+  "copyAyah": "Копировать",
+  "shareAyah": "Поделиться",
+  "copied": "Скопировано"
 }

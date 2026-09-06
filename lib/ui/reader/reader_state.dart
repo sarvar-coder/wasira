@@ -17,6 +17,7 @@ class ReaderLoaded extends ReaderState {
     required this.translations,
     required this.bismillahHeader,
     required this.arabicSize,
+    required this.bookmarked,
     this.expanded = const <int>{},
   });
 
@@ -33,15 +34,24 @@ class ReaderLoaded extends ReaderState {
   final String? bismillahHeader;
 
   final double arabicSize;
+
+  /// Global ayah numbers saved in this surah.
+  final Set<int> bookmarked;
+
   final Set<int> expanded;
 
-  ReaderLoaded copyWith({Set<int>? expanded, double? arabicSize}) =>
+  ReaderLoaded copyWith({
+    Set<int>? expanded,
+    double? arabicSize,
+    Set<int>? bookmarked,
+  }) =>
       ReaderLoaded(
         surah: surah,
         ayahs: ayahs,
         translations: translations,
         bismillahHeader: bismillahHeader,
         arabicSize: arabicSize ?? this.arabicSize,
+        bookmarked: bookmarked ?? this.bookmarked,
         expanded: expanded ?? this.expanded,
       );
 }
