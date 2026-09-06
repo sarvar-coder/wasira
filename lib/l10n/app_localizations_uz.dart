@@ -53,4 +53,18 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get copied => 'Nusxa olindi';
+
+  @override
+  String get about => 'Ilova haqida';
+
+  @override
+  String get translation => 'Tarjima';
+
+  @override
+  String get version => 'Versiya';
+
+  @override
+  String textFrom(String source) {
+    return 'Qur\'on matni va tarjimalari $source xizmatidan';
+  }
 }

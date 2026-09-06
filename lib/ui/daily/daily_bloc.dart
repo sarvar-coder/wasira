@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/daily_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../data/services/notification_service.dart';
+import '../../domain/models/edition.dart';
 import 'daily_event.dart';
 import 'daily_state.dart';
 
@@ -12,7 +13,6 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
   DailyBloc({
     required this.daily,
     required this.settings,
-    required this.translationEdition,
     this.notifications,
   }) : super(DailyLoading()) {
     on<DailyRequested>((event, emit) => _load(emit));
@@ -37,6 +37,11 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
       }
     });
 
+    on<TranslationEditionChanged>((event, emit) async {
+      settings.setTranslationEdition(event.edition, event.name);
+      await _load(emit);
+    });
+
     on<TranslationExpanded>((event, emit) {
       if (state case final DailyLoaded loaded) {
         emit(loaded.copyWith(expanded: true));
@@ -46,19 +51,24 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
 
   final DailyRepository daily;
   final SettingsRepository settings;
-  final String? translationEdition;
 
   /// Null in tests and wherever notifications are not wired up; a reminder
   /// that cannot be scheduled must not stop the ayah being shown.
   final NotificationService? notifications;
 
+  /// Every translation the API offers, for the settings sheet. Fetched on
+  /// demand rather than held in state — it is one screen, opened rarely.
+  Future<List<Edition>> translations() => daily.api.translationEditions();
+
   Future<void> _load(Emitter<DailyState> emit) async {
     emit(DailyLoading());
     try {
       emit(DailyLoaded(
-        daily: await daily.today(translationEdition: translationEdition),
+        daily: await daily
+            .today(translationEdition: settings.translationEdition),
         arabicSize: settings.arabicFontSize,
         reminderTimes: settings.reminderTimes,
+        translationName: settings.translationName,
       ));
     } catch (error) {
       emit(DailyUnavailable(error));

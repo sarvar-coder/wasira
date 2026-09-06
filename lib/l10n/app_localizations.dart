@@ -185,6 +185,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied'**
   String get copied;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// Credit line for the data source
+  ///
+  /// In en, this message translates to:
+  /// **'Quran text and translations from {source}'**
+  String textFrom(String source);
 }
 
 class _AppLocalizationsDelegate

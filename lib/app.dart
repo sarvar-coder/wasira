@@ -89,7 +89,6 @@ class _Daily extends StatelessWidget {
       create: (_) => DailyBloc(
         daily: DailyRepository(store: app.dailyStore, api: app.api),
         settings: app.settings,
-        translationEdition: edition,
         notifications: app.notifications,
       )..add(DailyRequested()),
       child: const Scaffold(body: DailyScreen()),

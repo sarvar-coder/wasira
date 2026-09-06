@@ -13,5 +13,16 @@
   "dailySettings": "Kunlik sozlamalar",
   "reminders": "Eslatmalar",
   "copyAyah": "Nusxa olish",
-  "copied": "Nusxa olindi"
+  "copied": "Nusxa olindi",
+  "about": "Ilova haqida",
+  "translation": "Tarjima",
+  "version": "Versiya",
+  "textFrom": "Qur'on matni va tarjimalari {source} xizmatidan",
+  "@textFrom": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  }
 }
