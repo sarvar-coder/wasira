@@ -138,71 +138,11 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get tryAgain;
 
-  /// No description provided for @surahsUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not load surahs'**
-  String get surahsUnavailable;
-
-  /// No description provided for @downloadingQuran.
-  ///
-  /// In en, this message translates to:
-  /// **'Downloading the Quran'**
-  String get downloadingQuran;
-
-  /// No description provided for @navSurahs.
-  ///
-  /// In en, this message translates to:
-  /// **'Surahs'**
-  String get navSurahs;
-
-  /// No description provided for @navBookmarks.
-  ///
-  /// In en, this message translates to:
-  /// **'Bookmarks'**
-  String get navBookmarks;
-
-  /// No description provided for @navDaily.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily'**
-  String get navDaily;
-
-  /// No description provided for @navDownloads.
-  ///
-  /// In en, this message translates to:
-  /// **'Downloads'**
-  String get navDownloads;
-
-  /// No description provided for @ayahCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 ayah} other{{count} ayahs}}'**
-  String ayahCount(int count);
-
-  /// No description provided for @revelationMeccan.
-  ///
-  /// In en, this message translates to:
-  /// **'Meccan'**
-  String get revelationMeccan;
-
-  /// No description provided for @revelationMedinan.
-  ///
-  /// In en, this message translates to:
-  /// **'Medinan'**
-  String get revelationMedinan;
-
   /// Expands a translation clamped for length
   ///
   /// In en, this message translates to:
   /// **'Show more'**
   String get showMore;
-
-  /// No description provided for @showLess.
-  ///
-  /// In en, this message translates to:
-  /// **'Show less'**
-  String get showLess;
 
   /// Marker on an ayah of prostration
   ///
@@ -222,119 +162,11 @@ abstract class AppLocalizations {
   /// **'Arabic text size'**
   String get arabicTextSize;
 
-  /// No description provided for @play.
-  ///
-  /// In en, this message translates to:
-  /// **'Play'**
-  String get play;
-
-  /// No description provided for @pause.
-  ///
-  /// In en, this message translates to:
-  /// **'Pause'**
-  String get pause;
-
-  /// No description provided for @nextAyah.
-  ///
-  /// In en, this message translates to:
-  /// **'Next ayah'**
-  String get nextAyah;
-
-  /// No description provided for @previousAyah.
-  ///
-  /// In en, this message translates to:
-  /// **'Previous ayah'**
-  String get previousAyah;
-
-  /// No description provided for @repeatOff.
-  ///
-  /// In en, this message translates to:
-  /// **'No repeat'**
-  String get repeatOff;
-
-  /// No description provided for @repeatAyah.
-  ///
-  /// In en, this message translates to:
-  /// **'Repeat ayah'**
-  String get repeatAyah;
-
-  /// No description provided for @repeatRange.
-  ///
-  /// In en, this message translates to:
-  /// **'Repeat range'**
-  String get repeatRange;
-
-  /// No description provided for @reciter.
-  ///
-  /// In en, this message translates to:
-  /// **'Reciter'**
-  String get reciter;
-
-  /// No description provided for @playbackFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Playback failed'**
-  String get playbackFailed;
-
-  /// No description provided for @wholeSurahReciter.
-  ///
-  /// In en, this message translates to:
-  /// **'This reciter publishes whole surahs, so single ayahs cannot be addressed'**
-  String get wholeSurahReciter;
-
-  /// No description provided for @download.
-  ///
-  /// In en, this message translates to:
-  /// **'Download'**
-  String get download;
-
-  /// No description provided for @resumeDownload.
-  ///
-  /// In en, this message translates to:
-  /// **'Resume'**
-  String get resumeDownload;
-
-  /// No description provided for @deleteDownload.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete download'**
-  String get deleteDownload;
-
-  /// No description provided for @downloadFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Download failed'**
-  String get downloadFailed;
-
-  /// Total disk taken by one reciter's downloads
-  ///
-  /// In en, this message translates to:
-  /// **'{size} on disk'**
-  String storageUsed(String size);
-
-  /// No description provided for @today.
-  ///
-  /// In en, this message translates to:
-  /// **'Today'**
-  String get today;
-
-  /// No description provided for @pickADay.
-  ///
-  /// In en, this message translates to:
-  /// **'Pick a day'**
-  String get pickADay;
-
   /// No description provided for @dailySettings.
   ///
   /// In en, this message translates to:
   /// **'Daily settings'**
   String get dailySettings;
-
-  /// No description provided for @ayahsPerDay.
-  ///
-  /// In en, this message translates to:
-  /// **'Ayahs a day'**
-  String get ayahsPerDay;
 
   /// No description provided for @reminders.
   ///
@@ -342,59 +174,17 @@ abstract class AppLocalizations {
   /// **'Reminders'**
   String get reminders;
 
-  /// No description provided for @noFutureDays.
-  ///
-  /// In en, this message translates to:
-  /// **'A day that has not arrived has no ayahs yet'**
-  String get noFutureDays;
-
-  /// No description provided for @bookmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Bookmark'**
-  String get bookmark;
-
-  /// No description provided for @removeBookmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove bookmark'**
-  String get removeBookmark;
-
-  /// No description provided for @playFromHere.
-  ///
-  /// In en, this message translates to:
-  /// **'Play from here'**
-  String get playFromHere;
-
   /// No description provided for @copyAyah.
   ///
   /// In en, this message translates to:
   /// **'Copy'**
   String get copyAyah;
 
-  /// No description provided for @shareAyah.
-  ///
-  /// In en, this message translates to:
-  /// **'Share'**
-  String get shareAyah;
-
   /// No description provided for @copied.
   ///
   /// In en, this message translates to:
   /// **'Copied'**
   String get copied;
-
-  /// No description provided for @noBookmarks.
-  ///
-  /// In en, this message translates to:
-  /// **'No bookmarks yet'**
-  String get noBookmarks;
-
-  /// No description provided for @bookmarksHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Right-click an ayah to bookmark it'**
-  String get bookmarksHint;
 }
 
 class _AppLocalizationsDelegate

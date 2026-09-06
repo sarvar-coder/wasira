@@ -26,24 +26,7 @@
   },
   "serviceUnreachable": "Could not reach the Quran service",
   "tryAgain": "Try again",
-  "surahsUnavailable": "Could not load surahs",
-  "downloadingQuran": "Downloading the Quran",
-  "navSurahs": "Surahs",
-  "navBookmarks": "Bookmarks",
-  "navDaily": "Daily",
-  "navDownloads": "Downloads",
-  "ayahCount": "{count, plural, =1{1 ayah} other{{count} ayahs}}",
-  "@ayahCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "revelationMeccan": "Meccan",
-  "revelationMedinan": "Medinan",
   "showMore": "Show more",
-  "showLess": "Show less",
   "sajdaHere": "Prostration",
   "sajdaObligatoryHere": "Obligatory prostration",
   "@showMore": {
@@ -53,41 +36,8 @@
     "description": "Marker on an ayah of prostration"
   },
   "arabicTextSize": "Arabic text size",
-  "play": "Play",
-  "pause": "Pause",
-  "nextAyah": "Next ayah",
-  "previousAyah": "Previous ayah",
-  "repeatOff": "No repeat",
-  "repeatAyah": "Repeat ayah",
-  "repeatRange": "Repeat range",
-  "reciter": "Reciter",
-  "playbackFailed": "Playback failed",
-  "wholeSurahReciter": "This reciter publishes whole surahs, so single ayahs cannot be addressed",
-  "download": "Download",
-  "resumeDownload": "Resume",
-  "deleteDownload": "Delete download",
-  "downloadFailed": "Download failed",
-  "storageUsed": "{size} on disk",
-  "@storageUsed": {
-    "description": "Total disk taken by one reciter's downloads",
-    "placeholders": {
-      "size": {
-        "type": "String"
-      }
-    }
-  },
-  "today": "Today",
-  "pickADay": "Pick a day",
   "dailySettings": "Daily settings",
-  "ayahsPerDay": "Ayahs a day",
   "reminders": "Reminders",
-  "noFutureDays": "A day that has not arrived has no ayahs yet",
-  "bookmark": "Bookmark",
-  "removeBookmark": "Remove bookmark",
-  "playFromHere": "Play from here",
   "copyAyah": "Copy",
-  "shareAyah": "Share",
-  "copied": "Copied",
-  "noBookmarks": "No bookmarks yet",
-  "bookmarksHint": "Right-click an ayah to bookmark it"
+  "copied": "Copied"
 }

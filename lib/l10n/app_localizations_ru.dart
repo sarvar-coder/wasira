@@ -31,46 +31,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tryAgain => 'Повторить';
 
   @override
-  String get surahsUnavailable => 'Не удалось загрузить суры';
-
-  @override
-  String get downloadingQuran => 'Загрузка Корана';
-
-  @override
-  String get navSurahs => 'Суры';
-
-  @override
-  String get navBookmarks => 'Закладки';
-
-  @override
-  String get navDaily => 'Ежедневно';
-
-  @override
-  String get navDownloads => 'Загрузки';
-
-  @override
-  String ayahCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count аятов',
-      few: '$count аята',
-      one: '$count аят',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get revelationMeccan => 'Мекканская';
-
-  @override
-  String get revelationMedinan => 'Мединская';
-
-  @override
   String get showMore => 'Показать полностью';
-
-  @override
-  String get showLess => 'Свернуть';
 
   @override
   String get sajdaHere => 'Земной поклон';
@@ -82,93 +43,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get arabicTextSize => 'Размер арабского текста';
 
   @override
-  String get play => 'Воспроизвести';
-
-  @override
-  String get pause => 'Пауза';
-
-  @override
-  String get nextAyah => 'Следующий аят';
-
-  @override
-  String get previousAyah => 'Предыдущий аят';
-
-  @override
-  String get repeatOff => 'Без повтора';
-
-  @override
-  String get repeatAyah => 'Повтор аята';
-
-  @override
-  String get repeatRange => 'Повтор отрывка';
-
-  @override
-  String get reciter => 'Чтец';
-
-  @override
-  String get playbackFailed => 'Не удалось воспроизвести';
-
-  @override
-  String get wholeSurahReciter =>
-      'Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны';
-
-  @override
-  String get download => 'Скачать';
-
-  @override
-  String get resumeDownload => 'Продолжить';
-
-  @override
-  String get deleteDownload => 'Удалить загрузку';
-
-  @override
-  String get downloadFailed => 'Не удалось скачать';
-
-  @override
-  String storageUsed(String size) {
-    return '$size на диске';
-  }
-
-  @override
-  String get today => 'Сегодня';
-
-  @override
-  String get pickADay => 'Выберите день';
-
-  @override
   String get dailySettings => 'Настройки дня';
-
-  @override
-  String get ayahsPerDay => 'Аятов в день';
 
   @override
   String get reminders => 'Напоминания';
 
   @override
-  String get noFutureDays => 'У ещё не наступившего дня нет аятов';
-
-  @override
-  String get bookmark => 'В закладки';
-
-  @override
-  String get removeBookmark => 'Убрать из закладок';
-
-  @override
-  String get playFromHere => 'Слушать отсюда';
-
-  @override
   String get copyAyah => 'Копировать';
 
   @override
-  String get shareAyah => 'Поделиться';
-
-  @override
   String get copied => 'Скопировано';
-
-  @override
-  String get noBookmarks => 'Закладок пока нет';
-
-  @override
-  String get bookmarksHint =>
-      'Нажмите на аят правой кнопкой, чтобы добавить в закладки';
 }

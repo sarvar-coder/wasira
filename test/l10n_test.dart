@@ -18,16 +18,19 @@ void main() {
     );
   });
 
-  test('every locale translates the navigation labels', () async {
+  test('every locale translates what the app actually shows', () async {
     for (final code in ['en', 'uz', 'ru', 'ar']) {
       final l10n = await load(code);
       for (final label in [
-        l10n.navSurahs,
-        l10n.navBookmarks,
-        l10n.navDaily,
-        l10n.navDownloads,
+        l10n.chooseTranslation,
+        l10n.dailySettings,
+        l10n.reminders,
+        l10n.arabicTextSize,
+        l10n.serviceUnreachable,
+        l10n.tryAgain,
+        l10n.copyAyah,
       ]) {
-        expect(label, isNotEmpty, reason: 'missing a nav label in $code');
+        expect(label, isNotEmpty, reason: 'missing a label in $code');
       }
     }
   });
@@ -36,19 +39,11 @@ void main() {
     final en = await load('en');
     for (final code in ['uz', 'ru', 'ar']) {
       final other = await load(code);
-      expect(other.navSurahs, isNot(en.navSurahs),
-          reason: '$code navSurahs looks untranslated');
       expect(other.chooseTranslation, isNot(en.chooseTranslation),
           reason: '$code chooseTranslation looks untranslated');
+      expect(other.dailySettings, isNot(en.dailySettings),
+          reason: '$code dailySettings looks untranslated');
     }
-  });
-
-  test('plurals are wired per locale', () async {
-    expect((await load('en')).ayahCount(1), '1 ayah');
-    expect((await load('en')).ayahCount(7), '7 ayahs');
-    // Russian has three plural forms; a naive translation collapses them.
-    final ru = await load('ru');
-    expect(ru.ayahCount(1), isNot(ru.ayahCount(5)));
   });
 
   testWidgets('Arabic locale mirrors the layout to RTL', (tester) async {
@@ -155,47 +150,6 @@ void main() {
           expect(value.trim(), isNotEmpty, reason: '$code has an empty $key');
         });
       }
-    });
-
-    test('calls a bookmark one thing per locale', () {
-      // The list said "saved" while the menu said "bookmark"; one concept
-      // needs one word or the two screens read as two features.
-      // Stems, not whole words: Russian inserts a vowel in the genitive
-      // plural (закладок) and Arabic prefixes the article (المحفوظات).
-      const stems = {
-        'en': 'bookmark',
-        'uz': "xatcho'p",
-        'ru': 'заклад',
-        'ar': 'محفوظات',
-      };
-      for (final code in stems.keys) {
-        final other = arb(code);
-        for (final key in ['navBookmarks', 'bookmark', 'removeBookmark', 'noBookmarks']) {
-          expect(other[key]!.toLowerCase(), contains(stems[code]!),
-              reason: '$code $key does not use the same word as the rest');
-        }
-      }
-    });
-  });
-
-  group('Arabic plural rules', () {
-    // CLDR gives Arabic six categories. Getting these wrong is the kind of
-    // error that only shows up on a surah with the wrong number of ayahs.
-    test('agree with the number, singular through plural', () async {
-      final ar = await load('ar');
-
-      expect(ar.ayahCount(1), 'آية واحدة');
-      expect(ar.ayahCount(2), 'آيتان');
-      // 3 to 10 take the plural noun.
-      expect(ar.ayahCount(7), '7 آيات');
-      // 11 upwards return to the singular. Al-Baqarah is 286.
-      expect(ar.ayahCount(286), '286 آية');
-    });
-
-    test('one and two carry no digit, because Arabic does not use one', () async {
-      final ar = await load('ar');
-      expect(ar.ayahCount(1), isNot(contains('1')));
-      expect(ar.ayahCount(2), isNot(contains('2')));
     });
   });
 }
