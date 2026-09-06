@@ -130,4 +130,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String storageUsed(String size) {
     return '$size on disk';
   }
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get pickADay => 'Pick a day';
+
+  @override
+  String get dailySettings => 'Daily settings';
+
+  @override
+  String get ayahsPerDay => 'Ayahs a day';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get noFutureDays => 'A day that has not arrived has no ayahs yet';
 }

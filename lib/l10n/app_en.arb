@@ -76,5 +76,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "today": "Today",
+  "pickADay": "Pick a day",
+  "dailySettings": "Daily settings",
+  "ayahsPerDay": "Ayahs a day",
+  "reminders": "Reminders",
+  "noFutureDays": "A day that has not arrived has no ayahs yet"
 }

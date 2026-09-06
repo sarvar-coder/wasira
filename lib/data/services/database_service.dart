@@ -250,6 +250,31 @@ class DatabaseService {
         bitrate: r['bitrate'] as int?,
       );
 
+  /// Ayahs addressed by their global number rather than by surah — how the
+  /// daily pick arrives, scattered across the Quran.
+  List<Ayah> readAyahsByNumber(List<int> numbers) {
+    if (numbers.isEmpty) return const [];
+    final holes = List.filled(numbers.length, '?').join(',');
+    return db
+        .select('SELECT * FROM ayahs WHERE number IN ($holes) ORDER BY number',
+            numbers)
+        .map(_ayahOf)
+        .toList(growable: false);
+  }
+
+  Map<int, String> readTranslationsByNumber(List<int> numbers, String edition) {
+    if (numbers.isEmpty) return const {};
+    final holes = List.filled(numbers.length, '?').join(',');
+    return {
+      for (final r in db.select(
+        'SELECT ayah_number n, text FROM translations '
+        'WHERE edition = ? AND ayah_number IN ($holes)',
+        [edition, ...numbers],
+      ))
+        r['n'] as int: r['text'] as String
+    };
+  }
+
   /// The ayah numbers stored for one day, or null when that day has never been
   /// asked for. Stored as a comma-separated list: a handful of small integers,
   /// read whole or not at all.
