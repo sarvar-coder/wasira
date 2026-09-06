@@ -387,13 +387,13 @@ abstract class AppLocalizations {
   /// No description provided for @noBookmarks.
   ///
   /// In en, this message translates to:
-  /// **'Nothing saved yet'**
+  /// **'No bookmarks yet'**
   String get noBookmarks;
 
   /// No description provided for @bookmarksHint.
   ///
   /// In en, this message translates to:
-  /// **'Right-click an ayah to save it'**
+  /// **'Right-click an ayah to bookmark it'**
   String get bookmarksHint;
 }
 

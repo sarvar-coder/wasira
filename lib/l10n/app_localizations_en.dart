@@ -165,8 +165,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copied => 'Copied';
 
   @override
-  String get noBookmarks => 'Nothing saved yet';
+  String get noBookmarks => 'No bookmarks yet';
 
   @override
-  String get bookmarksHint => 'Right-click an ayah to save it';
+  String get bookmarksHint => 'Right-click an ayah to bookmark it';
 }

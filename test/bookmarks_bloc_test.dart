@@ -175,7 +175,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Nothing saved yet'), findsOneWidget);
+    expect(find.text('No bookmarks yet'), findsOneWidget);
   });
 
   testWidgets('a saved ayah shows its reference and text', (tester) async {

@@ -166,8 +166,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get copied => 'Скопировано';
 
   @override
-  String get noBookmarks => 'Пока ничего не сохранено';
+  String get noBookmarks => 'Закладок пока нет';
 
   @override
-  String get bookmarksHint => 'Нажмите на аят правой кнопкой, чтобы сохранить';
+  String get bookmarksHint =>
+      'Нажмите на аят правой кнопкой, чтобы добавить в закладки';
 }

@@ -48,12 +48,12 @@
   "ayahsPerDay": "آيات في اليوم",
   "reminders": "التذكيرات",
   "noFutureDays": "اليوم الذي لم يأتِ بعد لا آيات له",
-  "bookmark": "إضافة إشارة",
-  "removeBookmark": "إزالة الإشارة",
+  "bookmark": "إضافة إلى المحفوظات",
+  "removeBookmark": "إزالة من المحفوظات",
   "playFromHere": "التشغيل من هنا",
   "copyAyah": "نسخ",
   "shareAyah": "مشاركة",
   "copied": "تم النسخ",
-  "noBookmarks": "لم يُحفظ شيء بعد",
-  "bookmarksHint": "انقر على الآية بالزر الأيمن لحفظها"
+  "noBookmarks": "لا توجد محفوظات بعد",
+  "bookmarksHint": "انقر على الآية بالزر الأيمن لإضافتها إلى المحفوظات"
 }
