@@ -79,4 +79,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sajdaObligatoryHere => 'Obligatory prostration';
+
+  @override
+  String get arabicTextSize => 'Arabic text size';
 }

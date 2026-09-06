@@ -78,4 +78,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get sajdaObligatoryHere => 'Vojib sajda';
+
+  @override
+  String get arabicTextSize => 'Arab matni o\'lchami';
 }

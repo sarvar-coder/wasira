@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'data/repositories/quran_repository.dart';
+import 'data/repositories/settings_repository.dart';
 import 'l10n/app_localizations.dart';
 import 'data/services/database_service.dart';
 import 'ui/core/themes/tokens.dart';
@@ -86,7 +87,9 @@ class _Shell extends StatelessWidget {
           l10n.navSurahs,
           Icons.menu_book_outlined,
           (_) => SurahListScreen(
-              repository: app.repository, translationEdition: edition),
+              repository: app.repository,
+              settings: SettingsRepository(app.db),
+              translationEdition: edition),
         ),
         ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
         ShellDestination(l10n.navDaily, Icons.wb_sunny_outlined, _buildTodo),

@@ -52,5 +52,6 @@
   },
   "@sajdaHere": {
     "description": "Marker on an ayah of prostration"
-  }
+  },
+  "arabicTextSize": "Arabic text size"
 }

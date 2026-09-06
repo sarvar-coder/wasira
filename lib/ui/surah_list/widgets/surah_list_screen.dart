@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/models/surah.dart';
 import '../../../data/repositories/quran_repository.dart';
+import '../../../data/repositories/settings_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../../reader/widgets/reader_screen.dart';
@@ -16,10 +17,12 @@ class SurahListScreen extends StatelessWidget {
   const SurahListScreen({
     super.key,
     required this.repository,
+    required this.settings,
     required this.translationEdition,
   });
 
   final QuranRepository repository;
+  final SettingsRepository settings;
   final String? translationEdition;
 
   @override
@@ -37,6 +40,7 @@ class SurahListScreen extends StatelessWidget {
               itemBuilder: (context, i) => _SurahTile(
                   surah: surahs[i],
                   repository: repository,
+                  settings: settings,
                   translationEdition: translationEdition),
             ),
         },
@@ -47,10 +51,12 @@ class _SurahTile extends StatelessWidget {
   const _SurahTile({
     required this.surah,
     required this.repository,
+    required this.settings,
     required this.translationEdition,
   });
   final Surah surah;
   final QuranRepository repository;
+  final SettingsRepository settings;
   final String? translationEdition;
 
   @override
@@ -99,6 +105,7 @@ class _SurahTile extends StatelessWidget {
           builder: (_) => ReaderScreen(
             surah: surah.number,
             repository: repository,
+            settings: settings,
             translationEdition: translationEdition,
           ),
         ));

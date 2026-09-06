@@ -11,3 +11,8 @@ class TranslationExpanded extends ReaderEvent {
   TranslationExpanded(this.ayahNumber);
   final int ayahNumber;
 }
+
+class ArabicSizeChanged extends ReaderEvent {
+  ArabicSizeChanged(this.size);
+  final double size;
+}

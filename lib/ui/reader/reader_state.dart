@@ -16,6 +16,7 @@ class ReaderLoaded extends ReaderState {
     required this.ayahs,
     required this.translations,
     required this.bismillahHeader,
+    required this.arabicSize,
     this.expanded = const <int>{},
   });
 
@@ -31,13 +32,16 @@ class ReaderLoaded extends ReaderState {
   /// At-Tawbah.
   final String? bismillahHeader;
 
+  final double arabicSize;
   final Set<int> expanded;
 
-  ReaderLoaded withExpanded(Set<int> next) => ReaderLoaded(
+  ReaderLoaded copyWith({Set<int>? expanded, double? arabicSize}) =>
+      ReaderLoaded(
         surah: surah,
         ayahs: ayahs,
         translations: translations,
         bismillahHeader: bismillahHeader,
-        expanded: next,
+        arabicSize: arabicSize ?? this.arabicSize,
+        expanded: expanded ?? this.expanded,
       );
 }
