@@ -30,5 +30,17 @@
   "repeatRange": "Повтор отрывка",
   "reciter": "Чтец",
   "playbackFailed": "Не удалось воспроизвести",
-  "wholeSurahReciter": "Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны"
+  "wholeSurahReciter": "Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны",
+  "download": "Скачать",
+  "resumeDownload": "Продолжить",
+  "deleteDownload": "Удалить загрузку",
+  "downloadFailed": "Не удалось скачать",
+  "storageUsed": "{size} на диске",
+  "@storageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }

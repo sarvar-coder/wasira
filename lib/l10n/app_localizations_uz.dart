@@ -112,4 +112,21 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get wholeSurahReciter =>
       'Bu qori butun surani o\'qigan, shuning uchun alohida oyatga o\'tib bo\'lmaydi';
+
+  @override
+  String get download => 'Yuklab olish';
+
+  @override
+  String get resumeDownload => 'Davom ettirish';
+
+  @override
+  String get deleteDownload => 'Yuklamani o\'chirish';
+
+  @override
+  String get downloadFailed => 'Yuklab olib bo\'lmadi';
+
+  @override
+  String storageUsed(String size) {
+    return 'diskda $size';
+  }
 }

@@ -30,5 +30,17 @@
   "repeatRange": "Oraliqni takrorlash",
   "reciter": "Qori",
   "playbackFailed": "Ijro etilmadi",
-  "wholeSurahReciter": "Bu qori butun surani o'qigan, shuning uchun alohida oyatga o'tib bo'lmaydi"
+  "wholeSurahReciter": "Bu qori butun surani o'qigan, shuning uchun alohida oyatga o'tib bo'lmaydi",
+  "download": "Yuklab olish",
+  "resumeDownload": "Davom ettirish",
+  "deleteDownload": "Yuklamani o'chirish",
+  "downloadFailed": "Yuklab olib bo'lmadi",
+  "storageUsed": "diskda {size}",
+  "@storageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }

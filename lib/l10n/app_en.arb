@@ -63,5 +63,18 @@
   "repeatRange": "Repeat range",
   "reciter": "Reciter",
   "playbackFailed": "Playback failed",
-  "wholeSurahReciter": "This reciter publishes whole surahs, so single ayahs cannot be addressed"
+  "wholeSurahReciter": "This reciter publishes whole surahs, so single ayahs cannot be addressed",
+  "download": "Download",
+  "resumeDownload": "Resume",
+  "deleteDownload": "Delete download",
+  "downloadFailed": "Download failed",
+  "storageUsed": "{size} on disk",
+  "@storageUsed": {
+    "description": "Total disk taken by one reciter's downloads",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }
