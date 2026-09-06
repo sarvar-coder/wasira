@@ -38,15 +38,21 @@ void main() {
         DatabaseService.schemaVersion);
   });
 
-  test('sajda is stored per ayah so the reader can mark the 15', () {
+  test('sajda keeps the obligatory/recommended distinction', () {
     DatabaseService(db).migrate();
     db.execute('''
       INSERT INTO surahs VALUES (32, 'س', 'As-Sajda', 'The Prostration', 'Meccan', 30);
-      INSERT INTO ayahs VALUES (4198, 32, 15, 21, 416, 168, 1, 5, 1, 'x');
+      INSERT INTO surahs VALUES (7, 'ا', 'Al-A''raaf', 'The Heights', 'Meccan', 206);
+      -- 32:15 is obligatory, 7:206 is recommended
+      INSERT INTO ayahs VALUES (4198, 32, 15, 21, 416, 168, 1, 5, 1, 1, 'x');
+      INSERT INTO ayahs VALUES (1160, 7, 206, 9, 176, 71, 1, 2, 1, 0, 'y');
     ''');
 
-    final sajda = db.select('SELECT sajda FROM ayahs WHERE number = 4198');
+    final rows = db.select(
+        'SELECT number, sajda, sajda_obligatory FROM ayahs ORDER BY number');
 
-    expect(sajda.first['sajda'], 1);
+    expect(rows.map((r) => r['sajda']), everyElement(1));
+    expect(rows.firstWhere((r) => r['number'] == 4198)['sajda_obligatory'], 1);
+    expect(rows.firstWhere((r) => r['number'] == 1160)['sajda_obligatory'], 0);
   });
 }

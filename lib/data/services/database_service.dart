@@ -48,6 +48,7 @@ class DatabaseService {
       ruku            INTEGER NOT NULL,
       manzil          INTEGER NOT NULL,
       sajda           INTEGER NOT NULL,
+      sajda_obligatory INTEGER,
       text_ar         TEXT NOT NULL
     );
     CREATE INDEX ayahs_by_surah ON ayahs(surah, number_in_surah);
