@@ -6,9 +6,13 @@ import '../../../data/repositories/settings_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
 import '../../core/ui/arabic_text.dart';
+import '../../../data/services/audio_player_service.dart';
+import '../audio_bloc.dart';
+import '../audio_state.dart';
 import '../reader_bloc.dart';
 import '../reader_event.dart';
 import '../reader_state.dart';
+import 'audio_bar.dart';
 import 'ayah_tile.dart';
 
 class ReaderScreen extends StatelessWidget {
@@ -52,13 +56,23 @@ class _ReaderView extends StatelessWidget {
                     style: TextStyle(color: Tokens.of(context).muted)),
               ),
             ),
-          final ReaderLoaded loaded => Scaffold(
-              appBar: AppBar(
-                title: Text(loaded.surah.nameEn),
-                titleTextStyle: Theme.of(context).textTheme.titleMedium,
-                actions: [_ArabicSizeButton(current: loaded.arabicSize)],
+          final ReaderLoaded loaded => BlocProvider(
+              // Scoped to the open surah: its ayah numbers are the playlist.
+              create: (context) => AudioBloc(
+                player: AudioPlayerService(),
+                settings: context.read<ReaderBloc>().settings,
+                surah: loaded.surah.number,
+                ayahNumbers: [for (final a in loaded.ayahs) a.number],
               ),
-              body: _Ayahs(loaded: loaded, arabicSize: loaded.arabicSize),
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(loaded.surah.nameEn),
+                  titleTextStyle: Theme.of(context).textTheme.titleMedium,
+                  actions: [_ArabicSizeButton(current: loaded.arabicSize)],
+                ),
+                body: _Ayahs(loaded: loaded, arabicSize: loaded.arabicSize),
+                bottomNavigationBar: const AudioBar(),
+              ),
             ),
         },
       );
@@ -82,14 +96,18 @@ class _Ayahs extends StatelessWidget {
           return _BismillahHeader(text: header, size: arabicSize);
         }
         final ayah = loaded.ayahs[i - offset];
-        return AyahTile(
-          ayah: ayah,
-          arabicSize: arabicSize,
-          translation: loaded.translations[ayah.number],
-          expanded: loaded.expanded.contains(ayah.number),
-          onExpand: () => context
-              .read<ReaderBloc>()
-              .add(TranslationExpanded(ayah.number)),
+        return BlocSelector<AudioBloc, AudioState, bool>(
+          selector: (audio) => audio.currentAyah == ayah.number,
+          builder: (context, sounding) => AyahTile(
+            ayah: ayah,
+            arabicSize: arabicSize,
+            translation: loaded.translations[ayah.number],
+            expanded: loaded.expanded.contains(ayah.number),
+            highlighted: sounding,
+            onExpand: () => context
+                .read<ReaderBloc>()
+                .add(TranslationExpanded(ayah.number)),
+          ),
         );
       },
     );

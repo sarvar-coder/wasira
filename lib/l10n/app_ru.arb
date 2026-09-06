@@ -20,5 +20,15 @@
   "showLess": "Свернуть",
   "sajdaHere": "Земной поклон",
   "sajdaObligatoryHere": "Обязательный земной поклон",
-  "arabicTextSize": "Размер арабского текста"
+  "arabicTextSize": "Размер арабского текста",
+  "play": "Воспроизвести",
+  "pause": "Пауза",
+  "nextAyah": "Следующий аят",
+  "previousAyah": "Предыдущий аят",
+  "repeatOff": "Без повтора",
+  "repeatAyah": "Повтор аята",
+  "repeatRange": "Повтор отрывка",
+  "reciter": "Чтец",
+  "playbackFailed": "Не удалось воспроизвести",
+  "wholeSurahReciter": "Этот чтец записан сурами целиком, поэтому отдельные аяты недоступны"
 }

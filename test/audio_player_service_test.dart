@@ -42,8 +42,8 @@ void main() {
   group('repeat modes', () {
     test('cover the memorization loop', () {
       // Repeating one ayah, then a span, is how hifz works.
-      expect(RepeatMode.values,
-          containsAll([RepeatMode.none, RepeatMode.ayah, RepeatMode.range]));
+      expect(RecitationRepeat.values,
+          containsAll([RecitationRepeat.none, RecitationRepeat.ayah, RecitationRepeat.range]));
     });
   });
 }

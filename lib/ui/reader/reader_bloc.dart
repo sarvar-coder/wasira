@@ -29,6 +29,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
 
   final QuranRepository repository;
   final SettingsRepository settings;
+
   final String? translationEdition;
 
   Future<void> _onSurahRequested(

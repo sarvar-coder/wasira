@@ -20,5 +20,15 @@
   "showLess": "Kamroq",
   "sajdaHere": "Sajda",
   "sajdaObligatoryHere": "Vojib sajda",
-  "arabicTextSize": "Arab matni o'lchami"
+  "arabicTextSize": "Arab matni o'lchami",
+  "play": "Ijro",
+  "pause": "To'xtatish",
+  "nextAyah": "Keyingi oyat",
+  "previousAyah": "Oldingi oyat",
+  "repeatOff": "Takrorlanmasin",
+  "repeatAyah": "Oyatni takrorlash",
+  "repeatRange": "Oraliqni takrorlash",
+  "reciter": "Qori",
+  "playbackFailed": "Ijro etilmadi",
+  "wholeSurahReciter": "Bu qori butun surani o'qigan, shuning uchun alohida oyatga o'tib bo'lmaydi"
 }

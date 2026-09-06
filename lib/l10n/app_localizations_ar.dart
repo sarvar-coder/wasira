@@ -84,4 +84,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get arabicTextSize => 'حجم النص العربي';
+
+  @override
+  String get play => 'تشغيل';
+
+  @override
+  String get pause => 'إيقاف مؤقت';
+
+  @override
+  String get nextAyah => 'الآية التالية';
+
+  @override
+  String get previousAyah => 'الآية السابقة';
+
+  @override
+  String get repeatOff => 'بدون تكرار';
+
+  @override
+  String get repeatAyah => 'تكرار الآية';
+
+  @override
+  String get repeatRange => 'تكرار المقطع';
+
+  @override
+  String get reciter => 'القارئ';
+
+  @override
+  String get playbackFailed => 'تعذر التشغيل';
+
+  @override
+  String get wholeSurahReciter =>
+      'هذا القارئ مسجَّل بالسور كاملة، لذا لا يمكن الانتقال إلى آية بعينها';
 }
