@@ -97,7 +97,10 @@ void main() {
     await render(
       tester,
       BlocProvider.value(
-          value: bloc, child: const Scaffold(body: SurahListScreen())),
+          value: bloc, child: Scaffold(
+              body: SurahListScreen(
+                  repository: repoServing('surah_list.json'),
+                  translationEdition: null))),
     );
 
     await expectLater(find.byType(MaterialApp),
@@ -112,7 +115,10 @@ void main() {
     await render(
       tester,
       BlocProvider.value(
-          value: bloc, child: const Scaffold(body: SurahListScreen())),
+          value: bloc, child: Scaffold(
+              body: SurahListScreen(
+                  repository: repoServing('surah_list.json'),
+                  translationEdition: null))),
       brightness: Brightness.dark,
     );
 
@@ -128,7 +134,10 @@ void main() {
     await render(
       tester,
       BlocProvider.value(
-          value: bloc, child: const Scaffold(body: SurahListScreen())),
+          value: bloc, child: Scaffold(
+              body: SurahListScreen(
+                  repository: repoServing('surah_list.json'),
+                  translationEdition: null))),
       locale: const Locale('ar'),
     );
 

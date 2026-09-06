@@ -67,4 +67,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get revelationMedinan => 'Medinan';
+
+  @override
+  String get showMore => 'Show more';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
+  String get sajdaHere => 'Prostration';
+
+  @override
+  String get sajdaObligatoryHere => 'Obligatory prostration';
 }

@@ -197,6 +197,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medinan'**
   String get revelationMedinan;
+
+  /// Expands a translation clamped for length
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
+  /// Marker on an ayah of prostration
+  ///
+  /// In en, this message translates to:
+  /// **'Prostration'**
+  String get sajdaHere;
+
+  /// No description provided for @sajdaObligatoryHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Obligatory prostration'**
+  String get sajdaObligatoryHere;
 }
 
 class _AppLocalizationsDelegate

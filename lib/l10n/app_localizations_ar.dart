@@ -69,4 +69,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get revelationMedinan => 'مدنية';
+
+  @override
+  String get showMore => 'عرض المزيد';
+
+  @override
+  String get showLess => 'عرض أقل';
+
+  @override
+  String get sajdaHere => 'سجدة';
+
+  @override
+  String get sajdaObligatoryHere => 'سجدة واجبة';
 }

@@ -60,24 +60,34 @@ class _Root extends StatelessWidget {
           OnboardingFailed() ||
           OnboardingChoosing() =>
             const Scaffold(body: OnboardingScreen()),
-          OnboardingSyncing(:final progress) => _Shell(progress: progress),
-          OnboardingReady() => const _Shell(),
+          OnboardingSyncing(:final edition, :final progress) =>
+            _Shell(edition: edition, progress: progress),
+          OnboardingReady(:final edition) => _Shell(edition: edition),
         },
       );
 }
 
 class _Shell extends StatelessWidget {
-  const _Shell({this.progress});
+  const _Shell({required this.edition, this.progress});
+
+  /// The translation the user chose. Ayah text is shown alongside it.
+  final String edition;
   final double? progress;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final app = context.findAncestorWidgetOfExactType<WasiraApp>()!;
 
     return AppShell(
       banner: progress == null ? null : _SyncBanner(progress: progress!),
       destinations: [
-        ShellDestination(l10n.navSurahs, Icons.menu_book_outlined, _buildSurahs),
+        ShellDestination(
+          l10n.navSurahs,
+          Icons.menu_book_outlined,
+          (_) => SurahListScreen(
+              repository: app.repository, translationEdition: edition),
+        ),
         ShellDestination(l10n.navBookmarks, Icons.star_outline, _buildTodo),
         ShellDestination(l10n.navDaily, Icons.wb_sunny_outlined, _buildTodo),
         ShellDestination(l10n.navDownloads, Icons.download_outlined, _buildTodo),
@@ -85,8 +95,6 @@ class _Shell extends StatelessWidget {
     );
   }
 }
-
-Widget _buildSurahs(BuildContext context) => const SurahListScreen();
 
 Widget _buildTodo(BuildContext context) => Center(
       child: Text(AppLocalizations.of(context)!.notBuiltYet,

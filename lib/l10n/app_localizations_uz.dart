@@ -66,4 +66,16 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get revelationMedinan => 'Madaniy';
+
+  @override
+  String get showMore => 'Ko\'proq';
+
+  @override
+  String get showLess => 'Kamroq';
+
+  @override
+  String get sajdaHere => 'Sajda';
+
+  @override
+  String get sajdaObligatoryHere => 'Vojib sajda';
 }
