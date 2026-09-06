@@ -2,6 +2,7 @@ import 'package:just_audio/just_audio.dart';
 
 import '../../domain/audio_url.dart';
 import '../../domain/reciter.dart';
+import 'audio_download_service.dart';
 
 /// What the player is repeating.
 enum RecitationRepeat {
@@ -22,9 +23,14 @@ enum RecitationRepeat {
 /// highlight, while a surah-by-surah reciter gets one source and no ayah
 /// granularity at all.
 class AudioPlayerService {
-  AudioPlayerService({AudioPlayer? player}) : _player = player ?? AudioPlayer();
+  AudioPlayerService({AudioPlayer? player, this.downloads})
+      : _player = player ?? AudioPlayer();
 
   final AudioPlayer _player;
+
+  /// When present, a downloaded surah plays from disk instead of the CDN.
+  /// Null means always stream.
+  final AudioDownloadService? downloads;
 
   /// Global ayah numbers in playing order. Empty for surah-by-surah playback,
   /// where individual ayahs are not addressable.
@@ -60,15 +66,17 @@ class AudioPlayerService {
     if (reciter.isVerseByVerse) {
       _queue = ayahNumbers;
       await _player.setAudioSources(
-        [for (final n in ayahNumbers) AudioSource.uri(AudioUrl.ayah(reciter, n))],
+        [for (final n in ayahNumbers) AudioSource.uri(_source(reciter, n))],
         initialIndex: startAt,
       );
     } else {
       _queue = const [];
-      await _player.setAudioSource(
-          AudioSource.uri(AudioUrl.surah(reciter, surah)));
+      await _player.setAudioSource(AudioSource.uri(_source(reciter, surah)));
     }
   }
+
+  Uri _source(Reciter reciter, int number) =>
+      downloads?.sourceFor(reciter, number) ?? AudioUrl.of(reciter, number);
 
   Future<void> play() => _player.play();
   Future<void> pause() => _player.pause();

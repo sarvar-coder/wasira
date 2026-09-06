@@ -5,6 +5,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'app.dart';
 import 'data/repositories/quran_repository.dart';
 import 'data/services/alquran_api_service.dart';
+import 'data/services/audio_download_service.dart';
 import 'data/services/database_service.dart';
 
 Future<void> main() async {
@@ -18,5 +19,6 @@ Future<void> main() async {
   runApp(WasiraApp(
     db: db,
     repository: QuranRepository(db: db, api: AlquranApiService()),
+    downloads: AudioDownloadService(root: dir),
   ));
 }

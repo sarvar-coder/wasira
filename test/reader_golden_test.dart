@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -9,6 +10,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
 import 'package:wasira/data/repositories/settings_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
+import 'package:wasira/data/services/audio_download_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 import 'package:wasira/l10n/app_localizations.dart';
 import 'package:wasira/ui/core/themes/tokens.dart';
@@ -63,7 +65,11 @@ void main() {
     tester.view.devicePixelRatio = 2.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(RepositoryProvider(
+      // Nothing is downloaded here, so every source resolves to the CDN and
+      // the goldens stay about text rather than audio.
+      create: (_) => AudioDownloadService(root: Directory.systemTemp),
+      child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: Tokens.light.theme.copyWith(
@@ -74,6 +80,7 @@ void main() {
         repository: repoFor(surah),
         settings: SettingsRepository(service),
         translationEdition: edition,
+      ),
       ),
     ));
     await tester.pumpAndSettle();

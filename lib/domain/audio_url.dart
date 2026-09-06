@@ -33,6 +33,12 @@ class AudioUrl {
         '$host/audio-surah/${reciter.bitrate}/${reciter.edition}/$surahNumber.mp3');
   }
 
+  /// Either shape, picked by the reciter's layout. [number] is a global ayah
+  /// number for a verse-by-verse reciter and a surah number for a
+  /// surah-by-surah one.
+  static Uri of(Reciter reciter, int number) =>
+      reciter.isVerseByVerse ? ayah(reciter, number) : surah(reciter, number);
+
   static void _check(int value, int min, int max, String what) {
     if (value < min || value > max) {
       throw RangeError.range(value, min, max, what);

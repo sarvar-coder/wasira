@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/app.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
+import 'package:wasira/data/services/audio_download_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 
 void main() {
@@ -13,6 +16,7 @@ void main() {
     await tester.pumpWidget(WasiraApp(
       db: service,
       repository: QuranRepository(db: service, api: AlquranApiService()),
+      downloads: AudioDownloadService(root: Directory.systemTemp),
     ));
     await tester.pump();
 
