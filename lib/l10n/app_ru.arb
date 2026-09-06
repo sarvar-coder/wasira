@@ -1,0 +1,19 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Wasira",
+  "chooseTranslation": "Выберите перевод",
+  "pickerSubtitle": "{translations} переводов на {languages} языках. Это можно изменить позже.",
+  "translationsAvailable": "доступно: {count}",
+  "serviceUnreachable": "Не удалось связаться со службой Корана",
+  "tryAgain": "Повторить",
+  "surahsUnavailable": "Не удалось загрузить суры",
+  "downloadingQuran": "Загрузка Корана",
+  "notBuiltYet": "Ещё не готово",
+  "navSurahs": "Суры",
+  "navBookmarks": "Закладки",
+  "navDaily": "Ежедневно",
+  "navDownloads": "Загрузки",
+  "ayahCount": "{count, plural, one{{count} аят} few{{count} аята} other{{count} аятов}}",
+  "revelationMeccan": "Мекканская",
+  "revelationMedinan": "Мединская"
+}

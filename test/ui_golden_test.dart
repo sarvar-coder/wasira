@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:wasira/data/repositories/quran_repository.dart';
+import 'package:wasira/l10n/app_localizations.dart';
 import 'package:wasira/data/services/alquran_api_service.dart';
 import 'package:wasira/data/services/database_service.dart';
 import 'package:wasira/ui/core/themes/tokens.dart';
@@ -54,12 +55,16 @@ void main() {
       );
 
   Future<void> render(WidgetTester tester, Widget child,
-      {Brightness brightness = Brightness.light}) async {
+      {Brightness brightness = Brightness.light,
+      Locale locale = const Locale('en')}) async {
     tester.view.physicalSize = const Size(1280, 1600);
     tester.view.devicePixelRatio = 2.0;
     addTearDown(tester.view.reset);
     final tokens = brightness == Brightness.light ? Tokens.light : Tokens.dark;
     await tester.pumpWidget(MaterialApp(
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: tokens.theme.copyWith(
         textTheme: tokens.theme.textTheme.apply(fontFamily: 'Amiri'),
       ),
@@ -113,5 +118,21 @@ void main() {
 
     await expectLater(find.byType(MaterialApp),
         matchesGoldenFile('goldens/surah_list_dark.png'));
+  });
+
+  testWidgets('surah list in Arabic, mirrored right to left', (tester) async {
+    final bloc = SurahListBloc(repoServing('surah_list.json'))
+      ..add(SurahListRequested());
+    addTearDown(bloc.close);
+
+    await render(
+      tester,
+      BlocProvider.value(
+          value: bloc, child: const Scaffold(body: SurahListScreen())),
+      locale: const Locale('ar'),
+    );
+
+    await expectLater(find.byType(MaterialApp),
+        matchesGoldenFile('goldens/surah_list_arabic.png'));
   });
 }

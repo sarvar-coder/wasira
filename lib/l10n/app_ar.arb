@@ -1,0 +1,19 @@
+{
+  "@@locale": "ar",
+  "appTitle": "وسيلة",
+  "chooseTranslation": "اختر ترجمة",
+  "pickerSubtitle": "{translations} ترجمة بـ {languages} لغة. يمكنك تغيير ذلك لاحقًا.",
+  "translationsAvailable": "{count} متاحة",
+  "serviceUnreachable": "تعذر الوصول إلى خدمة القرآن",
+  "tryAgain": "أعد المحاولة",
+  "surahsUnavailable": "تعذر تحميل السور",
+  "downloadingQuran": "جارٍ تحميل القرآن",
+  "notBuiltYet": "غير جاهز بعد",
+  "navSurahs": "السور",
+  "navBookmarks": "المحفوظات",
+  "navDaily": "اليومي",
+  "navDownloads": "التنزيلات",
+  "ayahCount": "{count, plural, one{آية واحدة} two{آيتان} few{{count} آيات} other{{count} آية}}",
+  "revelationMeccan": "مكية",
+  "revelationMedinan": "مدنية"
+}
