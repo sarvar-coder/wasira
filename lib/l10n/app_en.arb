@@ -28,7 +28,6 @@
   "tryAgain": "Try again",
   "surahsUnavailable": "Could not load surahs",
   "downloadingQuran": "Downloading the Quran",
-  "notBuiltYet": "Not built yet",
   "navSurahs": "Surahs",
   "navBookmarks": "Bookmarks",
   "navDaily": "Daily",
@@ -88,5 +87,7 @@
   "playFromHere": "Play from here",
   "copyAyah": "Copy",
   "shareAyah": "Share",
-  "copied": "Copied"
+  "copied": "Copied",
+  "noBookmarks": "Nothing saved yet",
+  "bookmarksHint": "Right-click an ayah to save it"
 }

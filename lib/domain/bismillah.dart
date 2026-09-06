@@ -10,6 +10,8 @@
 /// things and this pulls them apart again.
 library;
 
+import 'models/ayah.dart';
+
 /// Byte-for-byte the prefix `quran-uthmani` prepends. A test pins it against
 /// the real API response, so a change upstream fails loudly rather than
 /// silently disabling the split.
@@ -91,3 +93,33 @@ BismillahSplit splitOpeningBismillah({
 
   return BismillahSplit(header: null, text: stripped);
 }
+
+/// [splitOpeningBismillah] applied to a whole ayah, returning it unchanged
+/// when there is nothing to split.
+///
+/// Every screen that shows an ayah outside its surah — the daily pick, the
+/// bookmarks list — can land on ayah 1, so this lives in one place rather than
+/// being written out again at each of them.
+Ayah withoutOpeningBismillah(Ayah ayah) {
+  final split = splitOpeningBismillah(
+    surah: ayah.surah,
+    numberInSurah: ayah.numberInSurah,
+    text: ayah.textAr,
+  );
+  return split.text == ayah.textAr ? ayah : replacingText(ayah, split.text);
+}
+
+/// [Ayah] is immutable and has no copyWith; the split needs one field changed.
+Ayah replacingText(Ayah ayah, String text) => Ayah(
+      number: ayah.number,
+      surah: ayah.surah,
+      numberInSurah: ayah.numberInSurah,
+      juz: ayah.juz,
+      page: ayah.page,
+      hizbQuarter: ayah.hizbQuarter,
+      ruku: ayah.ruku,
+      manzil: ayah.manzil,
+      sajda: ayah.sajda,
+      sajdaObligatory: ayah.sajdaObligatory,
+      textAr: text,
+    );

@@ -150,12 +150,6 @@ abstract class AppLocalizations {
   /// **'Downloading the Quran'**
   String get downloadingQuran;
 
-  /// No description provided for @notBuiltYet.
-  ///
-  /// In en, this message translates to:
-  /// **'Not built yet'**
-  String get notBuiltYet;
-
   /// No description provided for @navSurahs.
   ///
   /// In en, this message translates to:
@@ -389,6 +383,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied'**
   String get copied;
+
+  /// No description provided for @noBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved yet'**
+  String get noBookmarks;
+
+  /// No description provided for @bookmarksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Right-click an ayah to save it'**
+  String get bookmarksHint;
 }
 
 class _AppLocalizationsDelegate

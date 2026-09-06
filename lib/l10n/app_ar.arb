@@ -8,7 +8,6 @@
   "tryAgain": "أعد المحاولة",
   "surahsUnavailable": "تعذر تحميل السور",
   "downloadingQuran": "جارٍ تحميل القرآن",
-  "notBuiltYet": "غير جاهز بعد",
   "navSurahs": "السور",
   "navBookmarks": "المحفوظات",
   "navDaily": "اليومي",
@@ -54,5 +53,7 @@
   "playFromHere": "التشغيل من هنا",
   "copyAyah": "نسخ",
   "shareAyah": "مشاركة",
-  "copied": "تم النسخ"
+  "copied": "تم النسخ",
+  "noBookmarks": "لم يُحفظ شيء بعد",
+  "bookmarksHint": "انقر على الآية بالزر الأيمن لحفظها"
 }

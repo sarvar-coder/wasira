@@ -5,7 +5,6 @@ import '../../data/repositories/quran_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../data/services/notification_service.dart';
 import '../../domain/bismillah.dart';
-import '../../domain/models/ayah.dart';
 import 'daily_event.dart';
 import 'daily_state.dart';
 
@@ -103,7 +102,9 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
         ayahs: [
           for (final ayah in ayahs)
             DailyAyah(
-              ayah: _withoutOpeningBismillah(ayah),
+              // A daily pick can land on ayah 1, which arrives with the
+              // Bismillah glued on.
+              ayah: withoutOpeningBismillah(ayah),
               surah: surahs.firstWhere((s) => s.number == ayah.surah),
               translation: translations[ayah.number],
             ),
@@ -112,31 +113,5 @@ class DailyBloc extends Bloc<DailyEvent, DailyState> {
     } catch (error) {
       emit(DailyFailed(error));
     }
-  }
-
-  /// A daily pick can land on ayah 1, which arrives with the Bismillah glued
-  /// on. Splitting it here keeps the ayah and its translation agreeing, the
-  /// same as the reader does.
-  static Ayah _withoutOpeningBismillah(Ayah a) {
-    final split = splitOpeningBismillah(
-      surah: a.surah,
-      numberInSurah: a.numberInSurah,
-      text: a.textAr,
-    );
-    if (split.text == a.textAr) return a;
-
-    return Ayah(
-      number: a.number,
-      surah: a.surah,
-      numberInSurah: a.numberInSurah,
-      juz: a.juz,
-      page: a.page,
-      hizbQuarter: a.hizbQuarter,
-      ruku: a.ruku,
-      manzil: a.manzil,
-      sajda: a.sajda,
-      sajdaObligatory: a.sajdaObligatory,
-      textAr: split.text,
-    );
   }
 }

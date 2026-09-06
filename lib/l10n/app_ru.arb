@@ -8,7 +8,6 @@
   "tryAgain": "Повторить",
   "surahsUnavailable": "Не удалось загрузить суры",
   "downloadingQuran": "Загрузка Корана",
-  "notBuiltYet": "Ещё не готово",
   "navSurahs": "Суры",
   "navBookmarks": "Закладки",
   "navDaily": "Ежедневно",
@@ -54,5 +53,7 @@
   "playFromHere": "Слушать отсюда",
   "copyAyah": "Копировать",
   "shareAyah": "Поделиться",
-  "copied": "Скопировано"
+  "copied": "Скопировано",
+  "noBookmarks": "Пока ничего не сохранено",
+  "bookmarksHint": "Нажмите на аят правой кнопкой, чтобы сохранить"
 }

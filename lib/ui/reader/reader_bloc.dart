@@ -4,7 +4,6 @@ import '../../data/repositories/bookmark_repository.dart';
 import '../../data/repositories/quran_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../domain/bismillah.dart';
-import '../../domain/models/ayah.dart';
 import 'reader_event.dart';
 import 'reader_state.dart';
 
@@ -67,7 +66,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
 
       emit(ReaderLoaded(
         surah: surah,
-        ayahs: [_replacingText(first, split.text), ...ayahs.skip(1)],
+        ayahs: [replacingText(first, split.text), ...ayahs.skip(1)],
         translations: translations,
         bismillahHeader: split.header,
         arabicSize: settings.arabicFontSize,
@@ -80,18 +79,4 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       emit(ReaderFailed(error));
     }
   }
-
-  static Ayah _replacingText(Ayah a, String text) => Ayah(
-        number: a.number,
-        surah: a.surah,
-        numberInSurah: a.numberInSurah,
-        juz: a.juz,
-        page: a.page,
-        hizbQuarter: a.hizbQuarter,
-        ruku: a.ruku,
-        manzil: a.manzil,
-        sajda: a.sajda,
-        sajdaObligatory: a.sajdaObligatory,
-        textAr: text,
-      );
 }

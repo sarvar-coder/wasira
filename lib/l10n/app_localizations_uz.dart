@@ -37,9 +37,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get downloadingQuran => 'Qur\'on yuklanmoqda';
 
   @override
-  String get notBuiltYet => 'Hali tayyor emas';
-
-  @override
   String get navSurahs => 'Suralar';
 
   @override
@@ -165,4 +162,10 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get copied => 'Nusxa olindi';
+
+  @override
+  String get noBookmarks => 'Hali hech narsa saqlanmagan';
+
+  @override
+  String get bookmarksHint => 'Saqlash uchun oyatni o\'ng tugma bilan bosing';
 }

@@ -67,7 +67,10 @@ class AudioBar extends StatelessWidget {
                     _RepeatButton(
                         state: state, enabled: ayahControls, reason: reason),
                     const Spacer(),
-                    _ReciterButton(state: state),
+                    // Flexible: on a phone-width window the controls and
+                    // "Mishary Rashid Alafasy" do not both fit, and the name
+                    // is what can give.
+                    Flexible(child: _ReciterButton(state: state)),
                   ],
                 ),
               ),
@@ -175,6 +178,7 @@ class _ReciterButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Text(state.reciter.name,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: 12, color: tokens.muted)),
       ),
     );
