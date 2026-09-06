@@ -167,4 +167,25 @@ void main() {
       }
     });
   });
+
+  group('Arabic plural rules', () {
+    // CLDR gives Arabic six categories. Getting these wrong is the kind of
+    // error that only shows up on a surah with the wrong number of ayahs.
+    test('agree with the number, singular through plural', () async {
+      final ar = await load('ar');
+
+      expect(ar.ayahCount(1), 'آية واحدة');
+      expect(ar.ayahCount(2), 'آيتان');
+      // 3 to 10 take the plural noun.
+      expect(ar.ayahCount(7), '7 آيات');
+      // 11 upwards return to the singular. Al-Baqarah is 286.
+      expect(ar.ayahCount(286), '286 آية');
+    });
+
+    test('one and two carry no digit, because Arabic does not use one', () async {
+      final ar = await load('ar');
+      expect(ar.ayahCount(1), isNot(contains('1')));
+      expect(ar.ayahCount(2), isNot(contains('2')));
+    });
+  });
 }
