@@ -15,5 +15,9 @@
   "navDownloads": "Загрузки",
   "ayahCount": "{count, plural, one{{count} аят} few{{count} аята} other{{count} аятов}}",
   "revelationMeccan": "Мекканская",
-  "revelationMedinan": "Мединская"
+  "revelationMedinan": "Мединская",
+  "showMore": "Показать полностью",
+  "showLess": "Свернуть",
+  "sajdaHere": "Земной поклон",
+  "sajdaObligatoryHere": "Обязательный земной поклон"
 }

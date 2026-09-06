@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/models/surah.dart';
+import '../../../data/repositories/quran_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
+import '../../reader/widgets/reader_screen.dart';
 import '../surah_list_bloc.dart';
 import '../surah_list_event.dart';
 import '../surah_list_state.dart';
@@ -11,7 +13,14 @@ import '../surah_list_state.dart';
 /// The 114 surahs. Stays scrollable while the background sync runs — that is
 /// the whole point of painting this from a 19 KB request.
 class SurahListScreen extends StatelessWidget {
-  const SurahListScreen({super.key});
+  const SurahListScreen({
+    super.key,
+    required this.repository,
+    required this.translationEdition,
+  });
+
+  final QuranRepository repository;
+  final String? translationEdition;
 
   @override
   Widget build(BuildContext context) =>
@@ -25,15 +34,24 @@ class SurahListScreen extends StatelessWidget {
             ),
           SurahListLoaded(:final surahs) => ListView.builder(
               itemCount: surahs.length,
-              itemBuilder: (context, i) => _SurahTile(surah: surahs[i]),
+              itemBuilder: (context, i) => _SurahTile(
+                  surah: surahs[i],
+                  repository: repository,
+                  translationEdition: translationEdition),
             ),
         },
       );
 }
 
 class _SurahTile extends StatelessWidget {
-  const _SurahTile({required this.surah});
+  const _SurahTile({
+    required this.surah,
+    required this.repository,
+    required this.translationEdition,
+  });
   final Surah surah;
+  final QuranRepository repository;
+  final String? translationEdition;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +93,16 @@ class _SurahTile extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Text(surah.nameAr, style: const TextStyle(fontSize: 17)),
       ),
-      onTap: () => context.read<SurahListBloc>().add(SurahOpened(surah.number)),
+      onTap: () {
+        context.read<SurahListBloc>().add(SurahOpened(surah.number));
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => ReaderScreen(
+            surah: surah.number,
+            repository: repository,
+            translationEdition: translationEdition,
+          ),
+        ));
+      },
     );
   }
 }

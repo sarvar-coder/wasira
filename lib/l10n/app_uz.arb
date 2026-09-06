@@ -15,5 +15,9 @@
   "navDownloads": "Yuklamalar",
   "ayahCount": "{count, plural, other{{count} oyat}}",
   "revelationMeccan": "Makkiy",
-  "revelationMedinan": "Madaniy"
+  "revelationMedinan": "Madaniy",
+  "showMore": "Ko'proq",
+  "showLess": "Kamroq",
+  "sajdaHere": "Sajda",
+  "sajdaObligatoryHere": "Vojib sajda"
 }

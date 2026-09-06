@@ -68,4 +68,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get revelationMedinan => 'Мединская';
+
+  @override
+  String get showMore => 'Показать полностью';
+
+  @override
+  String get showLess => 'Свернуть';
+
+  @override
+  String get sajdaHere => 'Земной поклон';
+
+  @override
+  String get sajdaObligatoryHere => 'Обязательный земной поклон';
 }
