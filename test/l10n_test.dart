@@ -117,6 +117,16 @@ void main() {
       }
     });
 
+    test('is called the same thing in every locale', () {
+      // appTitle is exempt from the "nothing left in English" check below, so
+      // without this the exemption would hide a divergence rather than record
+      // a decision. Arabic used to read وسيلة — a different word.
+      for (final code in ['uz', 'ru', 'ar']) {
+        expect(arb(code)['appTitle'], english['appTitle'],
+            reason: 'the app has one name, not one per language');
+      }
+    });
+
     test('has nothing left in English', () {
       for (final code in ['uz', 'ru', 'ar']) {
         final other = arb(code);
