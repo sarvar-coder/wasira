@@ -53,4 +53,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get copied => 'تم النسخ';
+
+  @override
+  String get about => 'حول التطبيق';
+
+  @override
+  String get translation => 'الترجمة';
+
+  @override
+  String get version => 'الإصدار';
+
+  @override
+  String textFrom(String source) {
+    return 'نص القرآن الكريم والترجمات من $source';
+  }
 }

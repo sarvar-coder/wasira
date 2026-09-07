@@ -39,5 +39,17 @@
   "dailySettings": "Daily settings",
   "reminders": "Reminders",
   "copyAyah": "Copy",
-  "copied": "Copied"
+  "copied": "Copied",
+  "about": "About",
+  "translation": "Translation",
+  "version": "Version",
+  "textFrom": "Quran text and translations from {source}",
+  "@textFrom": {
+    "description": "Credit line for the data source",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  }
 }

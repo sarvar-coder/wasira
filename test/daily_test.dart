@@ -181,11 +181,8 @@ void main() {
 
   group('the screen', () {
     Future<DailyBloc> pump(WidgetTester tester, {bool fail = false}) async {
-      final bloc = DailyBloc(
-        daily: repo(fail: fail),
-        settings: settings,
-        translationEdition: 'en.sahih',
-      );
+      settings.setTranslationEdition('en.sahih', 'Saheeh International');
+      final bloc = DailyBloc(daily: repo(fail: fail), settings: settings);
       addTearDown(bloc.close);
 
       await tester.pumpWidget(MaterialApp(
@@ -268,6 +265,41 @@ void main() {
 
       expect(settings.translationEdition, isNull);
       expect(settings.arabicFontSize, SettingsRepository.defaultArabicSize);
+    });
+  });
+
+  group('changing the translation', () {
+    test('refetches, because the cached ayah carries the old one', () async {
+      settings.setTranslationEdition('en.sahih', 'Saheeh International');
+      final bloc = DailyBloc(daily: repo(), settings: settings);
+      addTearDown(bloc.close);
+
+      bloc.add(DailyRequested());
+      await bloc.stream.firstWhere((s) => s is DailyLoaded);
+      expect(requests, 1);
+
+      bloc.add(TranslationEditionChanged('uz.sodik', 'Sodik'));
+      final after = await bloc.stream.firstWhere(
+          (s) => s is DailyLoaded && s.translationName == 'Sodik');
+
+      expect(requests, 2);
+      expect((after as DailyLoaded).translationName, 'Sodik');
+      expect(SettingsRepository(settingsStore).translationEdition, 'uz.sodik');
+    });
+
+    test('survives a relaunch, name and all', () {
+      settings.setTranslationEdition('uz.sodik', 'Muhammad Sodik');
+
+      final reopened = SettingsRepository(settingsStore);
+      expect(reopened.translationEdition, 'uz.sodik');
+      expect(reopened.translationName, 'Muhammad Sodik');
+    });
+
+    test('an edition stored without a name falls back to the identifier', () {
+      // Written by an older build, or by hand.
+      settingsStore.write({'translation_edition': 'en.sahih'});
+
+      expect(SettingsRepository(settingsStore).translationName, 'en.sahih');
     });
   });
 }

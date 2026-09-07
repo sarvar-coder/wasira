@@ -13,5 +13,16 @@
   "dailySettings": "Настройки дня",
   "reminders": "Напоминания",
   "copyAyah": "Копировать",
-  "copied": "Скопировано"
+  "copied": "Скопировано",
+  "about": "О приложении",
+  "translation": "Перевод",
+  "version": "Версия",
+  "textFrom": "Текст Корана и переводы предоставлены {source}",
+  "@textFrom": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  }
 }

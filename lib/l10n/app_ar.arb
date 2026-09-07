@@ -13,5 +13,16 @@
   "dailySettings": "إعدادات آية اليوم",
   "reminders": "التذكيرات",
   "copyAyah": "نسخ",
-  "copied": "تم النسخ"
+  "copied": "تم النسخ",
+  "about": "حول التطبيق",
+  "translation": "الترجمة",
+  "version": "الإصدار",
+  "textFrom": "نص القرآن الكريم والترجمات من {source}",
+  "@textFrom": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  }
 }

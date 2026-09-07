@@ -18,6 +18,7 @@ class DailyLoaded extends DailyState {
     required this.daily,
     required this.arabicSize,
     required this.reminderTimes,
+    required this.translationName,
     this.expanded = false,
   });
 
@@ -26,6 +27,10 @@ class DailyLoaded extends DailyState {
 
   /// Five, minutes after midnight. One ayah, nudged five times.
   final List<int> reminderTimes;
+
+  /// What to call the translation in settings — its English name, not its
+  /// identifier.
+  final String? translationName;
 
   /// Whether a long translation is shown in full. uz.sodik runs to 2660
   /// characters, which buries the ayah it belongs to.
@@ -40,6 +45,7 @@ class DailyLoaded extends DailyState {
         daily: daily,
         arabicSize: arabicSize ?? this.arabicSize,
         reminderTimes: reminderTimes ?? this.reminderTimes,
+        translationName: translationName,
         expanded: expanded ?? this.expanded,
       );
 }

@@ -19,6 +19,7 @@ class SettingsRepository {
   static const _arabicSizeKey = 'arabic_font_size';
   static const _reminderTimesKey = 'reminder_times';
   static const _translationKey = 'translation_edition';
+  static const _translationNameKey = 'translation_name';
 
   double get arabicFontSize {
     final stored = store.read()[_arabicSizeKey];
@@ -39,8 +40,19 @@ class SettingsRepository {
     return stored is String && stored.isNotEmpty ? stored : null;
   }
 
-  void setTranslationEdition(String edition) =>
-      store.update({_translationKey: edition});
+  /// [name] is the edition's English name, kept only so the settings sheet can
+  /// say "Saheeh International" instead of "en.sahih". The identifier is what
+  /// everything else uses.
+  void setTranslationEdition(String edition, [String? name]) => store.update({
+        _translationKey: edition,
+        _translationNameKey: ?name,
+      });
+
+  /// Falls back to the identifier, which is always right even if unlovely.
+  String? get translationName {
+    final stored = store.read()[_translationNameKey];
+    return stored is String && stored.isNotEmpty ? stored : translationEdition;
+  }
 
   /// Minutes after midnight, always [reminderCount] of them. A wall-clock time
   /// rather than an instant, so it does not shift when the device changes zone.

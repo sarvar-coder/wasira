@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/repositories/daily_repository.dart';
 import '../../../data/repositories/settings_repository.dart';
+import '../../../domain/app_info.dart';
 import '../../../domain/ayah_citation.dart';
+import '../../../domain/models/edition.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
+import '../../core/ui/translation_list.dart';
 import '../daily_bloc.dart';
 import '../daily_event.dart';
 import '../daily_state.dart';
@@ -188,6 +191,18 @@ class _SettingsDialog extends StatelessWidget {
                     bloc.add(ArabicSizeChanged(s.first)),
               ),
               const SizedBox(height: 20),
+              Text(l10n.translation,
+                  style: TextStyle(fontSize: 12, color: tokens.muted)),
+              // Changeable here, not only at first launch. Picking wrong once
+              // used to mean editing a JSON file by hand.
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () => _pickTranslation(context, state),
+                  child: Text(state.translationName ?? ''),
+                ),
+              ),
+              const SizedBox(height: 20),
               Text(l10n.reminders,
                   style: TextStyle(fontSize: 12, color: tokens.muted)),
               // One ayah, five nudges — the count of reminders has nothing to
@@ -201,6 +216,10 @@ class _SettingsDialog extends StatelessWidget {
             ],
           ),
           actions: [
+            TextButton(
+              onPressed: () => _showAbout(context, state),
+              child: Text(l10n.about),
+            ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(MaterialLocalizations.of(context).okButtonLabel),
@@ -234,4 +253,94 @@ class _ReminderChip extends StatelessWidget {
       child: Text(time.format(context)),
     );
   }
+}
+
+/// The full list of translations, fetched when asked for rather than held.
+Future<void> _pickTranslation(BuildContext context, DailyLoaded state) async {
+  final bloc = context.read<DailyBloc>();
+  final l10n = AppLocalizations.of(context)!;
+
+  await showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.chooseTranslation, style: const TextStyle(fontSize: 16)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+      content: SizedBox(
+        width: 380,
+        height: 420,
+        child: FutureBuilder<List<Edition>>(
+          future: bloc.translations(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(l10n.serviceUnreachable,
+                    style: TextStyle(color: Tokens.of(context).muted)),
+              );
+            }
+            final editions = snapshot.data;
+            if (editions == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return TranslationList(
+              editions: editions,
+              selected: bloc.settings.translationEdition,
+              onSelected: (e) {
+                bloc.add(TranslationEditionChanged(e.identifier, e.englishName));
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        ),
+      ),
+    ),
+  );
+}
+
+/// Where the words come from, and the licence that has to travel with the font.
+Future<void> _showAbout(BuildContext context, DailyLoaded state) {
+  final l10n = AppLocalizations.of(context)!;
+  final tokens = Tokens.of(context);
+  final muted = TextStyle(fontSize: 12, color: tokens.muted);
+
+  return showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.appTitle, style: const TextStyle(fontSize: 16)),
+      content: SizedBox(
+        width: 360,
+        child: SingleChildScrollView(
+          child: SelectionArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${l10n.version} $appVersion', style: muted),
+                const SizedBox(height: 16),
+                Text(l10n.textFrom(quranSource)),
+                Text(quranSourceUrl, style: muted),
+                if (state.translationName case final name?) ...[
+                  const SizedBox(height: 4),
+                  Text('${l10n.translation}: $name', style: muted),
+                ],
+                const SizedBox(height: 16),
+                // Not courtesy: the SIL Open Font License requires this notice
+                // to be distributed with the font. Left in English, because a
+                // licence notice is not a thing to translate.
+                Text(fontName),
+                Text(fontCopyright, style: muted),
+                Text(fontLicence, style: muted),
+                Text(fontLicenceUrl, style: muted),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(MaterialLocalizations.of(context).okButtonLabel),
+        ),
+      ],
+    ),
+  );
 }

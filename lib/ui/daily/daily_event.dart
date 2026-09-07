@@ -19,4 +19,12 @@ class ReminderTimeChanged extends DailyEvent {
   final int minutes;
 }
 
+/// A different translation was chosen. The cached ayah was fetched against the
+/// old one, so this refetches rather than restyling what is on screen.
+class TranslationEditionChanged extends DailyEvent {
+  TranslationEditionChanged(this.edition, this.name);
+  final String edition;
+  final String name;
+}
+
 class TranslationExpanded extends DailyEvent {}

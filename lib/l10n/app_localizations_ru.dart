@@ -53,4 +53,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copied => 'Скопировано';
+
+  @override
+  String get about => 'О приложении';
+
+  @override
+  String get translation => 'Перевод';
+
+  @override
+  String get version => 'Версия';
+
+  @override
+  String textFrom(String source) {
+    return 'Текст Корана и переводы предоставлены $source';
+  }
 }

@@ -53,4 +53,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copied => 'Copied';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get translation => 'Translation';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String textFrom(String source) {
+    return 'Quran text and translations from $source';
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/models/edition.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/themes/tokens.dart';
+import '../../core/ui/translation_list.dart';
 import '../onboarding_bloc.dart';
 import '../onboarding_event.dart';
 import '../onboarding_state.dart';
@@ -87,32 +88,11 @@ class _Picker extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            itemCount: languages.length,
-            itemBuilder: (context, i) {
-              final language = languages[i];
-              final group = byLanguage[language]!;
-              return ExpansionTile(
-                title: Text(language.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text(
-                    AppLocalizations.of(context)!
-                        .translationsAvailable(group.length),
-                    style: TextStyle(color: tokens.muted, fontSize: 12)),
-                children: [
-                  for (final e in group)
-                    ListTile(
-                      title: Text(e.englishName),
-                      subtitle: Text(e.name,
-                          style: TextStyle(color: tokens.muted, fontSize: 12)),
-                      onTap: () => context
-                          .read<OnboardingBloc>()
-                          .add(LanguageSelected(e.identifier)),
-                    ),
-                ],
-              );
-            },
+          child: TranslationList(
+            editions: editions,
+            onSelected: (e) => context
+                .read<OnboardingBloc>()
+                .add(LanguageSelected(e.identifier, e.englishName)),
           ),
         ),
       ],

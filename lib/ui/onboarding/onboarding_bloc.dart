@@ -17,7 +17,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     on<EditionsRequested>(_onEditionsRequested);
 
     on<LanguageSelected>((event, emit) {
-      settings.setTranslationEdition(event.edition);
+      settings.setTranslationEdition(event.edition, event.name);
       emit(OnboardingReady(event.edition));
     });
   }
