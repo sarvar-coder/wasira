@@ -178,6 +178,15 @@ Java 21 and the build is on 17.
 
 **Never use an emulator.** Test on the physical phone over `adb`.
 
+### Running on the phone
+
+`scripts/phone.sh` installs debug and launches it; `--release` builds, signs and
+installs the release (keystore as in Releases). Debug is `uz.wasira.debug`,
+labelled "Wasira Dev", and sits beside the release `uz.wasira` — never over it.
+Each has its own settings, cache, alarms and notification channel, so reminders
+set in one do not fire from the other. Wireless (Android 11+): Developer options
+› Wireless debugging, then `adb pair <ip:port>` and `adb connect <ip:port>`.
+
 ## Releases
 
 Release APKs are signed with `~/.android/wasira-release.jks` (alias `wasira`),
