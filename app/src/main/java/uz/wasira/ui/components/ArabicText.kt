@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -25,6 +26,14 @@ import uz.wasira.R
  * goldens: a different face can silently lack a rare Quranic mark.
  */
 val AmiriQuran = FontFamily(Font(R.font.amiri_quran))
+
+/**
+ * Amiri (Regular and Bold, release 1.003, same project and OFL as [AmiriQuran])
+ * for Latin headings only: the app title and the section headings. Never for
+ * scripture: ayah and hadith Arabic stay in [AmiriQuran]. Amiri has no Cyrillic,
+ * so Russian headings fall back to the system font; accepted.
+ */
+val AmiriLatin = FontFamily(Font(R.font.amiri_regular), Font(R.font.amiri_bold, FontWeight.Bold))
 
 /** Uthmani tashkeel collides below a line height of about 2.0. */
 const val ARABIC_LINE_HEIGHT = 2.0f
