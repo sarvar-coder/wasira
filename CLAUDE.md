@@ -156,6 +156,22 @@ Java 21 and the build is on 17.
 
 **Never use an emulator.** Test on the physical phone over `adb`.
 
+## Releases
+
+Release APKs are signed with `~/.android/wasira-release.jks` (alias `wasira`),
+kept outside the repo; its password is in the macOS Keychain. **Losing the key
+means no update can ever install over an existing install** — keep a backup.
+
+```
+WASIRA_KEYSTORE=~/.android/wasira-release.jks \
+WASIRA_KEYSTORE_PASSWORD="$(security find-generic-password -a wasira -s wasira-release-keystore -w)" \
+./gradlew assembleRelease
+```
+
+Release builds run R8 (minify + resource shrinking). The JSON is parsed as
+`JsonElement`, not `@Serializable` classes, so no keep rules are needed; adding
+`@Serializable` models means adding them.
+
 ## Decisions live in ADRs
 
 `docs/adr/` holds why, not what. Read before relitigating a choice.
