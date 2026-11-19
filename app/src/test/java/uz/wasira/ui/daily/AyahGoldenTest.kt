@@ -2,6 +2,7 @@ package uz.wasira.ui.daily
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
@@ -12,12 +13,13 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import uz.wasira.ui.components.page
 import uz.wasira.ui.fixture
 import uz.wasira.ui.theme.WasiraTheme
 import uz.wasira.ui.theme.wasira
 
 /**
- * AyahView rendered from live API responses (fixtures/golden_*.json). A changed
+ * The ayah page rendered from live API responses (fixtures/golden_*.json). A changed
  * font, line height or a Quranic mark gone missing shows up here as a diff.
  * Record with `./gradlew recordRoborazziDebug`, check with `verifyRoborazziDebug`.
  */
@@ -29,14 +31,14 @@ class AyahGoldenTest {
         val daily = fixture(name)
         captureRoboImage("src/test/snapshots/ayah_${name.removePrefix("golden_")}${if (dark) "_dark" else ""}.png") {
             WasiraTheme(darkTheme = dark) {
-                Box(Modifier.width(411.dp).background(MaterialTheme.wasira.bg)) {
-                    AyahView(
+                // As on the ayah page: the plain page, padded as the page pads.
+                val colors = MaterialTheme.wasira.page()
+                Box(Modifier.width(411.dp).background(colors.background).padding(24.dp)) {
+                    AyahPage(
                         ayah = daily.ayah,
                         arabicSize = 30,
                         translation = daily.translation,
                         translationRtl = daily.translationIsRtl,
-                        expanded = false,
-                        onExpand = {},
                     )
                 }
             }
@@ -49,7 +51,7 @@ class AyahGoldenTest {
     /** The Bismillah as ayah 1 of al-Fatiha, BOM removed. */
     @Test fun fatiha1() = golden("golden_1_1")
 
-    /** An obligatory sajda: the accent ۩ in the header, and the ۩ in the text itself. */
+    /** An obligatory sajda: the accent ۩ by the heading, and the ۩ in the text itself. */
     @Test fun sajda() = golden("golden_32_15")
 
     /** The Bismillah inside Sulayman's letter: genuine ayah content, never split. */

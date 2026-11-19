@@ -9,7 +9,6 @@
     <string name="translations_available">%1$d ta mavjud</string>
     <string name="service_unreachable">Qur\'on xizmatiga ulanib bo\'lmadi</string>
     <string name="try_again">Qayta urinish</string>
-    <string name="show_more">Ko\'proq</string>
     <string name="sajda_here">Sajda</string>
     <string name="sajda_obligatory_here">Vojib sajda</string>
     <string name="arabic_text_size">Arab matni o\'lchami</string>
@@ -22,10 +21,13 @@
     <string name="version">Versiya</string>
     <string name="text_from">Qur\'on matni va tarjimalari %1$s xizmatidan</string>
     <string name="hadith_language">uz</string>
+    <string name="ayah_of_the_day">Kun oyati</string>
     <string name="hadith_of_the_day">Kun hadisi</string>
     <string name="hadith_unreachable">Hadis xizmatiga ulanib bo\'lmadi</string>
     <string name="explanation">Sharh</string>
-    <string name="hide_explanation">Sharhni yopish</string>
     <string name="hadith_lessons">Foydalar</string>
     <string name="hadith_from">Hadislar, tarjimalar va sharhlar %1$s xizmatidan</string>
+    <string name="open_ayah">Oyatni ochish</string>
+    <string name="open_hadith">Hadisni ochish</string>
+    <string name="back">Orqaga</string>
 </resources>

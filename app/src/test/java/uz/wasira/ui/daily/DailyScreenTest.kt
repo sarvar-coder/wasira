@@ -1,16 +1,19 @@
 package uz.wasira.ui.daily
 
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -35,26 +38,41 @@ import uz.wasira.ui.theme.WasiraTheme
 
 @RunWith(RobolectricTestRunner::class)
 class DailyScreenTest {
-    @get:Rule val compose = createComposeRule()
+    @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val settings = Settings("en.sahih", "Saheeh International", 30, listOf(480, 660, 840, 1020, 1200))
 
     private fun show(
         ayah: DailyAyah,
-        expanded: Boolean = false,
         hadith: HadithState = HadithState.Idle,
         onEvent: (DailyEvent) -> Unit = {},
     ) {
         compose.setContent {
             WasiraTheme(darkTheme = false) {
-                DailyScreen(DailyState.Loaded(ayah, settings, expanded), TranslationsState.Idle, onEvent, hadith = hadith)
+                DailyScreen(DailyState.Loaded(ayah, settings), TranslationsState.Idle, onEvent, hadith = hadith)
             }
         }
     }
 
-    @Test fun `header names the surah and cites surah colon ayah`() {
+    @Test fun `the top bar names the app`() {
         show(fixture("golden_2_255"))
+        compose.onNodeWithText("Wasira").assertExists()
+    }
+
+    @Test fun `the ayah card is headed and names the surah and cites surah colon ayah`() {
+        show(fixture("golden_2_255"))
+        compose.onNodeWithText("Ayah of the day").assertExists()
         compose.onNodeWithText("Al-Baqara  ·  2:255").assertExists()
+    }
+
+    @Test fun `the hadith card holds its place while the hadith is idle`() {
+        show(fixture("golden_2_255"), hadith = HadithState.Idle)
+        compose.onNodeWithText("Hadith of the day").assertExists()
+    }
+
+    @Test fun `the hadith card is headed while it loads`() {
+        show(fixture("golden_2_255"), hadith = HadithState.Loading)
+        compose.onNodeWithText("Hadith of the day").assertExists()
     }
 
     @Test fun `unavailable shows try again, and retrying refetches`() {
@@ -74,21 +92,56 @@ class DailyScreenTest {
         compose.onAllNodesWithText("Try again").assertCountEquals(0)
     }
 
-    @Test fun `no show more at 300 characters`() {
-        show(fixture("golden_1_1").copy(translation = "a".repeat(300)))
-        compose.onAllNodesWithText("Show more").assertCountEquals(0)
+    @Test fun `both cards fit the screen with nothing to scroll`() {
+        show(fixture("golden_2_255"), hadith = loadedHadith())
+        compose.onNodeWithText("Ayah of the day").assertIsDisplayed()
+        compose.onNodeWithText("Hadith of the day").assertIsDisplayed()
+        compose.onNodeWithText("Narrated by At-Tirmidhi  ·  Authentic").assertIsDisplayed()
     }
 
-    @Test fun `show more at 301 characters asks to expand`() {
-        val events = mutableListOf<DailyEvent>()
-        show(fixture("golden_1_1").copy(translation = "a".repeat(301)), onEvent = { events += it })
-        compose.onNodeWithText("Show more").performClick()
-        assertEquals(listOf<DailyEvent>(DailyEvent.TranslationExpanded), events)
+    @Test fun `the ayah card previews and opens the full ayah, and back returns home`() {
+        val long = fixture("golden_1_1").copy(translation = "a ".repeat(400))
+        show(long, hadith = loadedHadith())
+        // Robolectric without native graphics does not wrap text, so the line
+        // limit is what is checked: two on the card, none on the page.
+        assertEquals(2, translationLayout().layoutInput.maxLines)
+
+        compose.onNode(opens("Open ayah")).performClick()
+        compose.waitForIdle()
+        assertEquals(Int.MAX_VALUE, translationLayout().layoutInput.maxLines)
+        compose.onAllNodesWithText("Hadith of the day").assertCountEquals(0)
+
+        compose.onNodeWithContentDescription("Back").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Hadith of the day").assertExists()
     }
 
-    @Test fun `expanded shows no show more`() {
-        show(fixture("golden_1_1").copy(translation = "a".repeat(301)), expanded = true)
-        compose.onAllNodesWithText("Show more").assertCountEquals(0)
+    @Test fun `system back on a page returns home`() {
+        show(fixture("golden_1_1"), hadith = loadedHadith())
+        compose.onNode(opens("Open hadith")).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText(HADITH.explanation).assertExists()
+
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+        compose.onAllNodesWithText(HADITH.explanation).assertCountEquals(0)
+        compose.onNodeWithText("Ayah of the day").assertExists()
+    }
+
+    @Test fun `the hadith page shows the explanation and the lessons`() {
+        show(fixture("golden_1_1"), hadith = loadedHadith())
+        compose.onAllNodesWithText(HADITH.explanation).assertCountEquals(0)
+        compose.onNode(opens("Open hadith")).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Explanation").assertExists()
+        compose.onNodeWithText(HADITH.explanation).assertExists()
+        compose.onNodeWithText("Lessons").assertExists()
+        compose.onNodeWithText(HADITH.hints.single()).assertExists()
+    }
+
+    @Test fun `a hadith still loading cannot be opened`() {
+        show(fixture("golden_1_1"), hadith = HadithState.Loading)
+        compose.onAllNodes(opens("Open hadith")).assertCountEquals(0)
     }
 
     @Test fun `urdu translation is laid out right to left`() {
@@ -105,6 +158,14 @@ class DailyScreenTest {
         assertEquals(ResolvedTextDirection.Ltr, layout.getParagraphDirection(0))
     }
 
+    /**
+     * A card by the label of its tap action. The label is on the action, not a
+     * content description, so a screen reader still reads the card's own text.
+     */
+    private fun opens(label: String) = SemanticsMatcher("opens $label") {
+        it.config.getOrElseNullable(SemanticsActions.OnClick) { null }?.label == label
+    }
+
     private fun translationLayout(): TextLayoutResult {
         val results = mutableListOf<TextLayoutResult>()
         compose.onNodeWithTag(TRANSLATION_TAG, useUnmergedTree = true)
@@ -119,38 +180,13 @@ class DailyScreenTest {
         translationDirection = "rtl",
     )
 
-    private fun loadedHadith(hadith: Hadith = HADITH, explanationOpen: Boolean = false) =
-        HadithState.Loaded(DailyHadith("2026-11-19", hadith), explanationOpen = explanationOpen)
+    private fun loadedHadith(hadith: Hadith = HADITH) = HadithState.Loaded(DailyHadith("2026-11-19", hadith))
 
-    @Test fun `the hadith sits under the ayah with its source and grade`() {
+    @Test fun `the hadith card shows its source and grade`() {
         show(fixture("golden_1_1"), hadith = loadedHadith())
-        compose.onNodeWithText("Hadith of the day").assertExists()
         compose.onNodeWithText(HADITH.arabic).assertExists()
         compose.onNodeWithText(HADITH.translation!!).assertExists()
         compose.onNodeWithText("Narrated by At-Tirmidhi  ·  Authentic").assertExists()
-    }
-
-    @Test fun `the explanation is closed until asked for`() {
-        val events = mutableListOf<DailyEvent>()
-        show(fixture("golden_1_1"), hadith = loadedHadith(), onEvent = { events += it })
-        compose.onAllNodesWithText(HADITH.explanation).assertCountEquals(0)
-        compose.onNodeWithText("Explanation").performScrollTo().performClick()
-        assertEquals(listOf<DailyEvent>(DailyEvent.HadithExplanationToggled), events)
-    }
-
-    @Test fun `an open explanation shows the sharh and the lessons`() {
-        show(fixture("golden_1_1"), hadith = loadedHadith(explanationOpen = true))
-        compose.onNodeWithText(HADITH.explanation).assertExists()
-        compose.onNodeWithText("Lessons").assertExists()
-        compose.onNodeWithText("Hide explanation").assertExists()
-    }
-
-    @Test fun `a long hadith clamps with show more`() {
-        val events = mutableListOf<DailyEvent>()
-        val long = HADITH.copy(translation = "a".repeat(301))
-        show(fixture("golden_1_1"), hadith = loadedHadith(long), onEvent = { events += it })
-        compose.onNodeWithText("Show more").performScrollTo().performClick()
-        assertEquals(listOf<DailyEvent>(DailyEvent.HadithExpanded), events)
     }
 
     @Test fun `an arabic hadith has no translation line`() {
@@ -159,12 +195,12 @@ class DailyScreenTest {
         compose.onAllNodesWithTag(HADITH_TRANSLATION_TAG).assertCountEquals(0)
     }
 
-    @Test fun `hadith unavailable - the ayah stays and the hadith offers a retry`() {
+    @Test fun `hadith unavailable - the ayah stays and the hadith card offers a retry`() {
         val events = mutableListOf<DailyEvent>()
         show(fixture("golden_1_1"), hadith = HadithState.Unavailable, onEvent = { events += it })
         compose.onNodeWithText("Al-Faatiha  ·  1:1").assertExists()
-        compose.onNodeWithText("Could not reach the hadith service").assertExists()
-        compose.onNodeWithText("Try again").performScrollTo().performClick()
+        compose.onNodeWithText("Could not reach the hadith service").assertIsDisplayed()
+        compose.onNodeWithText("Try again").performClick()
         assertEquals(listOf<DailyEvent>(DailyEvent.HadithRetried), events)
     }
 }

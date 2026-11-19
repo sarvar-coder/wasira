@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Debug installs beside the release as uz.wasira.debug; tell them apart. -->
+    <string name="launcher_label" translatable="false">Wasira Dev</string>
+</resources>

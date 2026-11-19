@@ -13,8 +13,8 @@ android {
         applicationId = "uz.wasira"
         minSdk = 26
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
     }
 
     compileOptions {
@@ -38,6 +38,12 @@ android {
     } else null
 
     buildTypes {
+        // Debug installs as uz.wasira.debug beside the signed release, so a
+        // development build never has to replace or uninstall it.
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true

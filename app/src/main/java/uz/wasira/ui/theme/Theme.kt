@@ -12,35 +12,51 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 /**
- * Warm neutrals rather than blue-greys: parchment, not office software. The
- * text is the interface, so the surface stays quiet. Ported from
- * lib/ui/core/themes/tokens.dart.
+ * Two dark-green cards on a neutral page: cream by day, charcoal by night. The
+ * green is only ever a card, never the page. The ayah card is the deeper green,
+ * the hadith card a lighter one. Headings are the text colour, set apart by
+ * weight and face alone. Every text-on-background pair here clears WCAG AA (4.5:1).
  */
 @Immutable
 data class WasiraColors(
     val bg: Color,
+    /** Dialogs and the hadith card. */
     val surface: Color,
     val text: Color,
     val muted: Color,
+    /** Buttons and links. */
     val accent: Color,
+    /** Hairlines and the hadith card's border. */
     val divider: Color,
+    val ayahCard: Color,
+    val onAyahCard: Color,
+    val ayahCardMuted: Color,
+    val hadithCard: Color,
 ) {
     companion object {
         val Light = WasiraColors(
-            bg = Color(0xFFFAF8F4),
-            surface = Color(0xFFFFFFFF),
-            text = Color(0xFF1C1917),
-            muted = Color(0xFF78716C),
-            accent = Color(0xFF0F5132),
-            divider = Color(0xFFE7E5E4),
+            bg = Color(0xFFF5F0E6),
+            surface = Color(0xFFFFFCF5),
+            text = Color(0xFF1A2620),
+            muted = Color(0xFF6B6A5E),
+            accent = Color(0xFF0E3B2E),
+            divider = Color(0xFFE3D9C3),
+            ayahCard = Color(0xFF0E3B2E),
+            onAyahCard = Color(0xFFF5F0E6),
+            ayahCardMuted = Color(0xFFCFE0D6),
+            hadithCard = Color(0xFF1A4A3B),
         )
         val Dark = WasiraColors(
-            bg = Color(0xFF14130F),
-            surface = Color(0xFF1E1C18),
-            text = Color(0xFFF5F3EF),
-            muted = Color(0xFFA8A29E),
-            accent = Color(0xFF5EAD8A),
-            divider = Color(0xFF2C2A26),
+            bg = Color(0xFF141414),
+            surface = Color(0xFF1E1E1E),
+            text = Color(0xFFECE8E1),
+            muted = Color(0xFFA3A3A0),
+            accent = Color(0xFF7FC4A0),
+            divider = Color(0xFF2C2C2A),
+            ayahCard = Color(0xFF123D30),
+            onAyahCard = Color(0xFFF5F0E6),
+            ayahCardMuted = Color(0xFFBFD3C8),
+            hadithCard = Color(0xFF1A4A3B),
         )
     }
 }

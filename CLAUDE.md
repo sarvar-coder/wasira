@@ -160,7 +160,11 @@ Arabic ayah text is always RTL. App layout mirrors only when the UI language is
 RTL.
 
 `uz.sodik` is a tafsir-translation: average 217 characters, maximum 2660, against
-`en.sahih`'s 137. Translations past 300 characters clamp with a "Show more".
+`en.sahih`'s 137, and hadith explanations run to about 3,900. So the home page never
+shows text in full. It holds two cards, ayah and hadith, each half the height of
+whatever screen it is on, cut with an ellipsis. Tapping a card pushes its page
+with all of it, on the plain page: the green is only ever a card. The stack is an enum held in `rememberSaveable` with
+`AnimatedContent` and `BackHandler`, with no navigation library.
 
 ## Build and test
 
@@ -177,6 +181,15 @@ app now. Robolectric runs on SDK 35 (`robolectric.properties`): SDK 37 needs
 Java 21 and the build is on 17.
 
 **Never use an emulator.** Test on the physical phone over `adb`.
+
+### Running on the phone
+
+`scripts/phone.sh` installs debug and launches it; `--release` builds, signs and
+installs the release (keystore as in Releases). Debug is `uz.wasira.debug`,
+labelled "Wasira Dev", and sits beside the release `uz.wasira` — never over it.
+Each has its own settings, cache, alarms and notification channel, so reminders
+set in one do not fire from the other. Wireless (Android 11+): Developer options
+› Wireless debugging, then `adb pair <ip:port>` and `adb connect <ip:port>`.
 
 ## Releases
 

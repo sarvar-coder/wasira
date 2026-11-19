@@ -1,5 +1,6 @@
 package uz.wasira.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -25,6 +27,14 @@ import uz.wasira.R
  * goldens: a different face can silently lack a rare Quranic mark.
  */
 val AmiriQuran = FontFamily(Font(R.font.amiri_quran))
+
+/**
+ * Amiri (Regular and Bold, release 1.003, same project and OFL as [AmiriQuran])
+ * for Latin headings only: the app title and the section headings. Never for
+ * scripture: ayah and hadith Arabic stay in [AmiriQuran]. Amiri has no Cyrillic,
+ * so Russian headings fall back to the system font; accepted.
+ */
+val AmiriLatin = FontFamily(Font(R.font.amiri_regular), Font(R.font.amiri_bold, FontWeight.Bold))
 
 /** Uthmani tashkeel collides below a line height of about 2.0. */
 const val ARABIC_LINE_HEIGHT = 2.0f
@@ -42,15 +52,22 @@ fun ArabicText(
     align: TextAlign = TextAlign.Right,
     /** Lines shown before the rest is cut with an ellipsis. Unlimited for the ayah. */
     maxLines: Int = Int.MAX_VALUE,
+    /**
+     * Cut with an ellipsis wherever the space given runs out, for a preview that
+     * fills a card. The full text is a tap away.
+     */
+    fillAndCut: Boolean = false,
+    /** Off inside a tappable card, where a long-press to select would swallow the tap. */
+    selectable: Boolean = true,
 ) {
     val resolved = if (color == Color.Unspecified) MaterialTheme.colorScheme.onSurface else color
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        SelectionContainer(modifier) {
+        val content: @Composable () -> Unit = {
             Text(
                 text = text,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = maxLines,
-                overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
+                overflow = if (fillAndCut || maxLines != Int.MAX_VALUE) TextOverflow.Ellipsis else TextOverflow.Clip,
                 style = TextStyle(
                     fontFamily = AmiriQuran,
                     fontSize = size.sp,
@@ -65,5 +82,6 @@ fun ArabicText(
                 ),
             )
         }
+        if (selectable) SelectionContainer(modifier) { content() } else Box(modifier) { content() }
     }
 }

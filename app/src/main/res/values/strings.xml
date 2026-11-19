@@ -15,8 +15,6 @@
     <string name="translations_available">%1$d available</string>
     <string name="service_unreachable">Could not reach the Quran service</string>
     <string name="try_again">Try again</string>
-    <!-- Expands a translation clamped for length. -->
-    <string name="show_more">Show more</string>
     <!-- Marker on an ayah of prostration. -->
     <string name="sajda_here">Prostration</string>
     <string name="sajda_obligatory_here">Obligatory prostration</string>
@@ -33,13 +31,17 @@
     <!-- The HadeethEnc language code matching this UI language. Not prose: one of en, uz, ru, ar. -->
     <string name="hadith_language">en</string>
     <!-- Heading above the hadith, below the ayah. -->
+    <string name="ayah_of_the_day">Ayah of the day</string>
     <string name="hadith_of_the_day">Hadith of the day</string>
     <string name="hadith_unreachable">Could not reach the hadith service</string>
     <!-- Opens the scholarly explanation (sharh) of the hadith. -->
     <string name="explanation">Explanation</string>
-    <string name="hide_explanation">Hide explanation</string>
     <!-- Heading of the list of lessons drawn from the hadith. -->
     <string name="hadith_lessons">Lessons</string>
     <!-- Credit line for the hadith source; %1$s is the service name. -->
     <string name="hadith_from">Hadith, translations and explanations from %1$s</string>
+    <!-- Spoken by screen readers for the card that opens the full page. -->
+    <string name="open_ayah">Open ayah</string>
+    <string name="open_hadith">Open hadith</string>
+    <string name="back">Back</string>
 </resources>

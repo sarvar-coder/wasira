@@ -9,7 +9,6 @@
     <string name="translations_available">доступно: %1$d</string>
     <string name="service_unreachable">Не удалось связаться со службой Корана</string>
     <string name="try_again">Повторить</string>
-    <string name="show_more">Показать полностью</string>
     <string name="sajda_here">Земной поклон</string>
     <string name="sajda_obligatory_here">Обязательный земной поклон</string>
     <string name="arabic_text_size">Размер арабского текста</string>
@@ -22,10 +21,13 @@
     <string name="version">Версия</string>
     <string name="text_from">Текст Корана и переводы предоставлены %1$s</string>
     <string name="hadith_language">ru</string>
+    <string name="ayah_of_the_day">Аят дня</string>
     <string name="hadith_of_the_day">Хадис дня</string>
     <string name="hadith_unreachable">Не удалось подключиться к сервису хадисов</string>
     <string name="explanation">Разъяснение</string>
-    <string name="hide_explanation">Скрыть разъяснение</string>
     <string name="hadith_lessons">Польза хадиса</string>
     <string name="hadith_from">Хадисы, переводы и разъяснения предоставлены %1$s</string>
+    <string name="open_ayah">Открыть аят</string>
+    <string name="open_hadith">Открыть хадис</string>
+    <string name="back">Назад</string>
 </resources>

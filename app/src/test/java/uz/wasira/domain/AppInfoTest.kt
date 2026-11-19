@@ -17,6 +17,8 @@ class AppInfoTest {
     @Test fun `the font notice matches the font actually shipped`() {
         // The SIL Open Font License requires this notice to travel with the font.
         assertTrue(File("src/main/res/font/amiri_quran.ttf").exists())
+        assertTrue(File("src/main/res/font/amiri_regular.ttf").exists())
+        assertTrue(File("src/main/res/font/amiri_bold.ttf").exists())
         val text = File("src/main/assets/OFL.txt").readText()
         assertTrue(text.contains("SIL OPEN FONT LICENSE Version 1.1"))
         assertTrue(text.contains("The Amiri Project Authors"))
