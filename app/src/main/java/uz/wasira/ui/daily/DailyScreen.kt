@@ -1,6 +1,8 @@
 package uz.wasira.ui.daily
 
 import android.content.ClipData
+import uz.wasira.domain.ayahReference
+import uz.wasira.domain.citation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -122,13 +124,7 @@ private fun Loaded(
                 color = colors.muted,
             )
             IconButton(onClick = {
-                val text = ayahCitation(
-                    arabic = ayah.text,
-                    translation = daily.translation,
-                    surahName = ayah.surah.nameEn,
-                    surah = ayah.surah.number,
-                    numberInSurah = ayah.numberInSurah,
-                )
+                val text = daily.citation()
                 scope.launch {
                     clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(ayah.surah.nameEn, text)))
                     snackbar.showSnackbar(copied, duration = SnackbarDuration.Short)

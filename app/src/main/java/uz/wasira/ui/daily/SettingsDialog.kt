@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import uz.wasira.R
+import uz.wasira.domain.AppInfo
 import uz.wasira.data.Settings
 import uz.wasira.data.SettingsRepository
 import uz.wasira.ui.components.TranslationList
@@ -210,8 +211,8 @@ private fun AboutDialog(translationName: String?, onDismiss: () -> Unit) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     Text("${stringResource(R.string.version)} $version", fontSize = 12.sp, color = muted)
                     Spacer(Modifier.height(16.dp))
-                    Text(stringResource(R.string.text_from, AboutConstants.QURAN_SOURCE))
-                    Text(AboutConstants.QURAN_SOURCE_URL, fontSize = 12.sp, color = muted)
+                    Text(stringResource(R.string.text_from, AppInfo.QURAN_SOURCE))
+                    Text(AppInfo.QURAN_SOURCE_URL, fontSize = 12.sp, color = muted)
                     if (translationName != null) {
                         Spacer(Modifier.height(4.dp))
                         Text(
@@ -221,10 +222,10 @@ private fun AboutDialog(translationName: String?, onDismiss: () -> Unit) {
                         )
                     }
                     Spacer(Modifier.height(16.dp))
-                    Text(AboutConstants.FONT_NAME)
-                    Text(AboutConstants.FONT_COPYRIGHT, fontSize = 12.sp, color = muted)
-                    Text(AboutConstants.FONT_LICENCE, fontSize = 12.sp, color = muted)
-                    Text(AboutConstants.FONT_LICENCE_URL, fontSize = 12.sp, color = muted)
+                    Text(AppInfo.FONT_NAME)
+                    Text(AppInfo.FONT_COPYRIGHT, fontSize = 12.sp, color = muted)
+                    Text(AppInfo.FONT_LICENCE, fontSize = 12.sp, color = muted)
+                    Text(AppInfo.FONT_LICENCE_URL, fontSize = 12.sp, color = muted)
                 }
             }
         },
