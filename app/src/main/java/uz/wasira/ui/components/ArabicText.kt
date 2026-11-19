@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
 import uz.wasira.R
@@ -29,7 +30,7 @@ val AmiriQuran = FontFamily(Font(R.font.amiri_quran))
 const val ARABIC_LINE_HEIGHT = 2.0f
 
 /**
- * Quranic Arabic. Always right-to-left regardless of the app's UI language.
+ * Quranic Arabic, and the Arabic of the daily hadith. Always right-to-left regardless of the app's UI language.
  * The string is rendered exactly as given; nothing here transforms it.
  */
 @Composable
@@ -39,6 +40,8 @@ fun ArabicText(
     size: Int = 30,
     color: Color = Color.Unspecified,
     align: TextAlign = TextAlign.Right,
+    /** Lines shown before the rest is cut with an ellipsis. Unlimited for the ayah. */
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val resolved = if (color == Color.Unspecified) MaterialTheme.colorScheme.onSurface else color
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -46,6 +49,8 @@ fun ArabicText(
             Text(
                 text = text,
                 modifier = Modifier.fillMaxWidth(),
+                maxLines = maxLines,
+                overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
                 style = TextStyle(
                     fontFamily = AmiriQuran,
                     fontSize = size.sp,

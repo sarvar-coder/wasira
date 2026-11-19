@@ -30,4 +30,16 @@
     <string name="version">Version</string>
     <!-- Credit line for the data source; %1$s is the service name. -->
     <string name="text_from">Quran text and translations from %1$s</string>
+    <!-- The HadeethEnc language code matching this UI language. Not prose: one of en, uz, ru, ar. -->
+    <string name="hadith_language">en</string>
+    <!-- Heading above the hadith, below the ayah. -->
+    <string name="hadith_of_the_day">Hadith of the day</string>
+    <string name="hadith_unreachable">Could not reach the hadith service</string>
+    <!-- Opens the scholarly explanation (sharh) of the hadith. -->
+    <string name="explanation">Explanation</string>
+    <string name="hide_explanation">Hide explanation</string>
+    <!-- Heading of the list of lessons drawn from the hadith. -->
+    <string name="hadith_lessons">Lessons</string>
+    <!-- Credit line for the hadith source; %1$s is the service name. -->
+    <string name="hadith_from">Hadith, translations and explanations from %1$s</string>
 </resources>

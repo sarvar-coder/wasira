@@ -21,4 +21,11 @@
     <string name="translation">Перевод</string>
     <string name="version">Версия</string>
     <string name="text_from">Текст Корана и переводы предоставлены %1$s</string>
+    <string name="hadith_language">ru</string>
+    <string name="hadith_of_the_day">Хадис дня</string>
+    <string name="hadith_unreachable">Не удалось подключиться к сервису хадисов</string>
+    <string name="explanation">Разъяснение</string>
+    <string name="hide_explanation">Скрыть разъяснение</string>
+    <string name="hadith_lessons">Польза хадиса</string>
+    <string name="hadith_from">Хадисы, переводы и разъяснения предоставлены %1$s</string>
 </resources>

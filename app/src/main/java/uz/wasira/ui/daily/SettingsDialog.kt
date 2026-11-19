@@ -222,6 +222,10 @@ private fun AboutDialog(translationName: String?, onDismiss: () -> Unit) {
                         )
                     }
                     Spacer(Modifier.height(16.dp))
+                    // HadeethEnc's terms ask that what is republished credit it as the source.
+                    Text(stringResource(R.string.hadith_from, AppInfo.HADITH_SOURCE))
+                    Text(AppInfo.HADITH_SOURCE_URL, fontSize = 12.sp, color = muted)
+                    Spacer(Modifier.height(16.dp))
                     Text(AppInfo.FONT_NAME)
                     Text(AppInfo.FONT_COPYRIGHT, fontSize = 12.sp, color = muted)
                     Text(AppInfo.FONT_LICENCE, fontSize = 12.sp, color = muted)

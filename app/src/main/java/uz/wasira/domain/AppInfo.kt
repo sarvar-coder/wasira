@@ -10,6 +10,13 @@ object AppInfo {
     const val QURAN_SOURCE_URL = "https://alquran.cloud"
 
     /**
+     * The daily hadith, its translation, grade and explanation. HadeethEnc's
+     * terms ask that it be credited as the source of what is republished.
+     */
+    const val HADITH_SOURCE = "HadeethEnc.com"
+    const val HADITH_SOURCE_URL = "https://hadeethenc.com"
+
+    /**
      * Amiri Quran ships inside the app, and the SIL Open Font License requires
      * its copyright notice and licence to travel with it. Read out of the font's
      * own name table, so it cannot drift from the file being redistributed.
