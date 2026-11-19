@@ -2,6 +2,7 @@ package uz.wasira.ui.daily
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
@@ -12,6 +13,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import uz.wasira.ui.components.SectionCard
+import uz.wasira.ui.components.SectionTone
 import uz.wasira.ui.fixture
 import uz.wasira.ui.theme.WasiraTheme
 import uz.wasira.ui.theme.wasira
@@ -29,15 +32,18 @@ class AyahGoldenTest {
         val daily = fixture(name)
         captureRoboImage("src/test/snapshots/ayah_${name.removePrefix("golden_")}${if (dark) "_dark" else ""}.png") {
             WasiraTheme(darkTheme = dark) {
-                Box(Modifier.width(411.dp).background(MaterialTheme.wasira.bg)) {
-                    AyahView(
-                        ayah = daily.ayah,
-                        arabicSize = 30,
-                        translation = daily.translation,
-                        translationRtl = daily.translationIsRtl,
-                        expanded = false,
-                        onExpand = {},
-                    )
+                Box(Modifier.width(411.dp).background(MaterialTheme.wasira.bg).padding(16.dp)) {
+                    // The card it sits in on the daily screen.
+                    SectionCard(SectionTone.Accent) {
+                        AyahView(
+                            ayah = daily.ayah,
+                            arabicSize = 30,
+                            translation = daily.translation,
+                            translationRtl = daily.translationIsRtl,
+                            expanded = false,
+                            onExpand = {},
+                        )
+                    }
                 }
             }
         }
@@ -49,7 +55,7 @@ class AyahGoldenTest {
     /** The Bismillah as ayah 1 of al-Fatiha, BOM removed. */
     @Test fun fatiha1() = golden("golden_1_1")
 
-    /** An obligatory sajda: the accent ۩ in the header, and the ۩ in the text itself. */
+    /** An obligatory sajda: the accent ۩ by the heading, and the ۩ in the text itself. */
     @Test fun sajda() = golden("golden_32_15")
 
     /** The Bismillah inside Sulayman's letter: genuine ayah content, never split. */

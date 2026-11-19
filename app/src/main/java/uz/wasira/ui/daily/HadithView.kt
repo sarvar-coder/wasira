@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import uz.wasira.R
 import uz.wasira.domain.Hadith
 import uz.wasira.ui.components.ArabicText
+import uz.wasira.ui.components.SectionHeading
 import uz.wasira.ui.theme.wasira
 
 const val HADITH_TRANSLATION_TAG = "hadith_translation"
@@ -50,10 +50,8 @@ fun HadithView(
     if (state == HadithState.Idle) return
     val colors = MaterialTheme.wasira
 
-    Column(modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
-        HorizontalDivider(color = colors.muted.copy(alpha = 0.2f))
-        Spacer(Modifier.height(14.dp))
-        Text(stringResource(R.string.hadith_of_the_day), fontSize = 12.sp, color = colors.muted)
+    Column(modifier) {
+        SectionHeading(stringResource(R.string.hadith_of_the_day))
         Spacer(Modifier.height(8.dp))
 
         when (state) {

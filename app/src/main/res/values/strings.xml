@@ -33,6 +33,7 @@
     <!-- The HadeethEnc language code matching this UI language. Not prose: one of en, uz, ru, ar. -->
     <string name="hadith_language">en</string>
     <!-- Heading above the hadith, below the ayah. -->
+    <string name="ayah_of_the_day">Ayah of the day</string>
     <string name="hadith_of_the_day">Hadith of the day</string>
     <string name="hadith_unreachable">Could not reach the hadith service</string>
     <!-- Opens the scholarly explanation (sharh) of the hadith. -->

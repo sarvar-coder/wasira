@@ -22,6 +22,7 @@
     <string name="version">Versiya</string>
     <string name="text_from">Qur\'on matni va tarjimalari %1$s xizmatidan</string>
     <string name="hadith_language">uz</string>
+    <string name="ayah_of_the_day">Kun oyati</string>
     <string name="hadith_of_the_day">Kun hadisi</string>
     <string name="hadith_unreachable">Hadis xizmatiga ulanib bo\'lmadi</string>
     <string name="explanation">Sharh</string>

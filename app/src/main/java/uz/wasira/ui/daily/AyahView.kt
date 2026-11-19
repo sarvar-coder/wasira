@@ -1,7 +1,5 @@
 package uz.wasira.ui.daily
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,10 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
@@ -31,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -39,8 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uz.wasira.R
 import uz.wasira.domain.Ayah
+import uz.wasira.domain.ayahReference
 import uz.wasira.ui.components.AmiriQuran
 import uz.wasira.ui.components.ArabicText
+import uz.wasira.ui.components.SectionHeading
 import uz.wasira.ui.theme.wasira
 
 /**
@@ -52,7 +48,15 @@ const val CLAMP_THRESHOLD = 300
 
 const val TRANSLATION_TAG = "translation"
 
-/** One ayah: its number, any sajda mark, the Arabic, and the translation. */
+/** The ayah's place under its heading: "Al-Baqara  ·  2:255". */
+fun ayahLabel(surahName: String, surah: Int, numberInSurah: Int): String =
+    "$surahName  ·  ${ayahReference(surah, numberInSurah)}"
+
+/**
+ * One ayah: the "Ayah of the day" heading with any sajda mark, where it sits,
+ * the Arabic, and the translation. Unpadded: the [uz.wasira.ui.components.SectionCard]
+ * around it pads.
+ */
 @Composable
 fun AyahView(
     ayah: Ayah,
@@ -67,14 +71,19 @@ fun AyahView(
     val long = (translation?.length ?: 0) > CLAMP_THRESHOLD
     val clamped = long && !expanded
 
-    Column(modifier.padding(horizontal = 24.dp, vertical = 18.dp)) {
+    Column(modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            NumberBadge(ayah.numberInSurah)
+            SectionHeading(stringResource(R.string.ayah_of_the_day))
             if (ayah.sajda) {
                 Spacer(Modifier.width(8.dp))
                 SajdaMark(obligatory = ayah.sajdaObligatory == true)
             }
         }
+        Text(
+            ayahLabel(ayah.surah.nameEn, ayah.surah.number, ayah.numberInSurah),
+            fontSize = 12.sp,
+            color = colors.muted,
+        )
         Spacer(Modifier.height(10.dp))
         ArabicText(ayah.text, size = arabicSize)
         if (!translation.isNullOrEmpty()) {
@@ -112,19 +121,6 @@ fun AyahView(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun NumberBadge(number: Int) {
-    val accent = MaterialTheme.wasira.accent
-    Box(
-        Modifier
-            .size(30.dp)
-            .background(accent.copy(alpha = 0.10f), RoundedCornerShape(8.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text("$number", color = accent, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 

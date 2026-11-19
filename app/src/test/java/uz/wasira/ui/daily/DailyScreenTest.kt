@@ -52,9 +52,25 @@ class DailyScreenTest {
         }
     }
 
-    @Test fun `header names the surah and cites surah colon ayah`() {
+    @Test fun `the top bar names the app`() {
         show(fixture("golden_2_255"))
+        compose.onNodeWithText("Wasira").assertExists()
+    }
+
+    @Test fun `the ayah card is headed and names the surah and cites surah colon ayah`() {
+        show(fixture("golden_2_255"))
+        compose.onNodeWithText("Ayah of the day").assertExists()
         compose.onNodeWithText("Al-Baqara  ·  2:255").assertExists()
+    }
+
+    @Test fun `no hadith card while the hadith is idle`() {
+        show(fixture("golden_2_255"), hadith = HadithState.Idle)
+        compose.onAllNodesWithText("Hadith of the day").assertCountEquals(0)
+    }
+
+    @Test fun `the hadith card is headed while it loads`() {
+        show(fixture("golden_2_255"), hadith = HadithState.Loading)
+        compose.onNodeWithText("Hadith of the day").assertExists()
     }
 
     @Test fun `unavailable shows try again, and retrying refetches`() {

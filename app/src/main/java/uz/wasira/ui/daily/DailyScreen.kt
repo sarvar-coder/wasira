@@ -1,7 +1,6 @@
 package uz.wasira.ui.daily
 
 import android.content.ClipData
-import uz.wasira.domain.ayahReference
 import uz.wasira.domain.citation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,17 +37,17 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import uz.wasira.R
+import uz.wasira.ui.components.AmiriLatin
+import uz.wasira.ui.components.SectionCard
+import uz.wasira.ui.components.SectionTone
 import uz.wasira.ui.theme.wasira
-
-/** The text of the header line: "Al-Baqara  ·  2:255". */
-fun headerText(surahName: String, surah: Int, numberInSurah: Int): String =
-    "$surahName  ·  ${ayahReference(surah, numberInSurah)}"
 
 /** The whole app: one ayah for today, and one hadith under it. Ported from lib/ui/daily/widgets/daily_screen.dart. */
 @Composable
@@ -118,12 +117,14 @@ private fun Loaded(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             Text(
-                headerText(ayah.surah.nameEn, ayah.surah.number, ayah.numberInSurah),
+                stringResource(R.string.app_title),
                 modifier = Modifier.weight(1f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 12.sp,
-                color = colors.muted,
+                fontFamily = AmiriLatin,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = colors.text,
             )
             IconButton(onClick = {
                 val text = daily.citation()
@@ -146,16 +147,29 @@ private fun Loaded(
                 )
             }
         }
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            AyahView(
-                ayah = ayah,
-                arabicSize = state.settings.arabicFontSize,
-                translation = daily.translation,
-                translationRtl = daily.translationIsRtl,
-                expanded = state.expanded,
-                onExpand = { onEvent(DailyEvent.TranslationExpanded) },
-            )
-            HadithView(hadith, arabicSize = state.settings.arabicFontSize, onEvent = onEvent)
+        Column(
+            Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp),
+        ) {
+            SectionCard(SectionTone.Accent) {
+                AyahView(
+                    ayah = ayah,
+                    arabicSize = state.settings.arabicFontSize,
+                    translation = daily.translation,
+                    translationRtl = daily.translationIsRtl,
+                    expanded = state.expanded,
+                    onExpand = { onEvent(DailyEvent.TranslationExpanded) },
+                )
+            }
+            // Idle means no hadith is coming: no card at all, not an empty one.
+            if (hadith != HadithState.Idle) {
+                Spacer(Modifier.height(12.dp))
+                SectionCard(SectionTone.Outlined) {
+                    HadithView(hadith, arabicSize = state.settings.arabicFontSize, onEvent = onEvent)
+                }
+            }
         }
     }
 
