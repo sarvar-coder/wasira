@@ -33,7 +33,7 @@ private const val BISMILLAH_WITH_SPURIOUS_SHADDA: String =
         "ٱلرَّحِيمِ"
 
 /** Zero-width no-break space. The API prefixes it to 1:1. */
-private const val BOM = "﻿"
+private const val BOM = "\uFEFF"
 
 /** Al-Fatiha, where the Bismillah is genuinely ayah 1 rather than an opening. */
 private const val SURAH_WHERE_BISMILLAH_IS_AYAH_ONE = 1
