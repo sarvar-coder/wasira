@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher and system label. Apart from app_title so debug can override it. -->
+    <string name="launcher_label" translatable="false">Wasira</string>
+</resources>
