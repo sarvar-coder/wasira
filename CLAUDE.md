@@ -1,6 +1,6 @@
 # Wasira
 
-One ayah a day. Android, native Kotlin; iOS later.
+One ayah a day, and one hadith under it. Android, native Kotlin; iOS later.
 
 The app was a full Quran reader — surah list, reader, recitation, offline
 downloads, bookmarks — and then a Flutter macOS app showing one ayah. It is now
@@ -32,6 +32,10 @@ pins all four rows and asserts 27:30 stays byte-identical to the API response.
 
 The `﻿` BOM prefixing 1:1 is stripped.
 
+**Hadith text is under the same rule, with no exception.** HadeethEnc's terms
+forbid modifying, adding to or deleting from what it publishes. Every string
+is stored and shown as sent, including the trailing `\r` on each lesson.
+
 ## One request a day
 
 ```
@@ -44,6 +48,21 @@ translation table.
 
 `n` is a global ayah number, 1 to 6236. That range is fixed by the text, not by
 anything the app downloads.
+
+The hadith is a separate service, HadeethEnc (ADR-0005), and costs three more
+calls because it lists only by category:
+
+```
+GET https://hadeethenc.com/api/v1/categories/roots/?language=en                       0.6 KB
+GET .../hadeeths/list/?language=en&category_id={c}&page={k}&per_page=1                 0.3 KB
+GET .../hadeeths/one/?language={ui}&id={id}                                        25–56 KB
+```
+
+Its shapes differ from alquran.cloud's. There is no `{code, data}` envelope.
+Ids and most counts are strings. A hadith missing in the asked language is a
+404 with an empty body, so English stands in. Asked in `ar`, the plain fields
+are the Arabic and the `_ar` ones are absent. Only about a third of hadiths
+have Uzbek, and it is Cyrillic.
 
 ## Today, and only today
 
@@ -81,17 +100,19 @@ Each fails with no error message. Keep them fixed:
 - **`RescheduleReceiver` stays.** Alarms are wiped on reboot; without it every
   reminder silently stops after the first restart.
 
-## Storage is two JSON files
+## Storage is three JSON files
 
 `settings.json` holds the chosen translation, the Arabic size and five reminder
-times. `daily.json` holds today's ayah. Both live in `filesDir` and are written
+times. `daily.json` holds today's ayah. `hadith.json` holds today's hadith and
+the UI language it was asked for. It is apart from `daily.json` so that a
+translation change, which refetches the ayah, never redraws the hadith. All live in `filesDir` and are written
 to `{name}.part` then atomically moved over the target, so a crash mid-write
 leaves the previous contents. Not `AtomicFile`: it logs through
 `android.util.Log`, which breaks the plain JVM tests.
 
 Reads never throw. A missing file is a first launch and a corrupt one is
-indistinguishable from it as far as the app can act — and a daily ayah is cheap
-to fetch again.
+indistinguishable from it as far as the app can act — and a daily ayah or
+hadith is cheap to fetch again.
 
 There is no database. Adding one back needs a reason written here.
 
@@ -127,7 +148,8 @@ Nothing is armed until a translation is chosen and notifications are allowed.
 
 ## Text rendering
 
-Arabic renders in **Amiri Quran**, locked by ADR-0002. Changing it means
+Arabic renders in **Amiri Quran**, locked by ADR-0002. The hadith's Arabic uses
+it too, at three quarters of the chosen size. Changing it means
 re-running the goldens: a different font can silently lack a rare Quranic mark.
 The goldens are Roborazzi PNGs in `app/src/test/snapshots/` (2:255, 1:1, 32:15
 sajda, 27:30), compared by `./gradlew verifyRoborazziDebug` and re-recorded with

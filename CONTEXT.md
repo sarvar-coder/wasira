@@ -131,3 +131,35 @@ _Avoid_: learning, study
 An ayah selected for a given calendar date and kept, so that revisiting that
 date shows the same ayah. Selection is fixed per date, never re-rolled.
 _Avoid_: random ayah, ayah of the day
+
+## Hadith
+
+**Hadith**:
+A report of what the Prophet ﷺ said, did or approved, as transmitted. Plural
+**hadiths** in this repo. Never called an ayah or a verse, and never quoted
+as Quran.
+_Avoid_: saying, narration (as the noun for the whole report)
+
+**Hadith of the day**:
+One hadith drawn for today and shown under the daily ayah. Like the daily
+ayah, it is held only for today.
+
+**Attribution**:
+Who recorded a hadith, as HadeethEnc phrases it: "Narrated by At-Tirmidhi",
+"Agreed upon" (Bukhari and Muslim both).
+_Avoid_: source, reference
+
+**Grade**:
+A hadith's authenticity classification: authentic (sahih), good (hasan) and so
+on. Shown as given, the same way the sajda classification is data and not a
+ruling.
+_Avoid_: rating, strength
+
+**Explanation**:
+The scholarly commentary (sharh) on one hadith. The hadith counterpart of a
+tafsir.
+_Avoid_: commentary, tafsir
+
+**Lessons**:
+The points HadeethEnc draws from a hadith, sent as `hints`.
+_Avoid_: hints, benefits
