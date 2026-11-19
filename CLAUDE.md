@@ -1,11 +1,12 @@
 # Wasira
 
-One ayah a day. macOS first; Windows, Linux, iOS, iPad, Android later.
+One ayah a day. Android, native Kotlin; iOS later.
 
 The app was a full Quran reader — surah list, reader, recitation, offline
-downloads, bookmarks. It is now one window showing the ayah of the day. That
-history matters when reading the repo: `git show b6d3d62` is the last commit
-before the narrowing, and ADR-0003 says why.
+downloads, bookmarks — and then a Flutter macOS app showing one ayah. It is now
+a native Android app showing the ayah of the day. That history matters when
+reading the repo: `git show b6d3d62` is the last commit before the narrowing
+(ADR-0003), and `git show flutter-final` is the last Flutter state (ADR-0004).
 
 ## Scripture is not ordinary data
 
@@ -26,7 +27,7 @@ concatenates the Bismillah into ayah 1, so `quran-uthmani` returns 2:1 as
 | **27:30** | **Never touched.** That Bismillah is inside Sulayman's letter — genuine ayah content |
 
 Only ayah **1** is ever split. This still matters with one ayah a day: a random
-draw lands on an ayah 1 roughly once every fifty-five days. `bismillah_test.dart`
+draw lands on an ayah 1 roughly once every fifty-five days. The Bismillah test
 pins all four rows and asserts 27:30 stays byte-identical to the API response.
 
 The `﻿` BOM prefixing 1:1 is stripped.
@@ -54,9 +55,9 @@ Two consequences worth not relitigating:
 
 - **The draw is not deterministic and does not need to be.** A seed existed so a
   past day could be reproduced instead of stored. There are no past days.
-- **A reminder cannot name the ayah.** Reminders are five repeating daily
-  notifications with fixed text. Carrying the ayah in the body would mean
-  knowing tomorrow's, which is the one thing this app deliberately does not do.
+- **A reminder cannot name the ayah.** Reminders are five daily notifications
+  with fixed text. Carrying the ayah in the body would mean knowing tomorrow's,
+  which is the one thing this app deliberately does not do.
 
 ## Verify against the live API before asserting
 
@@ -72,22 +73,21 @@ recognised.
 
 ## Silent failures
 
-Both are fixed in the repo. Keep them fixed — each fails with no error message:
+Each fails with no error message. Keep them fixed:
 
-- `com.apple.security.network.client` in **both** `DebugProfile.entitlements` and
-  `Release.entitlements`. Absent, every HTTP call fails silently.
-- `CFBundleAllowMixedLocalizations` in `Info.plist`. Absent, macOS text renders
-  in the wrong language — which bites because the app ships uz/ru/en/ar.
-
-CI runs `flutter analyze` and `flutter test` only. **It never builds the app**,
-so a plugin that fails to integrate passes CI. Run `flutter build macos --debug`
-by hand whenever a package changes.
+- **`INTERNET` permission in the manifest.** Absent, every HTTP call fails.
+- **`POST_NOTIFICATIONS` requested at runtime on API 33+.** Declaring it is not
+  enough; unrequested, reminders fire and never show.
+- **`RescheduleReceiver` stays.** Alarms are wiped on reboot; without it every
+  reminder silently stops after the first restart.
 
 ## Storage is two JSON files
 
 `settings.json` holds the chosen translation, the Arabic size and five reminder
-times. `daily.json` holds today's ayah. Both are written through a temporary
-file and renamed, so a crash mid-write leaves the previous contents.
+times. `daily.json` holds today's ayah. Both live in `filesDir` and are written
+to `{name}.part` then atomically moved over the target, so a crash mid-write
+leaves the previous contents. Not `AtomicFile`: it logs through
+`android.util.Log`, which breaks the plain JVM tests.
 
 Reads never throw. A missing file is a first launch and a corrupt one is
 indistinguishable from it as far as the app can act — and a daily ayah is cheap
@@ -97,38 +97,64 @@ There is no database. Adding one back needs a reason written here.
 
 ## Architecture
 
-Flutter's mixed layout: data layer by type, UI layer by feature.
+Jetpack Compose. UI layer by feature (`ui/`), data layer by type (`data/`),
+models in `domain/`.
 
-State is `flutter_bloc` with **events**, not bare Cubits. Sealed states make the
-UI `switch` exhaustive, so an unhandled case fails the build.
+Each screen has a ViewModel that takes a sealed `Event` through a single
+`onEvent` and exposes a sealed `State` — no bare mutator methods. Sealed states
+make the UI `when` exhaustive, so an unhandled case fails the build.
 
-Six packages: `path_provider`, `http`, `flutter_bloc`,
-`flutter_local_notifications`, `timezone`, `cupertino_icons`. A seventh needs its
+Dependencies are wired by hand in `WasiraApp`. No DI framework.
+
+Packages, exactly: `core-ktx`, `activity-compose`, the Compose BOM (`ui`,
+`material3`, `ui-tooling-preview`), `lifecycle-viewmodel-compose` +
+`lifecycle-runtime-compose`, `kotlinx-coroutines-android`,
+`kotlinx-serialization-json`, OkHttp. Test-only: JUnit4, `coroutines-test`,
+`mockwebserver3`, Robolectric, Compose `ui-test`, Roborazzi. Another needs its
 justification written here.
 
-`timezone` is not a free choice — `flutter_local_notifications.zonedSchedule`
-takes a `TZDateTime` and the plain-`DateTime` API is gone. It does not know
-which zone this is (`tz.local` defaults to UTC, five hours out for Tashkent), so
-the IANA name is read from `/etc/localtime` rather than adding a package for it.
-Windows keeps its zone in the registry and will need a lookup when it ships.
+## Reminders
+
+Five daily notifications at user-chosen times, fixed text, channel `daily_ayah`.
+Each is one inexact `AlarmManager.setAndAllowWhileIdle` alarm — no
+`SCHEDULE_EXACT_ALARM`; a few minutes late is fine. An alarm is one-shot:
+`ReminderReceiver` posts and re-arms that slot for its next occurrence, and
+`RescheduleReceiver` re-arms all five on boot, clock change and zone change.
+Times are local wall-clock in `ZoneId.systemDefault()`, computed with `java.time`
+so DST keeps the wall-clock time.
+
+Nothing is armed until a translation is chosen and notifications are allowed.
 
 ## Text rendering
 
 Arabic renders in **Amiri Quran**, locked by ADR-0002. Changing it means
 re-running the goldens: a different font can silently lack a rare Quranic mark.
-Uthmani diacritics collide below `height: 2.0`.
+The goldens are Roborazzi PNGs in `app/src/test/snapshots/` (2:255, 1:1, 32:15
+sajda, 27:30), compared by `./gradlew verifyRoborazziDebug` and re-recorded with
+`recordRoborazziDebug`. Plain `testDebugUnitTest` does not compare them.
+Uthmani diacritics collide below line height `2.0`.
 
-Arabic ayah text is always `TextDirection.rtl`. App layout mirrors only when the
-UI language is RTL.
+Arabic ayah text is always RTL. App layout mirrors only when the UI language is
+RTL.
 
 `uz.sodik` is a tafsir-translation: average 217 characters, maximum 2660, against
 `en.sahih`'s 137. Translations past 300 characters clamp with a "Show more".
 
-## The window
+## Build and test
 
-460×620, placed near the top of the screen on launch against `visibleFrame` so
-it clears the menu bar and the Dock. A normal window — no `NSStatusItem`, no
-`LSUIElement`, no window package.
+```
+./gradlew assembleDebug
+./gradlew testDebugUnitTest
+./gradlew verifyRoborazziDebug
+./gradlew lintDebug
+./gradlew installDebug
+```
+
+CI runs lint, unit tests, the golden check and `assembleDebug` — CI builds the
+app now. Robolectric runs on SDK 35 (`robolectric.properties`): SDK 37 needs
+Java 21 and the build is on 17.
+
+**Never use an emulator.** Test on the physical phone over `adb`.
 
 ## Decisions live in ADRs
 

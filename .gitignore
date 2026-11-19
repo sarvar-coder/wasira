@@ -1,29 +1,18 @@
-# Flutter / Dart
-.dart_tool/
-.packages
+# Gradle / Android
+.gradle/
 build/
-.flutter-plugins
-.flutter-plugins-dependencies
+local.properties
 *.iml
 .idea/
+.kotlin/
+captures/
+*.apk
+*.aab
 
 # macOS
 .DS_Store
 
-# Xcode / CocoaPods
-**/Pods/
-**/*.xcworkspace/xcuserdata/
-**/xcuserdata/
-
 # Local
 scratch/
-
-# M0 throwaway spike - deliverable is the ADR, not the code
-spike/
-
-# Local agent config
-.claude/
-
-# Flutter writes these when a golden mismatches - diagnostic only
-test/failures/
 dist/
+.claude/

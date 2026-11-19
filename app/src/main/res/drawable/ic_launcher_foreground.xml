@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  assets/icon/wasira_app_icon.svg as an adaptive-icon foreground. The macOS
+  rounded rect and its 0.8 inset are dropped: the launcher supplies the mask and
+  the background (#F8F5ED, ic_launcher_background). The drop shadow is dropped
+  too; VectorDrawable has no filters.
+
+  The artwork spans y 85..817 and x 213..811 in the SVG's 1024 space. Centred on
+  (512, 451), its farthest point lies 366 units out; scale 0.087 keeps every
+  point inside the 33dp radius of the 66dp safe zone, with antialiasing margin:
+  translate = 54 - 512 * 0.087, 54 - 451 * 0.087.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group
+        android:scaleX="0.087" android:scaleY="0.087"
+        android:translateX="9.456" android:translateY="14.763">
+
+        <!-- Mihrab / protective arch -->
+        <path
+            android:pathData="M244,545V394C244,277 340,190 512,116C684,190 780,277 780,394V545"
+            android:strokeWidth="62"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round">
+            <aapt:attr name="android:strokeColor">
+                <gradient android:type="linear"
+                    android:startX="244" android:startY="545"
+                    android:endX="780" android:endY="116">
+                    <item android:offset="0" android:color="#FF0B5A57" />
+                    <item android:offset="0.55" android:color="#FF126E67" />
+                    <item android:offset="1" android:color="#FFD6A43A" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Open Quran -->
+        <path android:pathData="M244,548C340,559 427,589 512,674C597,589 684,559 780,548L780,690C680,700 592,731 512,817C432,731 344,700 244,690Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear"
+                    android:startX="244" android:startY="0"
+                    android:endX="780" android:endY="0">
+                    <item android:offset="0" android:color="#FF0B5A57" />
+                    <item android:offset="1" android:color="#FF155F5B" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Page fold -->
+        <path
+            android:pathData="M512,674V817"
+            android:strokeColor="#FFF8F5ED"
+            android:strokeWidth="14"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M512,674C474,628 414,594 348,578"
+            android:strokeColor="#FFD6A43A"
+            android:strokeAlpha="0.9"
+            android:strokeWidth="13"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M512,674C550,628 610,594 676,578"
+            android:strokeColor="#FFD6A43A"
+            android:strokeAlpha="0.9"
+            android:strokeWidth="13"
+            android:strokeLineCap="round" />
+
+        <!-- Guiding light -->
+        <path
+            android:pathData="M512,321L531,365L575,384L531,403L512,447L493,403L449,384L493,365Z"
+            android:fillColor="#FFD6A43A" />
+    </group>
+</vector>

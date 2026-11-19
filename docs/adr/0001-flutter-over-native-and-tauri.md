@@ -1,6 +1,6 @@
 # ADR-0001 — Flutter, not native-per-platform, Tauri, KMP or React Native
 
-- **Status:** accepted
+- **Status:** Superseded by ADR-0004
 - **Date:** 2026-09-06
 
 ## Context
