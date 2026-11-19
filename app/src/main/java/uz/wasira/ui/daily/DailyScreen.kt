@@ -112,7 +112,7 @@ private fun Loaded(
 
     Column(Modifier.fillMaxSize()) {
         Row(
-            Modifier.fillMaxWidth().padding(start = 24.dp, top = 10.dp, end = 8.dp),
+            Modifier.fillMaxWidth().padding(start = 36.dp, top = 10.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
