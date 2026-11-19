@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_body">Bugungi oyat tayyor</string>
+    <string name="notification_channel_name">Kunlik oyat</string>
+    <string name="notification_channel_description">Kun oyati, siz tanlagan vaqtlarda</string>
+
+    <string name="choose_translation">Tarjimani tanlang</string>
+    <string name="picker_subtitle">%2$d tilda %1$d ta tarjima. Buni keyin ham o\'zgartirishingiz mumkin.</string>
+    <string name="translations_available">%1$d ta mavjud</string>
+    <string name="service_unreachable">Qur\'on xizmatiga ulanib bo\'lmadi</string>
+    <string name="try_again">Qayta urinish</string>
+    <string name="show_more">Ko\'proq</string>
+    <string name="sajda_here">Sajda</string>
+    <string name="sajda_obligatory_here">Vojib sajda</string>
+    <string name="arabic_text_size">Arab matni o\'lchami</string>
+    <string name="daily_settings">Kunlik sozlamalar</string>
+    <string name="reminders">Eslatmalar</string>
+    <string name="copy_ayah">Nusxa olish</string>
+    <string name="copied">Nusxa olindi</string>
+    <string name="about">Ilova haqida</string>
+    <string name="translation">Tarjima</string>
+    <string name="version">Versiya</string>
+    <string name="text_from">Qur\'on matni va tarjimalari %1$s xizmatidan</string>
+</resources>
