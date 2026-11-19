@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.AdaptiveIconDrawable
 import org.robolectric.RuntimeEnvironment
+import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import android.content.Context
 import org.junit.Assert.assertEquals
@@ -28,13 +29,22 @@ class LauncherIconTest {
     private val context: Context = RuntimeEnvironment.getApplication()
     private val size = 432 // 108dp at 4px per dp
 
+    /**
+     * Gradients rasterise slightly differently on Linux (CI) and macOS, so the
+     * gradient icons get a 1% pixel tolerance. These snapshots are for looking
+     * at; the safe-zone test below is the real check. The Arabic goldens stay exact.
+     */
+    private val gradientTolerance = RoborazziOptions(
+        compareOptions = RoborazziOptions.CompareOptions(changeThreshold = 0.01f),
+    )
+
     private fun render(draw: (Canvas) -> Unit): Bitmap =
         Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888).also { draw(Canvas(it)) }
 
     @Test fun adaptiveIcon() {
         val icon = context.getDrawable(R.mipmap.ic_launcher) as AdaptiveIconDrawable
         icon.setBounds(0, 0, size, size)
-        render { icon.draw(it) }.captureRoboImage("src/test/snapshots/launcher_icon.png")
+        render { icon.draw(it) }.captureRoboImage("src/test/snapshots/launcher_icon.png", gradientTolerance)
     }
 
     @Test fun foregroundWithSafeZone() {
@@ -49,7 +59,7 @@ class LauncherIconTest {
                 strokeWidth = 1f
             })
         }
-        bitmap.captureRoboImage("src/test/snapshots/launcher_foreground_safe_zone.png")
+        bitmap.captureRoboImage("src/test/snapshots/launcher_foreground_safe_zone.png", gradientTolerance)
     }
 
     @Test fun monochrome() {
