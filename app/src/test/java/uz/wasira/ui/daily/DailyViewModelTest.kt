@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import uz.wasira.ui.FakeApi
 import uz.wasira.ui.FakeDaily
+import uz.wasira.ui.FakeHadith
 import uz.wasira.ui.FakeReminders
 import uz.wasira.ui.FakeSettings
 import uz.wasira.ui.MainDispatcherRule
@@ -23,9 +24,10 @@ class DailyViewModelTest {
     private val daily = FakeDaily(clock = { now })
     private val api = FakeApi()
     private val reminders = FakeReminders()
+    private val hadith = FakeHadith(clock = { now })
 
     private fun TestScope.loaded(): DailyViewModel {
-        val vm = DailyViewModel(daily, settings, api, reminders, now = { now })
+        val vm = DailyViewModel(daily, settings, api, reminders, hadith, now = { now })
         testScheduler.runCurrent()
         return vm
     }
@@ -33,7 +35,7 @@ class DailyViewModelTest {
     private val DailyViewModel.loadedState get() = state.value as DailyState.Loaded
 
     @Test fun `starts loading`() {
-        assertEquals(DailyState.Loading, DailyViewModel(daily, settings, api, reminders).state.value)
+        assertEquals(DailyState.Loading, DailyViewModel(daily, settings, api, reminders, hadith).state.value)
     }
 
     @Test fun `requested - loaded with today's ayah and the settings`() = runTest(main.dispatcher) {
@@ -165,5 +167,102 @@ class DailyViewModelTest {
         vm.onEvent(DailyEvent.TranslationsRequested)
         testScheduler.runCurrent()
         assertEquals(TranslationsState.Loaded(api.editions), vm.translations.value)
+    }
+
+    private val DailyViewModel.loadedHadith get() = hadithState.value as HadithState.Loaded
+
+    @Test fun `no hadith is asked for before the UI language is known`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        assertEquals(HadithState.Idle, vm.hadithState.value)
+        assertTrue(hadith.languages.isEmpty())
+    }
+
+    @Test fun `hadith language - fetched in that language`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("uz"))
+        testScheduler.runCurrent()
+        assertEquals("uz", vm.loadedHadith.daily.hadith.language)
+        assertEquals(listOf("uz"), hadith.languages)
+    }
+
+    @Test fun `the same language reported again - not refetched`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("uz"))
+        vm.onEvent(DailyEvent.HadithLanguage("uz"))
+        testScheduler.runCurrent()
+        assertEquals(listOf("uz"), hadith.languages)
+    }
+
+    @Test fun `a new language - refetched in it`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("uz"))
+        testScheduler.runCurrent()
+        vm.onEvent(DailyEvent.HadithLanguage("ru"))
+        testScheduler.runCurrent()
+        assertEquals("ru", vm.loadedHadith.daily.hadith.language)
+    }
+
+    @Test fun `hadith failure leaves the ayah loaded, and retry refetches only the hadith`() = runTest(main.dispatcher) {
+        hadith.failures = 1
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        assertEquals(HadithState.Unavailable, vm.hadithState.value)
+        assertTrue(vm.state.value is DailyState.Loaded)
+
+        vm.onEvent(DailyEvent.HadithRetried)
+        testScheduler.runCurrent()
+        assertTrue(vm.hadithState.value is HadithState.Loaded)
+        assertEquals(1, daily.calls)
+    }
+
+    @Test fun `ayah failure does not stop the hadith`() = runTest(main.dispatcher) {
+        daily.failures = 1
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        assertEquals(DailyState.Unavailable, vm.state.value)
+        assertTrue(vm.hadithState.value is HadithState.Loaded)
+    }
+
+    @Test fun `hadith expanded and explanation toggled`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        vm.onEvent(DailyEvent.HadithExpanded)
+        vm.onEvent(DailyEvent.HadithExplanationToggled)
+        assertEquals(true, vm.loadedHadith.expanded)
+        assertEquals(true, vm.loadedHadith.explanationOpen)
+        vm.onEvent(DailyEvent.HadithExplanationToggled)
+        assertEquals(false, vm.loadedHadith.explanationOpen)
+    }
+
+    @Test fun `translation changed - the hadith is not redrawn`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        vm.onEvent(DailyEvent.TranslationChanged("ur.jalandhry", "Jalandhry"))
+        testScheduler.runCurrent()
+        assertEquals(listOf("en"), hadith.languages)
+    }
+
+    @Test fun `resumed on a new day - yesterday's hadith is replaced too`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        now = now.plusDays(1)
+        vm.onEvent(DailyEvent.Resumed)
+        testScheduler.runCurrent()
+        assertEquals("2026-11-20", vm.loadedHadith.daily.date)
+        assertEquals(listOf("en", "en"), hadith.languages)
+    }
+
+    @Test fun `resumed the same day - the hadith is not refetched`() = runTest(main.dispatcher) {
+        val vm = loaded()
+        vm.onEvent(DailyEvent.HadithLanguage("en"))
+        testScheduler.runCurrent()
+        vm.onEvent(DailyEvent.Resumed)
+        testScheduler.runCurrent()
+        assertEquals(listOf("en"), hadith.languages)
     }
 }

@@ -21,4 +21,11 @@
     <string name="translation">الترجمة</string>
     <string name="version">الإصدار</string>
     <string name="text_from">نص القرآن الكريم والترجمات من %1$s</string>
+    <string name="hadith_language">ar</string>
+    <string name="hadith_of_the_day">حديث اليوم</string>
+    <string name="hadith_unreachable">تعذّر الاتصال بخدمة الأحاديث</string>
+    <string name="explanation">الشرح</string>
+    <string name="hide_explanation">إخفاء الشرح</string>
+    <string name="hadith_lessons">من فوائد الحديث</string>
+    <string name="hadith_from">الأحاديث وترجماتها وشروحها من %1$s</string>
 </resources>

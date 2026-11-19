@@ -10,6 +10,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import uz.wasira.data.DailySource
+import uz.wasira.data.HadithSource
 import uz.wasira.data.FetchedAyah
 import uz.wasira.data.QuranApi
 import uz.wasira.data.ReminderScheduler
@@ -17,6 +18,8 @@ import uz.wasira.data.Settings
 import uz.wasira.data.SettingsSource
 import uz.wasira.domain.Ayah
 import uz.wasira.domain.DailyAyah
+import uz.wasira.domain.DailyHadith
+import uz.wasira.domain.Hadith
 import uz.wasira.domain.Edition
 import uz.wasira.domain.Surah
 
@@ -127,3 +130,32 @@ fun fixture(name: String, date: String = "2026-11-19"): DailyAyah {
 private fun JsonObject.str(key: String) = getValue(key).jsonPrimitive.content
 private fun JsonObject.int(key: String) = getValue(key).jsonPrimitive.int
 private fun JsonObject.edition(key: String) = getValue("edition").jsonObject.str(key)
+
+/** Returns [hadith] stamped with the date of [clock]; fails the first [failures] calls. */
+class FakeHadith(
+    var hadith: Hadith = HADITH,
+    private val clock: () -> LocalDateTime = LocalDateTime::now,
+) : HadithSource {
+    var failures = 0
+    val languages = mutableListOf<String>()
+    override suspend fun today(language: String): DailyHadith {
+        languages += language
+        if (failures > 0) {
+            failures--
+            throw IllegalStateException("offline")
+        }
+        return DailyHadith(clock().toLocalDate().toString(), hadith.copy(language = language))
+    }
+}
+
+val HADITH = Hadith(
+    id = "66530",
+    language = "en",
+    languages = listOf("ar", "en", "uz"),
+    arabic = "عَنْ مُعَاذِ بْنِ جَبَلٍ رَضِيَ اللهُ عَنْهُ",
+    translation = "Mu‘ādh ibn Jabal reported: I said: O Messenger of Allah!",
+    attribution = "Narrated by At-Tirmidhi",
+    grade = "Authentic",
+    explanation = "Mu‘ādh asked the Prophet about a deed that admits one into Paradise.",
+    hints = listOf("The Companions' keenness on acquiring knowledge.\r"),
+)

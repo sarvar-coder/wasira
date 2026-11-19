@@ -12,6 +12,9 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import uz.wasira.data.AlquranApi
 import uz.wasira.data.DailyRepository
+import uz.wasira.data.HadeethEncApi
+import uz.wasira.data.HadithRepository
+import uz.wasira.data.HadithSource
 import uz.wasira.data.LocalStore
 import uz.wasira.data.QuranApi
 import uz.wasira.data.ReminderScheduler
@@ -28,6 +31,8 @@ class WasiraApp : Application() {
         private set
     lateinit var reminders: ReminderScheduler
         private set
+    lateinit var hadith: HadithSource
+        private set
 
     /** Lives as long as the process; for work that must outlive any one screen. */
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -39,6 +44,10 @@ class WasiraApp : Application() {
         settings = SettingsRepository(LocalStore(File(filesDir, "settings.json")))
         daily = DailyRepository(api, LocalStore(File(filesDir, "daily.json")), settings)
         reminders = AlarmReminderScheduler(this)
+        hadith = HadithRepository(
+            HadeethEncApi(client, HadeethEncApi.BASE_URL.toHttpUrl()),
+            LocalStore(File(filesDir, "hadith.json")),
+        )
 
         // Not awaited: reminders are rewritten on every launch and none of it
         // needs to happen before the first frame.

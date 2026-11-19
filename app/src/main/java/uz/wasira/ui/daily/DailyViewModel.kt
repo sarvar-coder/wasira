@@ -13,11 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.wasira.data.DailySource
+import uz.wasira.data.HadithSource
 import uz.wasira.data.QuranApi
 import uz.wasira.data.ReminderScheduler
 import uz.wasira.data.Settings
 import uz.wasira.data.SettingsSource
 import uz.wasira.domain.DailyAyah
+import uz.wasira.domain.DailyHadith
 import uz.wasira.domain.Edition
 
 sealed interface DailyEvent {
@@ -49,6 +51,21 @@ sealed interface DailyEvent {
 
     /** POST_NOTIFICATIONS was granted: arm the five reminders. */
     data object NotificationsPermitted : DailyEvent
+
+    /**
+     * The screen is showing in [language], an ISO 639 code: on first composition
+     * and whenever the UI language changes. The hadith follows it.
+     */
+    data class HadithLanguage(val language: String) : DailyEvent
+
+    /** Try the hadith again after a failed fetch. The ayah is not refetched. */
+    data object HadithRetried : DailyEvent
+
+    /** Show a long hadith in full. */
+    data object HadithExpanded : DailyEvent
+
+    /** Open or close the hadith's explanation. */
+    data object HadithExplanationToggled : DailyEvent
 }
 
 sealed interface DailyState {
@@ -63,6 +80,24 @@ sealed interface DailyState {
         /** Whether a long translation is shown in full. */
         val expanded: Boolean = false,
     ) : DailyState
+}
+
+/**
+ * The hadith of the day. Apart from [DailyState] because the two are fetched
+ * from different services and either can fail without the other.
+ */
+sealed interface HadithState {
+    /** No UI language has been reported yet, so nothing has been asked for. */
+    data object Idle : HadithState
+    data object Loading : HadithState
+    data object Unavailable : HadithState
+
+    data class Loaded(
+        val daily: DailyHadith,
+        /** Whether a long hadith is shown in full. */
+        val expanded: Boolean = false,
+        val explanationOpen: Boolean = false,
+    ) : HadithState
 }
 
 /** The live translation list for the settings picker. Fetched when asked for, not held. */
@@ -82,6 +117,7 @@ class DailyViewModel(
     private val settings: SettingsSource,
     private val api: QuranApi,
     private val reminders: ReminderScheduler,
+    private val hadith: HadithSource,
     private val now: () -> LocalDateTime = LocalDateTime::now,
 ) : ViewModel() {
     private val _state = MutableStateFlow<DailyState>(DailyState.Loading)
@@ -90,7 +126,14 @@ class DailyViewModel(
     private val _translations = MutableStateFlow<TranslationsState>(TranslationsState.Idle)
     val translations: StateFlow<TranslationsState> = _translations.asStateFlow()
 
+    private val _hadith = MutableStateFlow<HadithState>(HadithState.Idle)
+    val hadithState: StateFlow<HadithState> = _hadith.asStateFlow()
+
     private var loadJob: Job? = null
+    private var hadithJob: Job? = null
+
+    /** The UI language last reported; null until the screen has composed. */
+    private var language: String? = null
     private var midnightJob: Job? = null
 
     init {
@@ -100,7 +143,10 @@ class DailyViewModel(
     fun onEvent(e: DailyEvent) {
         when (e) {
             DailyEvent.Requested, DailyEvent.Retried -> load()
-            DailyEvent.Resumed -> if (isStale()) load()
+            DailyEvent.Resumed -> {
+                if (isStale()) load()
+                if (isHadithStale()) loadHadith()
+            }
             DailyEvent.TranslationExpanded -> _state.update {
                 if (it is DailyState.Loaded) it.copy(expanded = true) else it
             }
@@ -124,6 +170,17 @@ class DailyViewModel(
             DailyEvent.NotificationsPermitted -> viewModelScope.launch {
                 schedule(settings.read().reminderTimes)
             }
+            is DailyEvent.HadithLanguage -> if (e.language != language) {
+                language = e.language
+                loadHadith()
+            }
+            DailyEvent.HadithRetried -> loadHadith()
+            DailyEvent.HadithExpanded -> _hadith.update {
+                if (it is HadithState.Loaded) it.copy(expanded = true) else it
+            }
+            DailyEvent.HadithExplanationToggled -> _hadith.update {
+                if (it is HadithState.Loaded) it.copy(explanationOpen = !it.explanationOpen) else it
+            }
         }
     }
 
@@ -132,6 +189,28 @@ class DailyViewModel(
         is DailyState.Loaded -> s.ayah.date != now().toLocalDate().toString()
         DailyState.Unavailable -> true
         DailyState.Loading -> false
+    }
+
+    /** Like [isStale], for the hadith. Nothing to refresh before a language has been reported. */
+    private fun isHadithStale(): Boolean = when (val s = _hadith.value) {
+        is HadithState.Loaded -> s.daily.date != now().toLocalDate().toString()
+        HadithState.Unavailable -> true
+        HadithState.Loading, HadithState.Idle -> false
+    }
+
+    private fun loadHadith() {
+        val language = language ?: return
+        hadithJob?.cancel()
+        hadithJob = viewModelScope.launch {
+            _hadith.value = HadithState.Loading
+            _hadith.value = try {
+                HadithState.Loaded(hadith.today(language))
+            } catch (c: CancellationException) {
+                throw c
+            } catch (_: Exception) {
+                HadithState.Unavailable
+            }
+        }
     }
 
     private fun load() {

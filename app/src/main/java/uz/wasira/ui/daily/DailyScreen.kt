@@ -50,13 +50,14 @@ import uz.wasira.ui.theme.wasira
 fun headerText(surahName: String, surah: Int, numberInSurah: Int): String =
     "$surahName  ·  ${ayahReference(surah, numberInSurah)}"
 
-/** The whole app: one ayah, for today. Ported from lib/ui/daily/widgets/daily_screen.dart. */
+/** The whole app: one ayah for today, and one hadith under it. Ported from lib/ui/daily/widgets/daily_screen.dart. */
 @Composable
 fun DailyScreen(
     state: DailyState,
     translations: TranslationsState,
     onEvent: (DailyEvent) -> Unit,
     modifier: Modifier = Modifier,
+    hadith: HadithState = HadithState.Idle,
 ) {
     val snackbar = remember { SnackbarHostState() }
     Scaffold(
@@ -71,7 +72,7 @@ fun DailyScreen(
                     onRetry = { onEvent(DailyEvent.Retried) },
                     modifier = Modifier.align(Alignment.Center),
                 )
-                is DailyState.Loaded -> Loaded(state, translations, snackbar, onEvent)
+                is DailyState.Loaded -> Loaded(state, translations, hadith, snackbar, onEvent)
             }
         }
     }
@@ -98,6 +99,7 @@ private fun Unavailable(onRetry: () -> Unit, modifier: Modifier = Modifier) {
 private fun Loaded(
     state: DailyState.Loaded,
     translations: TranslationsState,
+    hadith: HadithState,
     snackbar: SnackbarHostState,
     onEvent: (DailyEvent) -> Unit,
 ) {
@@ -144,15 +146,17 @@ private fun Loaded(
                 )
             }
         }
-        AyahView(
-            ayah = ayah,
-            arabicSize = state.settings.arabicFontSize,
-            translation = daily.translation,
-            translationRtl = daily.translationIsRtl,
-            expanded = state.expanded,
-            onExpand = { onEvent(DailyEvent.TranslationExpanded) },
-            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
-        )
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            AyahView(
+                ayah = ayah,
+                arabicSize = state.settings.arabicFontSize,
+                translation = daily.translation,
+                translationRtl = daily.translationIsRtl,
+                expanded = state.expanded,
+                onExpand = { onEvent(DailyEvent.TranslationExpanded) },
+            )
+            HadithView(hadith, arabicSize = state.settings.arabicFontSize, onEvent = onEvent)
+        }
     }
 
     if (settingsOpen) {

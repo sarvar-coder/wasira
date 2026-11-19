@@ -49,3 +49,34 @@ data class DailyAyah(
 ) {
     val translationIsRtl: Boolean get() = translationDirection == "rtl"
 }
+
+/**
+ * One hadith from HadeethEnc. Every string is exactly as sent: its terms forbid
+ * modifying, adding to or deleting from the content.
+ */
+data class Hadith(
+    /** HadeethEnc's id. A string in every response. */
+    val id: String,
+    /** The language [translation], [explanation] and the rest are in. */
+    val language: String,
+    /** Every language HadeethEnc has this hadith in. */
+    val languages: List<String>,
+    /** The Arabic text. */
+    val arabic: String,
+    /** The hadith in [language]; null when [language] is Arabic, because [arabic] already is. */
+    val translation: String?,
+    /** Who narrated or collected it: "Narrated by At-Tirmidhi". */
+    val attribution: String,
+    /** Its authenticity grade: "Authentic". */
+    val grade: String,
+    val explanation: String,
+    /** What the hadith teaches, one point each. */
+    val hints: List<String>,
+)
+
+/** Today's hadith, as cached in hadith.json. */
+data class DailyHadith(
+    /** Local day key, YYYY-MM-DD. */
+    val date: String,
+    val hadith: Hadith,
+)

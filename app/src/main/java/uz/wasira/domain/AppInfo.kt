@@ -3,11 +3,18 @@ package uz.wasira.domain
 /** What the app says about itself, and who it owes. */
 object AppInfo {
     /** Mirrors `versionName` in app/build.gradle.kts; AppInfoTest fails if the two drift. */
-    const val VERSION = "1.0.0"
+    const val VERSION = "1.1.0"
 
     /** The Quran text and every translation come from one free, keyless API. */
     const val QURAN_SOURCE = "alquran.cloud"
     const val QURAN_SOURCE_URL = "https://alquran.cloud"
+
+    /**
+     * The daily hadith, its translation, grade and explanation. HadeethEnc's
+     * terms ask that it be credited as the source of what is republished.
+     */
+    const val HADITH_SOURCE = "HadeethEnc.com"
+    const val HADITH_SOURCE_URL = "https://hadeethenc.com"
 
     /**
      * Amiri Quran ships inside the app, and the SIL Open Font License requires

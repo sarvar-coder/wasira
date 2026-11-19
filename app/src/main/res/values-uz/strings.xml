@@ -21,4 +21,11 @@
     <string name="translation">Tarjima</string>
     <string name="version">Versiya</string>
     <string name="text_from">Qur\'on matni va tarjimalari %1$s xizmatidan</string>
+    <string name="hadith_language">uz</string>
+    <string name="hadith_of_the_day">Kun hadisi</string>
+    <string name="hadith_unreachable">Hadis xizmatiga ulanib bo\'lmadi</string>
+    <string name="explanation">Sharh</string>
+    <string name="hide_explanation">Sharhni yopish</string>
+    <string name="hadith_lessons">Foydalar</string>
+    <string name="hadith_from">Hadislar, tarjimalar va sharhlar %1$s xizmatidan</string>
 </resources>
