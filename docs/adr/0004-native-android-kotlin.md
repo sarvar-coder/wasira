@@ -30,7 +30,7 @@ Native Android, in Kotlin, with Jetpack Compose.
 - **DI:** manual, in the `Application` subclass. Four dependencies do not need a
   framework.
 - **Storage:** the same two JSON files, `settings.json` and `daily.json`, in
-  `filesDir`, written atomically via `AtomicFile`.
+  `filesDir`, written to a `.part` file and atomically renamed over the target.
 - **Reminders:** five inexact `AlarmManager` alarms, each re-armed when it fires
   and all re-armed by a receiver on boot, clock change and zone change. This
   replaces `flutter_local_notifications` and `timezone`.

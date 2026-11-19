@@ -85,7 +85,9 @@ Each fails with no error message. Keep them fixed:
 
 `settings.json` holds the chosen translation, the Arabic size and five reminder
 times. `daily.json` holds today's ayah. Both live in `filesDir` and are written
-through `AtomicFile`, so a crash mid-write leaves the previous contents.
+to `{name}.part` then atomically moved over the target, so a crash mid-write
+leaves the previous contents. Not `AtomicFile`: it logs through
+`android.util.Log`, which breaks the plain JVM tests.
 
 Reads never throw. A missing file is a first launch and a corrupt one is
 indistinguishable from it as far as the app can act — and a daily ayah is cheap
@@ -127,6 +129,9 @@ Nothing is armed until a translation is chosen and notifications are allowed.
 
 Arabic renders in **Amiri Quran**, locked by ADR-0002. Changing it means
 re-running the goldens: a different font can silently lack a rare Quranic mark.
+The goldens are Roborazzi PNGs in `app/src/test/snapshots/` (2:255, 1:1, 32:15
+sajda, 27:30), compared by `./gradlew verifyRoborazziDebug` and re-recorded with
+`recordRoborazziDebug`. Plain `testDebugUnitTest` does not compare them.
 Uthmani diacritics collide below line height `2.0`.
 
 Arabic ayah text is always RTL. App layout mirrors only when the UI language is
@@ -140,11 +145,14 @@ RTL.
 ```
 ./gradlew assembleDebug
 ./gradlew testDebugUnitTest
+./gradlew verifyRoborazziDebug
 ./gradlew lintDebug
 ./gradlew installDebug
 ```
 
-CI runs lint, unit tests and `assembleDebug` — CI builds the app now.
+CI runs lint, unit tests, the golden check and `assembleDebug` — CI builds the
+app now. Robolectric runs on SDK 35 (`robolectric.properties`): SDK 37 needs
+Java 21 and the build is on 17.
 
 **Never use an emulator.** Test on the physical phone over `adb`.
 

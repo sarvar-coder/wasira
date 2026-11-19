@@ -17,4 +17,4 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       # Builds the app too: a dependency that fails to integrate fails here,
       # not on the first manual build.
-      - run: ./gradlew lintDebug testDebugUnitTest assembleDebug
+      - run: ./gradlew lintDebug testDebugUnitTest verifyRoborazziDebug assembleDebug
