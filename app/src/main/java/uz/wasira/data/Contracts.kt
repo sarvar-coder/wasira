@@ -2,7 +2,9 @@ package uz.wasira.data
 
 import uz.wasira.domain.Ayah
 import uz.wasira.domain.DailyAyah
+import uz.wasira.domain.DailyHadith
 import uz.wasira.domain.Edition
+import uz.wasira.domain.Hadith
 
 /** Thrown for timeouts, non-200 status, non-200 body `code`, and malformed bodies. */
 class AlquranApiException(message: String, cause: Throwable? = null) : Exception(message, cause)
@@ -58,4 +60,39 @@ interface ReminderScheduler {
 
     /** True if the app may post notifications (POST_NOTIFICATIONS on API 33+). */
     fun canNotify(): Boolean
+}
+
+/** Thrown for timeouts, unexpected status codes and malformed HadeethEnc bodies. */
+class HadeethEncException(message: String, cause: Throwable? = null) : Exception(message, cause)
+
+/** One top-level HadeethEnc category and how many hadiths it lists. */
+data class HadithCategory(val id: String, val count: Int)
+
+/** One entry of a category listing: enough to fetch it, and the languages it exists in. */
+data class HadithEntry(val id: String, val languages: List<String>)
+
+/** HadeethEnc. Implemented by [HadeethEncApi]. */
+interface HadithApi {
+    /** GET /categories/roots/?language={language} */
+    suspend fun roots(language: String): List<HadithCategory>
+
+    /** GET /hadeeths/list/?language=..&category_id=..&page={page}&per_page=1. Null past the last page. */
+    suspend fun entry(language: String, category: String, page: Int): HadithEntry?
+
+    /**
+     * GET /hadeeths/one/?language=..&id=.. with every string exactly as sent. Null
+     * when the hadith does not exist in [language]: HadeethEnc answers that with
+     * a 404 and an empty body.
+     */
+    suspend fun hadith(id: String, language: String): Hadith?
+}
+
+/** Source of today's hadith. Implemented by [HadithRepository]. */
+interface HadithSource {
+    /**
+     * The cached hadith if it is today's and in the right language; otherwise
+     * draws a new one. Shown in [language] when HadeethEnc has it, in English
+     * when it does not.
+     */
+    suspend fun today(language: String): DailyHadith
 }
