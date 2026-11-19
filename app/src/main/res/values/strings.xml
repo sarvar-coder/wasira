@@ -5,4 +5,29 @@
     <string name="notification_body">Today\'s ayah is ready</string>
     <string name="notification_channel_name">Daily ayah</string>
     <string name="notification_channel_description">The ayahs of the day, at the times you chose</string>
+
+    <!-- Ported from lib/l10n/app_en.arb. -->
+    <!-- Heading of the first-launch translation picker. -->
+    <string name="choose_translation">Choose a translation</string>
+    <!-- %1$d translations, %2$d languages. -->
+    <string name="picker_subtitle">%1$d translations in %2$d languages. You can change this later.</string>
+    <!-- %1$d translations available in one language. -->
+    <string name="translations_available">%1$d available</string>
+    <string name="service_unreachable">Could not reach the Quran service</string>
+    <string name="try_again">Try again</string>
+    <!-- Expands a translation clamped for length. -->
+    <string name="show_more">Show more</string>
+    <!-- Marker on an ayah of prostration. -->
+    <string name="sajda_here">Prostration</string>
+    <string name="sajda_obligatory_here">Obligatory prostration</string>
+    <string name="arabic_text_size">Arabic text size</string>
+    <string name="daily_settings">Daily settings</string>
+    <string name="reminders">Reminders</string>
+    <string name="copy_ayah">Copy</string>
+    <string name="copied">Copied</string>
+    <string name="about">About</string>
+    <string name="translation">Translation</string>
+    <string name="version">Version</string>
+    <!-- Credit line for the data source; %1$s is the service name. -->
+    <string name="text_from">Quran text and translations from %1$s</string>
 </resources>

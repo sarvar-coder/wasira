@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_body">Аят дня готов</string>
+    <string name="notification_channel_name">Аят дня</string>
+    <string name="notification_channel_description">Аят дня в выбранное вами время</string>
+
+    <string name="choose_translation">Выберите перевод</string>
+    <string name="picker_subtitle">%1$d переводов на %2$d языках. Это можно изменить позже.</string>
+    <string name="translations_available">доступно: %1$d</string>
+    <string name="service_unreachable">Не удалось связаться со службой Корана</string>
+    <string name="try_again">Повторить</string>
+    <string name="show_more">Показать полностью</string>
+    <string name="sajda_here">Земной поклон</string>
+    <string name="sajda_obligatory_here">Обязательный земной поклон</string>
+    <string name="arabic_text_size">Размер арабского текста</string>
+    <string name="daily_settings">Настройки дня</string>
+    <string name="reminders">Напоминания</string>
+    <string name="copy_ayah">Копировать</string>
+    <string name="copied">Скопировано</string>
+    <string name="about">О приложении</string>
+    <string name="translation">Перевод</string>
+    <string name="version">Версия</string>
+    <string name="text_from">Текст Корана и переводы предоставлены %1$s</string>
+</resources>

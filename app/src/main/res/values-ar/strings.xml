@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_body">آية اليوم جاهزة</string>
+    <string name="notification_channel_name">آية اليوم</string>
+    <string name="notification_channel_description">آية اليوم في الأوقات التي اخترتها</string>
+
+    <string name="choose_translation">اختر ترجمة</string>
+    <string name="picker_subtitle">%1$d ترجمة بـ %2$d لغة. يمكنك تغيير ذلك لاحقًا.</string>
+    <string name="translations_available">%1$d متاحة</string>
+    <string name="service_unreachable">تعذر الوصول إلى خدمة القرآن الكريم</string>
+    <string name="try_again">أعد المحاولة</string>
+    <string name="show_more">عرض المزيد</string>
+    <string name="sajda_here">سجدة تلاوة</string>
+    <string name="sajda_obligatory_here">سجدة تلاوة واجبة</string>
+    <string name="arabic_text_size">حجم النص العربي</string>
+    <string name="daily_settings">إعدادات آية اليوم</string>
+    <string name="reminders">التذكيرات</string>
+    <string name="copy_ayah">نسخ</string>
+    <string name="copied">تم النسخ</string>
+    <string name="about">حول التطبيق</string>
+    <string name="translation">الترجمة</string>
+    <string name="version">الإصدار</string>
+    <string name="text_from">نص القرآن الكريم والترجمات من %1$s</string>
+</resources>
