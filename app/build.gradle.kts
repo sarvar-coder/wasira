@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -40,6 +41,11 @@ android {
 
 kotlin { jvmToolchain(17) }
 
+// Goldens are committed next to the tests, not left in build/.
+roborazzi {
+    outputDir.set(file("src/test/snapshots"))
+}
+
 dependencies {
     implementation(libs.core.ktx)
     implementation(platform(libs.compose.bom))
@@ -61,4 +67,7 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.junit.rule)
 }
