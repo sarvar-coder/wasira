@@ -44,7 +44,6 @@ class DailyViewModelTest {
         assertEquals("2026-11-19", s.ayah.date)
         assertEquals(255, s.ayah.ayah.numberInSurah)
         assertEquals(settings.value, s.settings)
-        assertEquals(false, s.expanded)
     }
 
     @Test fun `failure - unavailable, and retry refetches`() = runTest(main.dispatcher) {
@@ -58,12 +57,6 @@ class DailyViewModelTest {
         assertEquals(2, daily.calls)
     }
 
-    @Test fun `translation expanded`() = runTest(main.dispatcher) {
-        val vm = loaded()
-        vm.onEvent(DailyEvent.TranslationExpanded)
-        assertEquals(true, vm.loadedState.expanded)
-    }
-
     @Test fun `arabic size changed - saved and shown`() = runTest(main.dispatcher) {
         val vm = loaded()
         vm.onEvent(DailyEvent.ArabicSizeChanged(22))
@@ -73,15 +66,13 @@ class DailyViewModelTest {
         assertEquals(1, daily.calls)
     }
 
-    @Test fun `translation changed - saved and refetched, collapsed again`() = runTest(main.dispatcher) {
+    @Test fun `translation changed - saved and refetched`() = runTest(main.dispatcher) {
         val vm = loaded()
-        vm.onEvent(DailyEvent.TranslationExpanded)
         vm.onEvent(DailyEvent.TranslationChanged("ur.jalandhry", "Jalandhry"))
         testScheduler.runCurrent()
         assertEquals("ur.jalandhry", settings.value.translationEdition)
         assertEquals(2, daily.calls)
         assertEquals("Jalandhry", vm.loadedState.settings.translationName)
-        assertEquals(false, vm.loadedState.expanded)
     }
 
     @Test fun `reminder time changed - saved and rescheduled when permitted`() = runTest(main.dispatcher) {
@@ -223,18 +214,6 @@ class DailyViewModelTest {
         testScheduler.runCurrent()
         assertEquals(DailyState.Unavailable, vm.state.value)
         assertTrue(vm.hadithState.value is HadithState.Loaded)
-    }
-
-    @Test fun `hadith expanded and explanation toggled`() = runTest(main.dispatcher) {
-        val vm = loaded()
-        vm.onEvent(DailyEvent.HadithLanguage("en"))
-        testScheduler.runCurrent()
-        vm.onEvent(DailyEvent.HadithExpanded)
-        vm.onEvent(DailyEvent.HadithExplanationToggled)
-        assertEquals(true, vm.loadedHadith.expanded)
-        assertEquals(true, vm.loadedHadith.explanationOpen)
-        vm.onEvent(DailyEvent.HadithExplanationToggled)
-        assertEquals(false, vm.loadedHadith.explanationOpen)
     }
 
     @Test fun `translation changed - the hadith is not redrawn`() = runTest(main.dispatcher) {

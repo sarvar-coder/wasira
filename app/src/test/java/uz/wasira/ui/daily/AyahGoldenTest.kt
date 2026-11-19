@@ -13,14 +13,13 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import uz.wasira.ui.components.SectionCard
-import uz.wasira.ui.components.SectionTone
+import uz.wasira.ui.components.page
 import uz.wasira.ui.fixture
 import uz.wasira.ui.theme.WasiraTheme
 import uz.wasira.ui.theme.wasira
 
 /**
- * AyahView rendered from live API responses (fixtures/golden_*.json). A changed
+ * The ayah page rendered from live API responses (fixtures/golden_*.json). A changed
  * font, line height or a Quranic mark gone missing shows up here as a diff.
  * Record with `./gradlew recordRoborazziDebug`, check with `verifyRoborazziDebug`.
  */
@@ -32,18 +31,15 @@ class AyahGoldenTest {
         val daily = fixture(name)
         captureRoboImage("src/test/snapshots/ayah_${name.removePrefix("golden_")}${if (dark) "_dark" else ""}.png") {
             WasiraTheme(darkTheme = dark) {
-                Box(Modifier.width(411.dp).background(MaterialTheme.wasira.bg).padding(16.dp)) {
-                    // The card it sits in on the daily screen.
-                    SectionCard(SectionTone.Accent) {
-                        AyahView(
-                            ayah = daily.ayah,
-                            arabicSize = 30,
-                            translation = daily.translation,
-                            translationRtl = daily.translationIsRtl,
-                            expanded = false,
-                            onExpand = {},
-                        )
-                    }
+                // As on the ayah page: the plain page, padded as the page pads.
+                val colors = MaterialTheme.wasira.page()
+                Box(Modifier.width(411.dp).background(colors.background).padding(24.dp)) {
+                    AyahPage(
+                        ayah = daily.ayah,
+                        arabicSize = 30,
+                        translation = daily.translation,
+                        translationRtl = daily.translationIsRtl,
+                    )
                 }
             }
         }

@@ -51,8 +51,9 @@ val WasiraViewModelFactory: ViewModelProvider.Factory = viewModelFactory {
 }
 
 /**
- * One ayah a day, in one window. There is no navigation, because there is
- * nowhere else to go. Ported from lib/app.dart.
+ * One ayah and one hadith a day. Onboarding until a translation is chosen, then
+ * the daily screen, whose two cards each open a page of their own (see
+ * [uz.wasira.ui.daily.DailyPage]).
  */
 @Composable
 fun WasiraRoot() {

@@ -160,7 +160,11 @@ Arabic ayah text is always RTL. App layout mirrors only when the UI language is
 RTL.
 
 `uz.sodik` is a tafsir-translation: average 217 characters, maximum 2660, against
-`en.sahih`'s 137. Translations past 300 characters clamp with a "Show more".
+`en.sahih`'s 137, and hadith explanations run to about 3,900. So the home page never
+shows text in full. It holds two cards, ayah and hadith, each half the height of
+whatever screen it is on, cut with an ellipsis. Tapping a card pushes its page
+with all of it, on the plain page: the green is only ever a card. The stack is an enum held in `rememberSaveable` with
+`AnimatedContent` and `BackHandler`, with no navigation library.
 
 ## Build and test
 

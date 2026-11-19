@@ -36,8 +36,6 @@ sealed interface DailyEvent {
      */
     data object Resumed : DailyEvent
 
-    data object TranslationExpanded : DailyEvent
-
     data class ArabicSizeChanged(val size: Int) : DailyEvent
 
     /** A different translation was chosen. The ayah on screen was fetched against the old one, so refetch. */
@@ -61,11 +59,6 @@ sealed interface DailyEvent {
     /** Try the hadith again after a failed fetch. The ayah is not refetched. */
     data object HadithRetried : DailyEvent
 
-    /** Show a long hadith in full. */
-    data object HadithExpanded : DailyEvent
-
-    /** Open or close the hadith's explanation. */
-    data object HadithExplanationToggled : DailyEvent
 }
 
 sealed interface DailyState {
@@ -77,8 +70,6 @@ sealed interface DailyState {
     data class Loaded(
         val ayah: DailyAyah,
         val settings: Settings,
-        /** Whether a long translation is shown in full. */
-        val expanded: Boolean = false,
     ) : DailyState
 }
 
@@ -92,12 +83,7 @@ sealed interface HadithState {
     data object Loading : HadithState
     data object Unavailable : HadithState
 
-    data class Loaded(
-        val daily: DailyHadith,
-        /** Whether a long hadith is shown in full. */
-        val expanded: Boolean = false,
-        val explanationOpen: Boolean = false,
-    ) : HadithState
+    data class Loaded(val daily: DailyHadith) : HadithState
 }
 
 /** The live translation list for the settings picker. Fetched when asked for, not held. */
@@ -147,9 +133,6 @@ class DailyViewModel(
                 if (isStale()) load()
                 if (isHadithStale()) loadHadith()
             }
-            DailyEvent.TranslationExpanded -> _state.update {
-                if (it is DailyState.Loaded) it.copy(expanded = true) else it
-            }
             is DailyEvent.ArabicSizeChanged -> viewModelScope.launch {
                 settings.setArabicFontSize(e.size)
                 refreshSettings()
@@ -175,12 +158,6 @@ class DailyViewModel(
                 loadHadith()
             }
             DailyEvent.HadithRetried -> loadHadith()
-            DailyEvent.HadithExpanded -> _hadith.update {
-                if (it is HadithState.Loaded) it.copy(expanded = true) else it
-            }
-            DailyEvent.HadithExplanationToggled -> _hadith.update {
-                if (it is HadithState.Loaded) it.copy(explanationOpen = !it.explanationOpen) else it
-            }
         }
     }
 
