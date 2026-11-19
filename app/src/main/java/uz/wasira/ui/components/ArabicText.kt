@@ -2,7 +2,7 @@ package uz.wasira.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -40,7 +40,7 @@ fun ArabicText(
     color: Color = Color.Unspecified,
     align: TextAlign = TextAlign.Right,
 ) {
-    val resolved = if (color == Color.Unspecified) LocalContentColor.current else color
+    val resolved = if (color == Color.Unspecified) MaterialTheme.colorScheme.onSurface else color
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         SelectionContainer(modifier) {
             Text(

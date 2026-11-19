@@ -25,6 +25,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -59,7 +60,7 @@ fun SettingsDialog(
     val muted = MaterialTheme.wasira.muted
     var picking by rememberSaveable { mutableStateOf(false) }
     var aboutOpen by rememberSaveable { mutableStateOf(false) }
-    var editingSlot by rememberSaveable { mutableStateOf(-1) }
+    var editingSlot by rememberSaveable { mutableIntStateOf(-1) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
