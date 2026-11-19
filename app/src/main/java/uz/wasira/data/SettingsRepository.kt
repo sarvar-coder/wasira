@@ -1,12 +1,10 @@
 package uz.wasira.data
 
-class SettingsRepository(private val store: LocalStore) {
-    suspend fun read(): Settings = TODO("Agent A")
-    suspend fun setTranslation(identifier: String, name: String?): Unit = TODO("Agent A")
-    /** Ignores values not in [ARABIC_SIZES]. */
-    suspend fun setArabicFontSize(size: Int): Unit = TODO("Agent A")
-    /** Clamps [minutes] to 0..1439; [slot] is 0..4. */
-    suspend fun setReminderTime(slot: Int, minutes: Int): Unit = TODO("Agent A")
+class SettingsRepository(private val store: LocalStore) : SettingsSource {
+    override suspend fun read(): Settings = TODO("Agent A")
+    override suspend fun setTranslation(identifier: String, name: String?): Unit = TODO("Agent A")
+    override suspend fun setArabicFontSize(size: Int): Unit = TODO("Agent A")
+    override suspend fun setReminderTime(slot: Int, minutes: Int): Unit = TODO("Agent A")
 
     companion object {
         val ARABIC_SIZES = listOf(22, 26, 30, 34)

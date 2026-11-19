@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_title" translatable="false">Wasira</string>
+    <string name="notification_title" translatable="false">Wasira</string>
+    <string name="notification_body">Today\'s ayah is ready</string>
+    <string name="notification_channel_name">Daily ayah</string>
+    <string name="notification_channel_description">The ayahs of the day, at the times you chose</string>
 </resources>

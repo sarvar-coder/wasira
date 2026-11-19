@@ -7,7 +7,7 @@ import uz.wasira.domain.DailyAyah
 class DailyRepository(
     private val api: QuranApi,
     private val store: LocalStore,
-    private val settings: SettingsRepository,
+    private val settings: SettingsSource,
     private val today: () -> LocalDate = LocalDate::now,
     private val random: Random = Random.Default,
 ) : DailySource {

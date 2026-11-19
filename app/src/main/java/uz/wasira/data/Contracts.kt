@@ -35,6 +35,16 @@ data class Settings(
     val translationLabel: String get() = translationName ?: translationEdition.orEmpty()
 }
 
+/** Persisted user settings. Implemented by [SettingsRepository]. */
+interface SettingsSource {
+    suspend fun read(): Settings
+    suspend fun setTranslation(identifier: String, name: String?)
+    /** Ignores values not in [SettingsRepository.ARABIC_SIZES]. */
+    suspend fun setArabicFontSize(size: Int)
+    /** Clamps [minutes] to 0..1439; [slot] is 0..4. */
+    suspend fun setReminderTime(slot: Int, minutes: Int)
+}
+
 /** Source of today's ayah. Implemented by [DailyRepository]. */
 interface DailySource {
     /** Cached ayah if it is today's and for the current translation; otherwise draws and fetches a new one. */
