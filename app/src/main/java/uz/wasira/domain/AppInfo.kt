@@ -3,7 +3,7 @@ package uz.wasira.domain
 /** What the app says about itself, and who it owes. */
 object AppInfo {
     /** Mirrors `versionName` in app/build.gradle.kts; AppInfoTest fails if the two drift. */
-    const val VERSION = "1.0.0"
+    const val VERSION = "1.1.0"
 
     /** The Quran text and every translation come from one free, keyless API. */
     const val QURAN_SOURCE = "alquran.cloud"
