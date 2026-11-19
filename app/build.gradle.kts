@@ -22,6 +22,30 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // Release signing comes from the environment, never the repo:
+    //   WASIRA_KEYSTORE           path to the .jks (kept outside the repo)
+    //   WASIRA_KEYSTORE_PASSWORD  store and key password
+    // Without them a release build is produced unsigned.
+    val keystorePath = System.getenv("WASIRA_KEYSTORE")
+    val keystorePassword = System.getenv("WASIRA_KEYSTORE_PASSWORD")
+    val releaseSigning = if (keystorePath != null && keystorePassword != null) {
+        signingConfigs.create("release") {
+            storeFile = file(keystorePath)
+            storePassword = keystorePassword
+            keyAlias = "wasira"
+            keyPassword = keystorePassword
+        }
+    } else null
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = releaseSigning
+        }
+    }
+
     buildFeatures { compose = true }
 
     androidResources {
